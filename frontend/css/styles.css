@@ -138,7 +138,7 @@ h1, h2 {
 }
 
 .btn-nav:hover {
-    background: linear-gradient(135deg, #5a6268, #343a40);
+    background: linear-gradient(135deg, #1488e1, #117ae4);
     box-shadow: 0 5px 16px rgba(108, 117, 125, 0.4);
     transform: translateY(-2px);
 }

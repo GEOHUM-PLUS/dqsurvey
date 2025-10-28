@@ -1311,6 +1311,57 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
+  // --- XLSX and JSON ZIP Export System ---
+const ExportManager = {
+  generateXLSX(surveyData) {
+    const wb = XLSX.utils.book_new();
+
+    const addSheet = (name, data) => {
+      const flatData = Array.isArray(data) ? data : [data];
+      const ws = XLSX.utils.json_to_sheet(flatData);
+      XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31)); // Excel sheet name limit
+    };
+
+    addSheet('Section1_Basic', surveyData.dataset.basic);
+    addSheet('Section1_UseCase', surveyData.dataset.useCase);
+    addSheet('Section1_Spatial', surveyData.dataset.spatial);
+    addSheet('Section2_Descriptives', surveyData.descriptives);
+    addSheet('Section3_Design', surveyData.design);
+    addSheet('Section4_Conformance', surveyData.conformance);
+    addSheet('Section5_Context', surveyData.context);
+    addSheet('Scores_BySection', surveyData.qualityScores.bySection);
+    addSheet('Scores_ByGroup', surveyData.qualityScores.summary.byGroup);
+
+    const datasetTitle = surveyData.dataset.basic.datasetTitle || 'DataQuality';
+    const timestamp = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+    XLSX.writeFile(wb, `${datasetTitle.replace(/[^a-z0-9]/gi,'_')}_${timestamp}.xlsx`);
+  },
+
+  async generateJSONZip(surveyData) {
+    const zip = new JSZip();
+
+    zip.file("Section1_Basic.json", JSON.stringify(surveyData.dataset.basic, null, 2));
+    zip.file("Section1_UseCase.json", JSON.stringify(surveyData.dataset.useCase, null, 2));
+    zip.file("Section1_Spatial.json", JSON.stringify(surveyData.dataset.spatial, null, 2));
+    zip.file("Section2_Descriptives.json", JSON.stringify(surveyData.descriptives, null, 2));
+    zip.file("Section3_Design.json", JSON.stringify(surveyData.design, null, 2));
+    zip.file("Section4_Conformance.json", JSON.stringify(surveyData.conformance, null, 2));
+    zip.file("Section5_Context.json", JSON.stringify(surveyData.context, null, 2));
+    zip.file("Scores.json", JSON.stringify(surveyData.qualityScores, null, 2));
+
+    const datasetTitle = surveyData.dataset.basic.datasetTitle || 'DataQuality';
+    const timestamp = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+    const blob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${datasetTitle.replace(/[^a-z0-9]/gi,'_')}_${timestamp}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+};
+
+
   const summaryBtn = document.getElementById('generateSummary');
   const summaryOut = document.getElementById('summary-output');
   if (summaryBtn && summaryOut) {
@@ -1996,6 +2047,16 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('saveSummaryDB').disabled = false;
       }
     });
+
+    document.getElementById('downloadXLSX').addEventListener('click', () => {
+        const data = generateComprehensiveExport();
+        ExportManager.generateXLSX(data);
+        });
+
+    document.getElementById('downloadJSONZIP').addEventListener('click', () => {
+        const data = generateComprehensiveExport();
+        ExportManager.generateJSONZip(data);
+        });
     
     // Update Dashboard Data
     document.getElementById('updateDashboard').addEventListener('click', async () => {
@@ -3083,7 +3144,23 @@ Generated on: ${new Date().toLocaleString()}`;
 }
 
 // Simple submit handler
-document.addEventListener('DOMContentLoaded',function(){
-  var submitBtn=document.getElementById('submitForm');
-  if(submitBtn){ submitBtn.addEventListener('click',function(){alert('Form submitted!');});}
+
+document.addEventListener('DOMContentLoaded', function(){
+  const submitBtn = document.getElementById('submitForm');
+  if (submitBtn) {
+    submitBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Form submitted successfully!');
+      
+      // Clear survey data
+      localStorage.removeItem('surveyData');
+      localStorage.removeItem('dataProcessingLevel');
+      localStorage.removeItem('evaluationType');
+      localStorage.removeItem('dataType');
+      
+      // Refresh the page take me to home
+      window.location.href = '../index.html';
+    });
+  }
 });
+
