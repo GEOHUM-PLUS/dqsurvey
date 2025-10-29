@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // sections/section1.js
-import { DataManager } from "../core/dataManager.js";
+import { DataManager } from "../core/datamanager.js";
 import { initializePage } from "../core/init.js";
 
 document.addEventListener("DOMContentLoaded", () => {
