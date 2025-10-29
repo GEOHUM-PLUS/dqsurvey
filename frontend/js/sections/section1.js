@@ -17,9 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// sections/section1.js
-import { DataManager } from "../core/datamanager.js";
-import { initializePage } from "../core/init.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   initializePage("section1");
@@ -62,3 +59,68 @@ document.addEventListener("DOMContentLoaded", () => {
     if (aoiType.value === "upload") aoiUpload.style.display = "block";
   });
 });
+
+// api exmaple for dataset submission
+document.addEventListener("DOMContentLoaded", () => {
+  initializePage("section1");
+  // 🔴 Submit handler
+  const submitBtn = document.getElementById("submitDataset");
+  submitBtn?.addEventListener("click", async (e) => {
+      console.log('button clicked');
+    e.preventDefault();
+
+    // Gather field values
+    const title = document.getElementById("datasetTitle").value.trim();
+    const evaluator = document.getElementById("evaluatorName").value.trim();
+    const affiliation = document.getElementById("evaluatorOrg").value.trim();
+    const data_processing_level =
+      document.getElementById("dataprocessinglevel").value === "primary"
+        ? "primary data"
+        : "data product";
+    const data_type = document.getElementById("dataType").value.trim();
+    const evaluation_type =
+      document.getElementById("evaluationType").value === "general-quality"
+        ? "general data quality"
+        : "use case specific";
+
+    // evaluation_id (0 = general, 1 = use case)
+    const evaluation_id = evaluation_type === "general data quality" ? 0 : 1;
+
+    // Prepare request payload
+    const payload = {
+      title,
+      evaluator,
+      affiliation,
+      data_processing_level,
+      data_type,
+      evaluation_id,
+      evaluation_type,
+    };
+
+    console.log("📤 Sending payload:", payload);
+
+    try {
+      const response = await fetch("http://localhost:8020/dataset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert("✅ Dataset saved successfully!");
+        console.log(result);
+      } else {
+        alert("⚠️ Validation failed: " + (result.message || "Check input"));
+        console.error(result);
+      }
+    } catch (error) {
+      console.error("❌ Error connecting to backend:", error);
+      alert("Failed to connect to server. Please check if backend is running.");
+    }
+  });
+});
+
