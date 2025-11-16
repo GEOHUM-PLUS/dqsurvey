@@ -5,50 +5,6 @@ app.use(express.json());
 const pool = require('../config/connection'); // mysql2/promise pool
 const { datasetSchema, useCaseSchema }  = require('../models/intial_dataset');
 
-// POST /dataset
-// router.post('/', async (req, res) => {
-//   // Validate request body
-//   const { error, value } = datasetEvaluationSchema.validate(req.body, { abortEarly: false });
-
-//   if (error) {
-//     return res.status(400).json({
-//       status: 'error',
-//       message: 'Validation failed',
-//       details: error.details.map(d => d.message)
-//     });
-//   }
-
-//   // Insert into database
-//   const query = `
-//     INSERT INTO dataset_evaluation
-//       (title, evaluator, affiliation, data_processing_level, data_type, evaluation_id, evaluation_type, creation_date)
-//     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-//   `;
-
-//   const params = [
-//     value.title,
-//     value.evaluator,
-//     value.affiliation,
-//     value.data_processing_level,
-//     value.data_type,
-//     value.evaluation_id,
-//     value.evaluation_type,
-//     value.creation_date,
-//   ];
-
-//   try {
-//     const [result] = await pool.execute(query, params);
-//     res.status(201).json({
-//       status: 'success',
-//       message: 'Dataset added successfully',
-//       data: { id: result.insertId, ...value }
-//     });
-//   } catch (err) {
-//     console.error('Error inserting dataset:', err);
-//     res.status(500).json({ status: 'error', message: 'Database insertion failed' });
-//   }
-// });
-
 router.post("/", async (req, res) => {
   try {
     const {
@@ -57,17 +13,23 @@ router.post("/", async (req, res) => {
       affiliation,
       data_processing_level,
       data_type,
-      evaluation_id,       // 0 = general, 1 = use-case
+      other_data_type, 
+      evaluation_id,
       evaluation_type,
+
+      // use case fields:
       use_case_description,
-      requirements,
       optimum_data_collection,
-      optimum_spatial_resolution,
       aoi_input_method,
+
+      aoi_coordinates,
+      aoi_file,
+      aoi_geographical_identifier,
+
       other_requirements
     } = req.body;
 
-    // Validate basic dataset input
+    // Validate dataset
     const { error } = datasetSchema.validate({
       title,
       evaluator,
@@ -82,63 +44,58 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
 
-    // 1️⃣ Insert into dataset_evaluation table
-    const datasetInsertQuery = `
-      INSERT INTO dataset_evaluation 
-      (title, evaluator, affiliation, data_processing_level, data_type, evaluation_id, evaluation_type)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+    // Insert dataset
+    const insertDataset = `
+      INSERT INTO dataset_evaluation
+      (title, evaluator, affiliation, data_processing_level, data_type, other_data_type, evaluation_id, evaluation_type)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    const datasetValues = [
-      title, evaluator, affiliation, data_processing_level,
-      data_type, evaluation_id, evaluation_type
-    ];
 
-    const [datasetResult] = await pool.query(datasetInsertQuery, datasetValues);
-    const datasetId = datasetResult.insertId; // newly created id
+    const [datasetResult] = await pool.query(insertDataset, [
+      title,
+      evaluator,
+      affiliation,
+      data_processing_level,
+      data_type,
+      data_type === "other" ? other_data_type : null, 
+      evaluation_id,
+      evaluation_type
+    ]);
 
-    // 2️⃣ If use-case-specific → Insert into use_case_specific table
+    const datasetId = datasetResult.insertId;
+
+    // If use-case specific
     if (evaluation_id === 1) {
-      const { error: useCaseError } = useCaseSchema.validate({
-        use_case_description,
-        requirements,
-        optimum_data_collection,
-        optimum_spatial_resolution,
-        aoi_input_method,
-        other_requirements,
-      });
-
-      if (useCaseError) {
-        return res.status(400).json({ message: useCaseError.details[0].message });
-      }
-
-      const useCaseInsertQuery = `
+      const insertUseCase = `
         INSERT INTO use_case_specific
-        (dataset_evaluation_id, use_case_description, requirements, optimum_data_collection,
-         optimum_spatial_resolution, aoi_input_method, other_requirements)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (dataset_evaluation_id, use_case_description, optimum_data_collection,
+        aoi_input_method, aoi_coordinates,
+        aoi_file, aoi_geographical_identifier, other_requirements)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `;
-      const useCaseValues = [
+
+      await pool.query(insertUseCase, [
         datasetId,
         use_case_description,
-        requirements,
         optimum_data_collection,
-        optimum_spatial_resolution,
         aoi_input_method,
-        other_requirements,
-      ];
-
-      await pool.query(useCaseInsertQuery, useCaseValues);
+        aoi_coordinates || null,
+        aoi_file || null,
+        aoi_geographical_identifier || null,
+        other_requirements
+      ]);
     }
 
-    return res.status(201).json({
-      message: "Dataset saved successfully!",
-      datasetId,
+    return res.status(201).json({ 
+      message: "Dataset saved successfully!", 
+      datasetId 
     });
 
   } catch (err) {
     console.error("Error saving dataset:", err);
-    return res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
+
 
 module.exports = router;
