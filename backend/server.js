@@ -22,23 +22,18 @@ db.serialize(() => {
       dataprocessinglevel TEXT CHECK(dataprocessinglevel IN ('primary','products')),
       dataType TEXT,
       evaluationType TEXT CHECK(evaluationType IN ('general-quality','use-case-adequacy')),
-      // section 2 (examples)
       language TEXT,
       identifier TEXT,
       datasetDescription TEXT,
-      // section 3 design scores (0–4)
       score_design_resolution INTEGER CHECK(score_design_resolution BETWEEN 0 AND 4),
       score_design_coverage   INTEGER CHECK(score_design_coverage   BETWEEN 0 AND 4),
       score_design_timeliness INTEGER CHECK(score_design_timeliness BETWEEN 0 AND 4),
-      // section 4 conformance % with 0–100 checks
       valuesCompleteness INTEGER CHECK(valuesCompleteness BETWEEN 0 AND 100),
       attributeCompleteness INTEGER CHECK(attributeCompleteness BETWEEN 0 AND 100),
       topoConsistency INTEGER CHECK(topoConsistency BETWEEN 0 AND 100),
-      // section 5 context scores (0–4)
       score_context_reputation INTEGER CHECK(score_context_reputation BETWEEN 0 AND 4),
       score_context_applicability INTEGER CHECK(score_context_applicability BETWEEN 0 AND 4),
       score_context_transferability INTEGER CHECK(score_context_transferability BETWEEN 0 AND 4),
-      // raw JSON copy for anything else
       payload_json TEXT NOT NULL,
       created_at TEXT NOT NULL
     )
