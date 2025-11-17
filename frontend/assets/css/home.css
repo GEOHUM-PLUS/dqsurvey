@@ -1,0 +1,186 @@
+/* ========================================
+   HOME PAGE STYLES (index.html)
+   ======================================== */
+
+/* General Styles - Shared */
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: url('https://geohum.eu/wp-content/uploads/2020/06/Kutupalong_UAV_image-1-scaled.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #222;
+}
+
+.overlay {
+    background: rgba(240, 236, 28, 0.364);
+    min-height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0; left: 0;
+    z-index: 0;
+}
+
+.main-content {
+    position: relative;
+    z-index: 1;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1.2s cubic-bezier(.77,0,.18,1) forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.container, .dashboard-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+    background: rgba(224, 221, 221, 0);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(13,110,253,0.08);
+}
+
+h1, h2 {
+    color: #e10707;
+    text-shadow: 2px 2px 8px #fff;
+}
+
+/* Buttons - Navigation */
+.btn-nav {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 3px 12px rgba(108, 117, 125, 0.3);
+    transition: all 0.3s ease;
+    margin: 0 8px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-nav:hover {
+    background: linear-gradient(135deg, #1488e1, #117ae4);
+    box-shadow: 0 5px 16px rgba(108, 117, 125, 0.4);
+    transform: translateY(-2px);
+}
+
+.btn-next {
+    background: linear-gradient(135deg, #fd7e14, #e8590c);
+}
+
+.btn-next:hover {
+    background: linear-gradient(135deg, #e8590c, #d63384);
+}
+
+.btn-next::after {
+    content: '→';
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.navigation-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+    padding: 0 20px;
+}
+
+/* Navigation Styles */
+.navbar {
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Navbar Logo Styling */
+.navbar-logos {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 1rem;
+}
+
+.funding-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.navbar-logo-item {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.navbar-logo-item:hover {
+    opacity: 1;
+    text-decoration: none;
+}
+
+.navbar-logo-item img {
+    height: 60px;
+    width: auto;
+    max-width: 1000px;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+/* Responsive navbar logos */
+@media (max-width: 992px) {
+    .navbar-logos {
+        display: none;
+    }
+}
+
+/* List Group Items */
+.list-group-item {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.list-group-item:hover {
+    box-shadow: 0 4px 16px rgba(13,110,253,0.15);
+    transform: translateY(-2px) scale(1.03);
+    background: #e7f1ff;
+}
+
+/* Text Styles */
+.display-4 {
+    text-shadow: 2px 2px 8px #fff;
+}
+
+.lead {
+    color: #333;
+    text-shadow: 1px 1px 4px #fff;
+}
+
+/* Responsive button layout */
+@media (max-width: 768px) {
+    .navigation-buttons {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0 10px;
+    }
+    
+    .btn-nav {
+        width: 100%;
+        max-width: 250px;
+    }
+}
