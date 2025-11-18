@@ -9,14 +9,12 @@ function debounce(func, wait = 300) {
 // ============================================
 // SECTION 1: INITIAL INFORMATION 
 // ============================================
-// Saves critical data to backend database for persistence
-// Uses sessionStorage for inter-section communication only
-// No localStorage operations
 
 import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
+import { setDataType, setEvaluationType, setProcessingLevel, getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 
 // Database API configuration
-const API_BASE_URL = 'http://localhost:3000/api'; // Update with your backend URL
+// const API_BASE_URL = 'http://localhost:3000/api'; // Update with your backend URL
 
 // Save data to backend database
 async function saveToDatabase(key, value) {
@@ -41,21 +39,7 @@ function saveFormValue(key, value) {
 document.addEventListener('DOMContentLoaded', function () {
   initializeHighlighting();
 
-  // ---- SETUP HTML TOOLTIPS ----
-  document.querySelectorAll('.info-icon[data-tooltip]').forEach(el => {
-    const html = el.getAttribute('data-tooltip');
-    if (html.includes('<')) {
-      el.addEventListener('mouseenter', () => {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'html-tooltip';
-        tooltip.innerHTML = html;
-        el.appendChild(tooltip);
-      });
-      el.addEventListener('mouseleave', () => {
-        el.querySelector('.html-tooltip')?.remove();
-      });
-    }
-  });
+
 
   // ---- DATA PROCESSING LEVEL (Primary vs Products) - CRITICAL ----
   const dataProcessingLevel = document.getElementById('dataprocessinglevel');
@@ -117,10 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const predictionResolution = document.getElementById('prediction-resolution');
   const surveyAggregation = document.getElementById('survey-aggregation');
   const otherResolution = document.getElementById('other-resolution');
-  
   if (dataTypeSelect) {
+    
     dataTypeSelect.addEventListener('change', function() {
-      saveFormValue('dataType', this.value);
+      setDataType(this.value);
       if (dataTypeOtherContainer) {
         dataTypeOtherContainer.style.display = this.value === 'other' ? 'block' : 'none';
       }
@@ -238,271 +222,18 @@ document.addEventListener('DOMContentLoaded', function () {
   // ==========================================================
 
 // =========================
-// Full ISO-3166 Dataset
+// Load ISO-3166 Dataset from JSON
 // =========================
 
-const ISO_LOCATIONS = [
-  // --- CONTINENTS ---
-  { value: "global", label: "Global" },
-  { value: "africa", label: "Africa" },
-  { value: "asia", label: "Asia" },
-  { value: "europe", label: "Europe" },
-  { value: "north-america", label: "North America" },
-  { value: "south-america", label: "South America" },
-  { value: "oceania", label: "Oceania" },
-  { value: "antarctica", label: "Antarctica" },
+let ISO_LOCATIONS = [];
 
-  // --- COUNTRIES (ISO 3166-1 alpha-2) ---
-  { value: "AF", label: "Afghanistan (AF)" },
-  { value: "AX", label: "Aland Islands (AX)" },
-  { value: "AL", label: "Albania (AL)" },
-  { value: "DZ", label: "Algeria (DZ)" },
-  { value: "AS", label: "American Samoa (AS)" },
-  { value: "AD", label: "Andorra (AD)" },
-  { value: "AO", label: "Angola (AO)" },
-  { value: "AI", label: "Anguilla (AI)" },
-  { value: "AQ", label: "Antarctica (AQ)" },
-  { value: "AG", label: "Antigua and Barbuda (AG)" },
-  { value: "AR", label: "Argentina (AR)" },
-  { value: "AM", label: "Armenia (AM)" },
-  { value: "AW", label: "Aruba (AW)" },
-  { value: "AU", label: "Australia (AU)" },
-  { value: "AT", label: "Austria (AT)" },
-  { value: "AZ", label: "Azerbaijan (AZ)" },
-  { value: "BS", label: "Bahamas (BS)" },
-  { value: "BH", label: "Bahrain (BH)" },
-  { value: "BD", label: "Bangladesh (BD)" },
-  { value: "BB", label: "Barbados (BB)" },
-  { value: "BY", label: "Belarus (BY)" },
-  { value: "BE", label: "Belgium (BE)" },
-  { value: "BZ", label: "Belize (BZ)" },
-  { value: "BJ", label: "Benin (BJ)" },
-  { value: "BM", label: "Bermuda (BM)" },
-  { value: "BT", label: "Bhutan (BT)" },
-  { value: "BO", label: "Bolivia (BO)" },
-  { value: "BQ", label: "Bonaire, Sint Eustatius and Saba (BQ)" },
-  { value: "BA", label: "Bosnia and Herzegovina (BA)" },
-  { value: "BW", label: "Botswana (BW)" },
-  { value: "BV", label: "Bouvet Island (BV)" },
-  { value: "BR", label: "Brazil (BR)" },
-  { value: "IO", label: "British Indian Ocean Territory (IO)" },
-  { value: "BN", label: "Brunei Darussalam (BN)" },
-  { value: "BG", label: "Bulgaria (BG)" },
-  { value: "BF", label: "Burkina Faso (BF)" },
-  { value: "BI", label: "Burundi (BI)" },
-  { value: "KH", label: "Cambodia (KH)" },
-  { value: "CM", label: "Cameroon (CM)" },
-  { value: "CA", label: "Canada (CA)" },
-  { value: "CV", label: "Cape Verde (CV)" },
-  { value: "KY", label: "Cayman Islands (KY)" },
-  { value: "CF", label: "Central African Republic (CF)" },
-  { value: "TD", label: "Chad (TD)" },
-  { value: "CL", label: "Chile (CL)" },
-  { value: "CN", label: "China (CN)" },
-  { value: "CX", label: "Christmas Island (CX)" },
-  { value: "CC", label: "Cocos Islands (CC)" },
-  { value: "CO", label: "Colombia (CO)" },
-  { value: "KM", label: "Comoros (KM)" },
-  { value: "CG", label: "Congo (CG)" },
-  { value: "CD", label: "Congo, Democratic Republic (CD)" },
-  { value: "CK", label: "Cook Islands (CK)" },
-  { value: "CR", label: "Costa Rica (CR)" },
-  { value: "CI", label: "Côte d’Ivoire (CI)" },
-  { value: "HR", label: "Croatia (HR)" },
-  { value: "CU", label: "Cuba (CU)" },
-  { value: "CW", label: "Curaçao (CW)" },
-  { value: "CY", label: "Cyprus (CY)" },
-  { value: "CZ", label: "Czech Republic (CZ)" },
-  { value: "DK", label: "Denmark (DK)" },
-  { value: "DJ", label: "Djibouti (DJ)" },
-  { value: "DM", label: "Dominica (DM)" },
-  { value: "DO", label: "Dominican Republic (DO)" },
-  { value: "EC", label: "Ecuador (EC)" },
-  { value: "EG", label: "Egypt (EG)" },
-  { value: "SV", label: "El Salvador (SV)" },
-  { value: "GQ", label: "Equatorial Guinea (GQ)" },
-  { value: "ER", label: "Eritrea (ER)" },
-  { value: "EE", label: "Estonia (EE)" },
-  { value: "SZ", label: "Eswatini (SZ)" },
-  { value: "ET", label: "Ethiopia (ET)" },
-  { value: "FK", label: "Falkland Islands (FK)" },
-  { value: "FO", label: "Faroe Islands (FO)" },
-  { value: "FJ", label: "Fiji (FJ)" },
-  { value: "FI", label: "Finland (FI)" },
-  { value: "FR", label: "France (FR)" },
-  { value: "GF", label: "French Guiana (GF)" },
-  { value: "PF", label: "French Polynesia (PF)" },
-  { value: "TF", label: "French Southern Territories (TF)" },
-  { value: "GA", label: "Gabon (GA)" },
-  { value: "GM", label: "Gambia (GM)" },
-  { value: "GE", label: "Georgia (GE)" },
-  { value: "DE", label: "Germany (DE)" },
-  { value: "GH", label: "Ghana (GH)" },
-  { value: "GI", label: "Gibraltar (GI)" },
-  { value: "GR", label: "Greece (GR)" },
-  { value: "GL", label: "Greenland (GL)" },
-  { value: "GD", label: "Grenada (GD)" },
-  { value: "GP", label: "Guadeloupe (GP)" },
-  { value: "GU", label: "Guam (GU)" },
-  { value: "GT", label: "Guatemala (GT)" },
-  { value: "GG", label: "Guernsey (GG)" },
-  { value: "GN", label: "Guinea (GN)" },
-  { value: "GW", label: "Guinea-Bissau (GW)" },
-  { value: "GY", label: "Guyana (GY)" },
-  { value: "HT", label: "Haiti (HT)" },
-  { value: "HM", label: "Heard Island and McDonald Islands (HM)" },
-  { value: "VA", label: "Vatican City (VA)" },
-  { value: "HN", label: "Honduras (HN)" },
-  { value: "HK", label: "Hong Kong (HK)" },
-  { value: "HU", label: "Hungary (HU)" },
-  { value: "IS", label: "Iceland (IS)" },
-  { value: "IN", label: "India (IN)" },
-  { value: "ID", label: "Indonesia (ID)" },
-  { value: "IR", label: "Iran (IR)" },
-  { value: "IQ", label: "Iraq (IQ)" },
-  { value: "IE", label: "Ireland (IE)" },
-  { value: "IM", label: "Isle of Man (IM)" },
-  { value: "IL", label: "Israel (IL)" },
-  { value: "IT", label: "Italy (IT)" },
-  { value: "JM", label: "Jamaica (JM)" },
-  { value: "JP", label: "Japan (JP)" },
-  { value: "JE", label: "Jersey (JE)" },
-  { value: "JO", label: "Jordan (JO)" },
-  { value: "KZ", label: "Kazakhstan (KZ)" },
-  { value: "KE", label: "Kenya (KE)" },
-  { value: "KI", label: "Kiribati (KI)" },
-  { value: "KP", label: "North Korea (KP)" },
-  { value: "KR", label: "South Korea (KR)" },
-  { value: "KW", label: "Kuwait (KW)" },
-  { value: "KG", label: "Kyrgyzstan (KG)" },
-  { value: "LA", label: "Laos (LA)" },
-  { value: "LV", label: "Latvia (LV)" },
-  { value: "LB", label: "Lebanon (LB)" },
-  { value: "LS", label: "Lesotho (LS)" },
-  { value: "LR", label: "Liberia (LR)" },
-  { value: "LY", label: "Libya (LY)" },
-  { value: "LI", label: "Liechtenstein (LI)" },
-  { value: "LT", label: "Lithuania (LT)" },
-  { value: "LU", label: "Luxembourg (LU)" },
-  { value: "MO", label: "Macao (MO)" },
-  { value: "MG", label: "Madagascar (MG)" },
-  { value: "MW", label: "Malawi (MW)" },
-  { value: "MY", label: "Malaysia (MY)" },
-  { value: "MV", label: "Maldives (MV)" },
-  { value: "ML", label: "Mali (ML)" },
-  { value: "MT", label: "Malta (MT)" },
-  { value: "MH", label: "Marshall Islands (MH)" },
-  { value: "MQ", label: "Martinique (MQ)" },
-  { value: "MR", label: "Mauritania (MR)" },
-  { value: "MU", label: "Mauritius (MU)" },
-  { value: "YT", label: "Mayotte (YT)" },
-  { value: "MX", label: "Mexico (MX)" },
-  { value: "FM", label: "Micronesia (FM)" },
-  { value: "MD", label: "Moldova (MD)" },
-  { value: "MC", label: "Monaco (MC)" },
-  { value: "MN", label: "Mongolia (MN)" },
-  { value: "ME", label: "Montenegro (ME)" },
-  { value: "MS", label: "Montserrat (MS)" },
-  { value: "MA", label: "Morocco (MA)" },
-  { value: "MZ", label: "Mozambique (MZ)" },
-  { value: "MM", label: "Myanmar (MM)" },
-  { value: "NA", label: "Namibia (NA)" },
-  { value: "NR", label: "Nauru (NR)" },
-  { value: "NP", label: "Nepal (NP)" },
-  { value: "NL", label: "Netherlands (NL)" },
-  { value: "NC", label: "New Caledonia (NC)" },
-  { value: "NZ", label: "New Zealand (NZ)" },
-  { value: "NI", label: "Nicaragua (NI)" },
-  { value: "NE", label: "Niger (NE)" },
-  { value: "NG", label: "Nigeria (NG)" },
-  { value: "NU", label: "Niue (NU)" },
-  { value: "NF", label: "Norfolk Island (NF)" },
-  { value: "MK", label: "North Macedonia (MK)" },
-  { value: "MP", label: "Northern Mariana Islands (MP)" },
-  { value: "NO", label: "Norway (NO)" },
-  { value: "OM", label: "Oman (OM)" },
-  { value: "PK", label: "Pakistan (PK)" },
-  { value: "PW", label: "Palau (PW)" },
-  { value: "PS", label: "Palestine (PS)" },
-  { value: "PA", label: "Panama (PA)" },
-  { value: "PG", label: "Papua New Guinea (PG)" },
-  { value: "PY", label: "Paraguay (PY)" },
-  { value: "PE", label: "Peru (PE)" },
-  { value: "PH", label: "Philippines (PH)" },
-  { value: "PN", label: "Pitcairn (PN)" },
-  { value: "PL", label: "Poland (PL)" },
-  { value: "PT", label: "Portugal (PT)" },
-  { value: "PR", label: "Puerto Rico (PR)" },
-  { value: "QA", label: "Qatar (QA)" },
-  { value: "RE", label: "Reunion (RE)" },
-  { value: "RO", label: "Romania (RO)" },
-  { value: "RU", label: "Russia (RU)" },
-  { value: "RW", label: "Rwanda (RW)" },
-  { value: "BL", label: "Saint Barthélemy (BL)" },
-  { value: "SH", label: "Saint Helena (SH)" },
-  { value: "KN", label: "Saint Kitts and Nevis (KN)" },
-  { value: "LC", label: "Saint Lucia (LC)" },
-  { value: "MF", label: "Saint Martin (MF)" },
-  { value: "PM", label: "Saint Pierre and Miquelon (PM)" },
-  { value: "VC", label: "Saint Vincent and the Grenadines (VC)" },
-  { value: "WS", label: "Samoa (WS)" },
-  { value: "SM", label: "San Marino (SM)" },
-  { value: "ST", label: "Sao Tome and Principe (ST)" },
-  { value: "SA", label: "Saudi Arabia (SA)" },
-  { value: "SN", label: "Senegal (SN)" },
-  { value: "RS", label: "Serbia (RS)" },
-  { value: "SC", label: "Seychelles (SC)" },
-  { value: "SL", label: "Sierra Leone (SL)" },
-  { value: "SG", label: "Singapore (SG)" },
-  { value: "SX", label: "Sint Maarten (SX)" },
-  { value: "SK", label: "Slovakia (SK)" },
-  { value: "SI", label: "Slovenia (SI)" },
-  { value: "SB", label: "Solomon Islands (SB)" },
-  { value: "SO", label: "Somalia (SO)" },
-  { value: "ZA", label: "South Africa (ZA)" },
-  { value: "GS", label: "South Georgia and the South Sandwich Islands (GS)" },
-  { value: "SS", label: "South Sudan (SS)" },
-  { value: "ES", label: "Spain (ES)" },
-  { value: "LK", label: "Sri Lanka (LK)" },
-  { value: "SD", label: "Sudan (SD)" },
-  { value: "SR", label: "Suriname (SR)" },
-  { value: "SJ", label: "Svalbard and Jan Mayen (SJ)" },
-  { value: "SE", label: "Sweden (SE)" },
-  { value: "CH", label: "Switzerland (CH)" },
-  { value: "SY", label: "Syria (SY)" },
-  { value: "TW", label: "Taiwan (TW)" },
-  { value: "TJ", label: "Tajikistan (TJ)" },
-  { value: "TZ", label: "Tanzania (TZ)" },
-  { value: "TH", label: "Thailand (TH)" },
-  { value: "TL", label: "Timor-Leste (TL)" },
-  { value: "TG", label: "Togo (TG)" },
-  { value: "TK", label: "Tokelau (TK)" },
-  { value: "TO", label: "Tonga (TO)" },
-  { value: "TT", label: "Trinidad and Tobago (TT)" },
-  { value: "TN", label: "Tunisia (TN)" },
-  { value: "TR", label: "Turkey (TR)" },
-  { value: "TM", label: "Turkmenistan (TM)" },
-  { value: "TC", label: "Turks and Caicos Islands (TC)" },
-  { value: "TV", label: "Tuvalu (TV)" },
-  { value: "UG", label: "Uganda (UG)" },
-  { value: "UA", label: "Ukraine (UA)" },
-  { value: "AE", label: "United Arab Emirates (AE)" },
-  { value: "GB", label: "United Kingdom (GB)" },
-  { value: "UM", label: "U.S. Minor Outlying Islands (UM)" },
-  { value: "US", label: "United States (US)" },
-  { value: "UY", label: "Uruguay (UY)" },
-  { value: "UZ", label: "Uzbekistan (UZ)" },
-  { value: "VU", label: "Vanuatu (VU)" },
-  { value: "VE", label: "Venezuela (VE)" },
-  { value: "VN", label: "Vietnam (VN)" },
-  { value: "VG", label: "Virgin Islands, British (VG)" },
-  { value: "VI", label: "Virgin Islands, U.S. (VI)" },
-  { value: "WF", label: "Wallis and Futuna (WF)" },
-  { value: "EH", label: "Western Sahara (EH)" },
-  { value: "YE", label: "Yemen (YE)" },
-  { value: "ZM", label: "Zambia (ZM)" },
-  { value: "ZW", label: "Zimbabwe (ZW)" }
-];
+// Load countries data from JSON
+fetch('/assets/data/countries.json')
+  .then(response => response.json())
+  .then(data => {
+    ISO_LOCATIONS = data;
+  })
+  .catch(error => console.error('Error loading ISO countries:', error));
 
 
   (function setupAoiSelect2() {
