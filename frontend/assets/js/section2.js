@@ -3,6 +3,7 @@
 // ============================================
 
 import { DataManager, initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
+import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 
 // ---- KEYWORDS BANK ----
 // Predefined keywords that users can select from or add custom ones

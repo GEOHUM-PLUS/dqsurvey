@@ -29,6 +29,25 @@ export function getAllStoredSurveys() {
   
   return surveys;
 }
+// ======================================================
+// GLOBAL HTML TOOLTIP HANDLER (For all sections)
+// ======================================================
+export function initializeTooltips() {
+  document.querySelectorAll('.info-icon[data-tooltip]').forEach(el => {
+    const html = el.getAttribute('data-tooltip');
+
+    el.addEventListener('mouseenter', () => {
+      const tooltip = document.createElement('div');
+      tooltip.className = 'html-tooltip';
+      tooltip.innerHTML = html;
+      el.appendChild(tooltip);
+    });
+
+    el.addEventListener('mouseleave', () => {
+      el.querySelector('.html-tooltip')?.remove();
+    });
+  });
+}
 
 // ---- COMPREHENSIVE DATA MANAGEMENT SYSTEM ----
 export const DataManager = {

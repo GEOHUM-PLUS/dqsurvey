@@ -27,9 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+
 function initializeHomePage() {
   // Initialize shared utilities
   initializeHighlighting();
+  initializeTooltips();
   DataManager.init();
   
   console.log('Home page initialized with DataManager');

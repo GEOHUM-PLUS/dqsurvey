@@ -3,6 +3,7 @@
 // ============================================
 
 import { DataManager, initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
+import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize shared features
