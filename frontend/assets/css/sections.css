@@ -924,26 +924,40 @@ span[role="img"][aria-label]:active {
     color: #fff !important;
     padding: 0.75rem 1rem !important;
     border-radius: 6px !important;
-    font-size: 8px !important;
+    font-size: 10px !important;
     line-height: 1.6 !important;
     min-width: 280px !important;
     max-width: 350px !important;
     margin-left: 12px !important;
-    z-index: 1001 !important;
+    z-index: 10000 !important;
     white-space: normal !important;
     word-wrap: break-word !important;
+    pointer-events: auto !important;
 }
 
 .html-tooltip b {
     font-weight: bold;
+    display: inline;
+    margin-bottom: 0;
+}
+
+.html-tooltip b br {
+    font-weight: normal;
     display: block;
-    margin-bottom: 6px;
+    content: '';
+    margin: 6px 0;
 }
 
 .html-tooltip br {
     display: block;
+    font-weight: normal;
     content: '';
     margin: 6px 0;
+}
+
+.info-icon {
+    position: relative;
+    z-index: 9999;
 }
 
 .html-tooltip::before {

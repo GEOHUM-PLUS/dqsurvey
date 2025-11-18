@@ -67,8 +67,18 @@ document.addEventListener('DOMContentLoaded', function () {
     handleAggregationLevelChange(currentAggregationLevel);
   }
   
+  // Also get from state module getters
+  const stateDataType = getDataType();
+  if (stateDataType && !currentDataType) {
+    handleDataTypeChange(stateDataType);
+  }
+  
+  const stateEvaluationType = getEvaluationType();
+  console.log('State evaluation type:', stateEvaluationType);
+  
   function handleDataTypeChange(dataType) {
     console.log('Section 3 updating UI for data type:', dataType);
+    updateSpatialResolutionOptions(dataType);
   }
   
   function handleProcessingLevelChange(processingLevel) {
@@ -82,32 +92,92 @@ document.addEventListener('DOMContentLoaded', function () {
   function handleAggregationLevelChange(aggregationLevel) {
     console.log('Section 3 updating UI for aggregation level:', aggregationLevel);
   }
-  
+
   // ---- SPATIAL RESOLUTION HANDLING ----
-  const spatialResolutionRadios = document.querySelectorAll('input[name="spatialResolution"]');
+  function updateSpatialResolutionOptions(dataType) {
+    const pixelResolution = document.getElementById('pixel-resolution');
+    const gridResolution = document.getElementById('grid-resolution');
+    const aggregationResolution = document.getElementById('aggregation-resolution');
+    const manualSelection = document.getElementById('manual-resolution-selection');
+    
+    // Hide all first
+    [pixelResolution, gridResolution, aggregationResolution, manualSelection].forEach(el => {
+      if (el) el.style.display = 'none';
+    });
+    
+    // Show appropriate option based on data type
+    switch(dataType) {
+      case 'remote-sensing':
+        if (pixelResolution) pixelResolution.style.display = 'block';
+        console.log('Showing pixel resolution input for Remote Sensing');
+        break;
+      case 'gis':
+        if (gridResolution) gridResolution.style.display = 'block';
+        console.log('Showing grid resolution input for GIS');
+        break;
+      case 'model-ml':
+        if (gridResolution) gridResolution.style.display = 'block';
+        console.log('Showing grid resolution input for Model/ML');
+        break;
+      case 'prediction':
+        if (gridResolution) gridResolution.style.display = 'block';
+        console.log('Showing grid resolution input for Prediction');
+        break;
+      case 'survey':
+        if (aggregationResolution) aggregationResolution.style.display = 'block';
+        console.log('Showing aggregation level input for Survey');
+        break;
+      default:
+        if (manualSelection) manualSelection.style.display = 'block';
+        console.log('Showing manual selection for data type:', dataType);
+    }
+  }
   
-  spatialResolutionRadios.forEach(radio => {
+  // Handle manual resolution type selection (if visible)
+  const resolutionTypeRadios = document.querySelectorAll('input[name="resolutionType"]');
+  resolutionTypeRadios.forEach(radio => {
     radio.addEventListener('change', function() {
-      // Hide all sub-options
-      document.getElementById('pixel-size-input')?.style.display === 'none';
-      document.getElementById('grid-size-input')?.style.display === 'none';
-      document.getElementById('aggregation-level-input')?.style.display === 'none';
+      const pixelResolution = document.getElementById('pixel-resolution');
+      const gridResolution = document.getElementById('grid-resolution');
+      const aggregationResolution = document.getElementById('aggregation-resolution');
       
-      // Show selected option
-      if (this.value === 'remote-sensing') {
-        const pixelInput = document.getElementById('pixel-size-input');
-        if (pixelInput) pixelInput.style.display = 'block';
-      } else if (this.value === 'grid') {
-        const gridInput = document.getElementById('grid-size-input');
-        if (gridInput) gridInput.style.display = 'block';
-      } else if (this.value === 'aggregated') {
-        const aggInput = document.getElementById('aggregation-level-input');
-        if (aggInput) aggInput.style.display = 'block';
+      // Hide all first
+      [pixelResolution, gridResolution, aggregationResolution].forEach(el => {
+        if (el) el.style.display = 'none';
+      });
+      
+      // Show selected type
+      if (this.value === 'pixel' && pixelResolution) {
+        pixelResolution.style.display = 'block';
+      } else if (this.value === 'grid' && gridResolution) {
+        gridResolution.style.display = 'block';
+      } else if (this.value === 'aggregation' && aggregationResolution) {
+        aggregationResolution.style.display = 'block';
       }
-      
-      DataManager.saveSection('section3', 'spatialResolution', { type: this.value });
     });
   });
+  
+  // Save spatial resolution inputs
+  const pixelResolutionValue = document.getElementById('pixelResolutionValue');
+  if (pixelResolutionValue) {
+    pixelResolutionValue.addEventListener('change', function() {
+      sessionStorage.setItem('spatialResolutionPixels', this.value);
+    });
+  }
+  
+  const gridResolutionValue = document.getElementById('gridResolutionValue');
+  if (gridResolutionValue) {
+    gridResolutionValue.addEventListener('change', function() {
+      sessionStorage.setItem('spatialResolutionGrid', this.value);
+    });
+  }
+  
+  const aggregationLevel = document.getElementById('aggregationResolutionLevel');
+  if (aggregationLevel) {
+    aggregationLevel.addEventListener('change', function() {
+      sessionStorage.setItem('spatialResolutionAggregation', this.value);
+    });
+  }
 
   // ---- SPATIAL COVERAGE HANDLING ----
   const coverageTypeSelect = document.getElementById('coverageType');

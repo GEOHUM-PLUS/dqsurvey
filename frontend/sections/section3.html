@@ -18,12 +18,12 @@
 </button>
 <div class="collapse navbar-collapse" id="navbarNav">
 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<li class="nav-item"><a class="nav-link" data-section="section1" href="section1.html">Initial Info</a></li>
-<li class="nav-item"><a class="nav-link" data-section="section2" href="section2.html">Descriptives</a></li>
-<li class="nav-item"><a class="nav-link" data-section="section3" href="section3.html">Design</a></li>
-<li class="nav-item" id="nav-conformance"><a class="nav-link" data-section="section4" href="section4.html">Conformance</a></li>
-<li class="nav-item"><a class="nav-link" data-section="section5" href="section5.html">Context</a></li>
-<li class="nav-item"><a class="nav-link" data-section="summary" href="summary.html">Summary</a></li>
+<li class="nav-item"><a class="nav-link" data-section="section1" href=#>Initial Info</a></li>
+<li class="nav-item"><a class="nav-link" data-section="section2" href=#>Descriptives</a></li>
+<li class="nav-item"><a class="nav-link" data-section="section3" href=#>Design</a></li>
+<li class="nav-item" id="nav-conformance"><a class="nav-link" data-section="section4" href=#>Conformance</a></li>
+<li class="nav-item"><a class="nav-link" data-section="section5" href=#>Context</a></li>
+<li class="nav-item"><a class="nav-link" data-section="summary" href=#>Summary</a></li>
 </ul>
 <div class="navbar-logos">
 <span class="funding-text me-2">Funded by:</span>
@@ -46,7 +46,10 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Spatial Resolution</strong></h4>
 <div class="mb-3">
-<label class="required">Spatial Resolution</label>
+<label class="required">Spatial Resolution
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Spatial Resolution:</b><br>The pixel size, grid size, or aggregation level of the data based on data type.">?
+</span>
+</label>
 <div id="resolution-inputs">
 <div id="pixel-resolution" style="display: none;">
 <div class="input-group">
@@ -96,7 +99,10 @@
 </div>
 <!-- General Design Scoring -->
 <div class="mb-3 general-design-only">
-<label>Score general design spatial resolution</label>
+<label>Score general design spatial resolution
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Spatial Resolution:</b><br>Rate the spatial resolution quality (1=coarse >30m, 2=medium 5-30m, 3=fine 1-5m, 4=very fine <1m).">?
+</span>
+</label>
 <select class="form-select score-field" id="generalResolutionScore" data-scoregroup="design-resolution">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: &gt;30m (RS/grid) / country/federation</option>
@@ -109,19 +115,31 @@
 <!-- Use-case specific fields -->
 <div class="use-case-only" style="display:none;">
 <div class="mb-3">
-<label>Optimal spatial resolution (auto-filled)</label>
+<label>Optimal spatial resolution (auto-filled)
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Optimal Spatial Resolution:</b><br>The ideal spatial resolution from section1 requirements for this use case.">?
+</span>
+</label>
 <input class="form-control" id="optimalResolution" readonly="" type="text"/>
 </div>
 <div class="mb-3">
-<label>Spatial fit for purpose</label>
+<label>Spatial fit for purpose
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Spatial Fit for Purpose:</b><br>Describe how well the data spatial resolution meets your use-case requirements.">?
+</span>
+</label>
 <textarea class="form-control" id="spatialFit" placeholder="Describe fit with use-case requirements"></textarea>
 </div>
 <div class="mb-3">
-<label>Deviation from optimum spatial resolution</label>
+<label>Deviation from optimum spatial resolution
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Deviation from Optimum:</b><br>Auto-calculated difference between actual and optimal spatial resolution.">?
+</span>
+</label>
 <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" readonly="" type="text"/>
 </div>
 <div class="mb-3">
-<label>Score spatial fit for purpose</label>
+<label>Score spatial fit for purpose
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Spatial Fit:</b><br>Rate how well the spatial resolution fits your use case (1=cannot use, 2=coarse but usable, 3=acceptable, 4=very high fit).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="usecase-spatial-fit">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: data cannot be used in a meaningful way</option>
@@ -137,7 +155,10 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Spatial Coverage</strong></h4>
 <div class="mb-3">
-<label>General data extent</label>
+<label>General data extent
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>General Data Extent:</b><br>The geographic coverage of the dataset (e.g., local, regional, national, global).">?
+</span>
+</label>
 <select class="form-select" id="generalExtent">
 <option value="">Select coverage</option>
 <option value="city">City/Village</option>
@@ -153,7 +174,10 @@
 </div>
 <!-- General scoring -->
 <div class="mb-3 general-design-only">
-<label>Score general design spatial coverage</label>
+<label>Score general design spatial coverage
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Spatial Coverage:</b><br>Rate the coverage extent (1=local/regional, 2=country, 3=continent/multi-country, 4=global).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="design-coverage">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: local, regional</option>
@@ -165,20 +189,32 @@
 <!-- Use-case specific fields -->
 <div class="use-case-only" style="display:none;">
 <div class="mb-3">
-<label>Coverage of AOI (%)</label>
+<label>Coverage of AOI (%)
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Coverage of AOI:</b><br>Percentage of your Area of Interest (AOI) covered by the dataset.">?
+</span>
+</label>
 <input class="form-control" id="aoiCoverage" max="100" min="0" placeholder="Enter % coverage of AOI" type="number"/>
 </div>
 <div class="mb-3 remote-sensing-only" style="display:none;">
-<label>Cloud cover / haziness (%)</label>
+<label>Cloud cover / haziness (%)
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Cloud Cover / Haziness:</b><br>Percentage of the dataset obscured by clouds or atmospheric haziness (Remote Sensing only).">?
+</span>
+</label>
 <input class="form-control" id="cloudCover" max="100" min="0" placeholder="Enter % obscured" type="number"/>
 <div class="form-text">Only applicable for remote sensing data</div>
 </div>
 <div class="mb-3">
-<label>Deviation from full coverage</label>
+<label>Deviation from full coverage
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Deviation from Full Coverage:</b><br>Auto-calculated percentage of AOI not covered by the dataset.">?
+</span>
+</label>
 <input class="form-control" id="coverageDeviation" placeholder="Auto-calculated" readonly="" type="text"/>
 </div>
 <div class="mb-3">
-<label>Score spatial fit of coverage</label>
+<label>Score spatial fit of coverage
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Coverage Fit:</b><br>Rate the coverage fit (1=<30%, 2=30-60%, 3=60-80%, 4=>80% of AOI).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="usecase-coverage-fit" id="coverageFitScore">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: &lt;30%</option>
@@ -194,11 +230,17 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Timeliness</strong></h4>
 <div class="mb-3">
-<label>Data collection / creation date</label>
+<label>Data collection / creation date
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Data Collection Date:</b><br>The date when the data was originally collected or created.">?
+</span>
+</label>
 <input class="form-control" id="collectionDate" type="date"/>
 </div>
 <div class="mb-3">
-<label>Temporal resolution</label>
+<label>Temporal resolution
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Temporal Resolution:</b><br>Frequency of data collection or update (daily, weekly, monthly, yearly, etc.).">?
+</span>
+</label>
 <select class="form-select" id="temporalResolution">
 <option value="">Select resolution</option>
 <option value="daily">Daily</option>
@@ -212,22 +254,34 @@
 </select>
 </div>
 <div class="mb-3">
-<label>Version / Latest update / Latest measure</label>
+<label>Version / Latest update / Latest measure
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Latest Update:</b><br>The date of the most recent update or version of the dataset.">?
+</span>
+</label>
 <input class="form-control" id="latestUpdate" type="date"/>
 </div>
 <div class="mb-3">
-<label>Temporal extent</label>
+<label>Temporal extent
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Temporal Extent:</b><br>The time period covered by the dataset (start date to end date).">?
+</span>
+</label>
 <input class="form-control" id="temporalExtent" placeholder="YYYY-MM-DD – YYYY-MM-DD (leave blank if ongoing)" type="text"/>
 <div class="form-text">Select the start and end of data sampling period</div>
 </div>
 <div class="mb-3">
-<label>Temporal validity</label>
+<label>Temporal validity
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Temporal Validity:</b><br>The period during which the data is considered accurate and valid for use.">?
+</span>
+</label>
 <input class="form-control" id="temporalValidity" placeholder="YYYY-MM-DD – YYYY-MM-DD" type="text"/>
 <div class="form-text">Start and end date of known or estimated data validity</div>
 </div>
 <!-- General scoring -->
 <div class="mb-3 general-design-only">
-<label>Score general design timeliness</label>
+<label>Score general design timeliness
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Timeliness:</b><br>Rate the timeliness (1=single collection, 2=irregular updates, 3=regular long intervals, 4=regular short intervals).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="design-timeliness">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: single valid data collection</option>
@@ -239,15 +293,24 @@
 <!-- Use-case specific -->
 <div class="use-case-only" style="display:none;">
 <div class="mb-3">
-<label>Optimum collection date (auto-filled)</label>
+<label>Optimum collection date (auto-filled)
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Optimum Collection Date:</b><br>The ideal collection date from section1 requirements for this use case.">?
+</span>
+</label>
 <input class="form-control" id="optimumCollectionAuto" readonly="" type="text"/>
 </div>
 <div class="mb-3">
-<label>Deviation from optimum collection date</label>
+<label>Deviation from optimum collection date
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Temporal Deviation:</b><br>Auto-calculated difference between actual and optimal collection date.">?
+</span>
+</label>
 <input class="form-control" id="temporalDeviation" placeholder="Auto-calculated" readonly="" type="text"/>
 </div>
 <div class="mb-3">
-<label>Score temporal fit</label>
+<label>Score temporal fit
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Temporal Fit:</b><br>Rate temporal fitness (1=outdated/unusable, 2=low fit but usable, 3=acceptable, 4=very high fit).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="usecase-temporal-fit">
 <option value="">Select score (1 to 4)</option>
 <option value="1">1: out-dated data, cannot be used responsibly</option>
