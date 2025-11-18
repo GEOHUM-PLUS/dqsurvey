@@ -2,7 +2,7 @@
 // SECTION 2: DESCRIPTIVES
 // ============================================
 
-import { DataManager, initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
+import { DataManager, initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
 import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 
 // ---- KEYWORDS BANK ----
@@ -37,6 +37,7 @@ const KEYWORDS_BANK = [
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize shared features
   initializeHighlighting();
+  initializeTooltips();
   DataManager.init();
   
   // Initialize conformance visibility

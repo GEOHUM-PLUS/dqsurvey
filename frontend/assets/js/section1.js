@@ -10,57 +10,34 @@ function debounce(func, wait = 300) {
 // SECTION 1: INITIAL INFORMATION 
 // ============================================
 
-import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
+import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
 import { setDataType, setEvaluationType, setProcessingLevel, getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 
-// Database API configuration
-// const API_BASE_URL = 'http://localhost:3000/api'; // Update with your backend URL
-
-// Save data to backend database
-async function saveToDatabase(key, value) {
-  try {
-    await fetch(`${API_BASE_URL}/survey/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ key, value, timestamp: new Date().toISOString() })
-    });
-  } catch (error) {
-    console.warn(`Database save error: ${error.message}`);
-  }
-}
-
-// Save key values for inter-section communication
-function saveFormValue(key, value) {
-  sessionStorage.setItem(key, value);
-  saveToDatabase(key, value);
-  console.log(`Saved: ${key} = ${value}`);
-}
 
 document.addEventListener('DOMContentLoaded', function () {
   initializeHighlighting();
+  initializeTooltips();
 
 
 
-  // ---- DATA PROCESSING LEVEL (Primary vs Products) - CRITICAL ----
+  // ---- DATA PROCESSING LEVEL (Primary vs Products) 
   const dataProcessingLevel = document.getElementById('dataprocessinglevel');
   if (dataProcessingLevel) {
     dataProcessingLevel.addEventListener('change', function() {
-      saveFormValue('dataProcessingLevel', this.value);
+      setProcessingLevel(this.value);
       applyConformanceVisibility(this.value);
       updateNavigationButtons();
-      // Broadcast processing level change to all sections via custom event
-      window.dispatchEvent(new CustomEvent('processingLevelChanged', { detail: { processingLevel: this.value } }));
     });
     dataProcessingLevel.dispatchEvent(new Event('change'));
   }
 
-  // ---- EVALUATION TYPE (Use-case vs General) - CRITICAL ----
+  // ---- EVALUATION TYPE (Use-case vs General)
   const evaluationType = document.getElementById('evaluationType');
   const useCaseSection = document.getElementById('use-case-section');
   
   if (evaluationType) {
     evaluationType.addEventListener('change', function() {
-      saveFormValue('evaluationType', this.value);
+      setEvaluationType(this.value);
       
       const isUseCase = this.value === 'use-case-adequacy';
       if (useCaseSection) useCaseSection.style.display = isUseCase ? 'block' : 'none';
@@ -82,9 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
           autoFillField.value = optimumDateInput.value;
         });
       }
-      
-      // Broadcast evaluation type change to all sections via custom event
-      window.dispatchEvent(new CustomEvent('evaluationTypeChanged', { detail: { evaluationType: this.value } }));
     });
     evaluationType.dispatchEvent(new Event('change'));
   }
@@ -168,11 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const element = document.getElementById(id);
     if (element) {
       element.addEventListener('change', function() {
-        saveFormValue(key, this.value);
-        // Also save a unified aggregation level if applicable
-        if (key === 'optimumSurveyAggregation' || key === 'optimumPredictionSpatialResolution') {
-          saveToDatabase('optimumAggregationLevel', this.value);
-        }
+        sessionStorage.setItem(key, this.value);
       });
     }
   });
@@ -189,7 +159,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const element = document.getElementById(id);
     if (element) {
       element.addEventListener('change', function() {
-        saveFormValue(key, this.value);
+        sessionStorage.setItem(key, this.value);
       });
     }
   });
@@ -204,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
   
   if (aoiType) {
     aoiType.addEventListener('change', function() {
-      saveToDatabase('aoiType', this.value);
+      sessionStorage.setItem('aoiType', this.value);
       
       [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
         if (el) el.style.display = 'none';
@@ -218,140 +188,68 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // ==========================================================
-  // AOI SELECT2-STYLE DROPDOWN
+  // AOI DROPDOWN - Simple Implementation
   // ==========================================================
-
-// =========================
-// Load ISO-3166 Dataset from JSON
-// =========================
-
-let ISO_LOCATIONS = [];
-
-// Load countries data from JSON
-fetch('/assets/data/countries.json')
-  .then(response => response.json())
-  .then(data => {
-    ISO_LOCATIONS = data;
-  })
-  .catch(error => console.error('Error loading ISO countries:', error));
-
-
-  (function setupAoiSelect2() {
-    const nativeSelect = document.getElementById('aoiDropdown'); // your big ISO select
-    if (!nativeSelect) return;
-
-    // Optional: hide any old search input if it exists
-    const oldSearchInput = document.getElementById('aoiSearchInput');
-    const aoiOptions = ISO_LOCATIONS;
-
-
-    // Hide the native select; we'll keep it for storing the real value
-    nativeSelect.style.display = 'none';
-
-    // Create Select2-style structure:
-    // <div class="custom-select2">
-    //   <div class="select2-display">...</div>
-    //   <div class="select2-dropdown">
-    //     <input class="select2-search" />
-    //     <ul class="select2-results"></ul>
-    //   </div>
-    // </div>
-
-    const wrapper = document.createElement('div');
-    wrapper.className = 'custom-select2';
-
-    const display = document.createElement('div');
-    display.className = 'select2-display';
-    display.id = 'aoiSelect2Display';
-    display.textContent = 'Select location…';
-
-    const dropdown = document.createElement('div');
-    dropdown.className = 'select2-dropdown';
-    dropdown.id = 'aoiSelect2Dropdown';
-
-    const search = document.createElement('input');
-    search.type = 'text';
-    search.className = 'select2-search';
-    search.id = 'aoiSelect2Search';
-    search.placeholder = 'Search…';
-
-    const results = document.createElement('ul');
-    results.className = 'select2-results';
-    results.id = 'aoiSelect2Results';
-
-    dropdown.appendChild(search);
-    dropdown.appendChild(results);
-    wrapper.appendChild(display);
-    wrapper.appendChild(dropdown);
-
-    // Insert wrapper right after the native select
-    nativeSelect.parentNode.insertBefore(wrapper, nativeSelect.nextSibling);
-
-    // If you have a hidden input to store final value, wire it
-    const hiddenValueInput = document.getElementById('aoiLocationValue');
-
-    function renderResults(filterText = '') {
-      const f = filterText.toLowerCase();
-      const filtered = aoiOptions.filter(opt =>
-        opt.label.toLowerCase().includes(f) || opt.value.toLowerCase().includes(f)
-      );
-
-      results.innerHTML = filtered
-        .map(opt => `<li data-value="${opt.value}">${opt.label}</li>`)
-        .join('');
-
-      results.querySelectorAll('li').forEach(li => {
-        li.addEventListener('click', () => {
-          const val = li.getAttribute('data-value');
-          const label = li.textContent;
-
-          // Update UI
-          display.textContent = label;
-
-          // Update underlying <select>
-          nativeSelect.value = val;
-
-          // Update hidden input (if exists)
-          if (hiddenValueInput) hiddenValueInput.value = val;
-
-          // Persist
-          saveFormValue('aoiLocation', val);
-
-          // Close dropdown
-          dropdown.style.display = 'none';
+  
+  const aoiSelect = document.getElementById('aoiDropdown');
+  console.log('aoiSelect element:', aoiSelect);
+  
+  if (aoiSelect) {
+    // Load countries.json and populate dropdown
+    fetch('../assets/data/countries.json')
+      .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('Data loaded:', data);
+        
+        // Flatten countries array
+        let allCountries = [];
+        
+        // Add global options
+        if (data.global) {
+          allCountries.push(...data.global);
+        }
+        
+        // Add countries from all continents
+        if (data.continents) {
+          data.continents.forEach(continent => {
+            if (continent.countries) {
+              allCountries.push(...continent.countries);
+            }
+          });
+        }
+        
+        console.log('Total countries to add:', allCountries.length);
+        
+        // Populate dropdown
+        allCountries.forEach(country => {
+          const option = document.createElement('option');
+          option.value = country.value;
+          option.textContent = country.label;
+          aoiSelect.appendChild(option);
         });
-      });
-    }
-
-    // Toggle dropdown on display click
-    display.addEventListener('click', () => {
-      const isOpen = dropdown.style.display === 'block';
-      dropdown.style.display = isOpen ? 'none' : 'block';
-
-      search.value = '';
-      renderResults('');
-      search.focus();
+        
+        console.log('Dropdown populated with', allCountries.length, 'items');
+      })
+      .catch(error => console.error('Error loading countries:', error));
+    
+    // Save selected value
+    aoiSelect.addEventListener('change', function() {
+      console.log('Selected:', this.value);
+      sessionStorage.setItem('aoiLocation', this.value);
     });
-
-    // Search with debounce
-    search.addEventListener('input', debounce(() => {
-      renderResults(search.value);
-    }, 150));
-
-    // Close when clicking outside
-    document.addEventListener('click', evt => {
-      if (!wrapper.contains(evt.target)) {
-        dropdown.style.display = 'none';
-      }
-    });
-  })();
+  } else {
+    console.warn('aoiDropdown element not found in HTML');
+  }
 
   // ---- AOI COORDINATES ----
   ['minLat', 'maxLat', 'minLon', 'maxLon'].forEach(id => {
     const field = document.getElementById(id);
     if (field) {
       field.addEventListener('change', function() {
-        saveToDatabase(id, this.value);
+        sessionStorage.setItem(id, this.value);
       });
     }
   });
@@ -361,7 +259,7 @@ fetch('/assets/data/countries.json')
   if (aoiFile) {
     aoiFile.addEventListener('change', function() {
       if (this.files.length > 0) {
-        saveToDatabase('aoiFileName', this.files[0].name);
+        sessionStorage.setItem('aoiFileName', this.files[0].name);
       }
     });
   }
