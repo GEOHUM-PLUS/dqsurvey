@@ -837,7 +837,7 @@ span[role="img"][aria-label]:active {
     padding: 0.75rem 1rem !important;
     border-radius: 6px !important;
     font-size: 8px !important;
-    font-weight: 200 !important;
+    font-weight: 100 !important;
     line-height: 1.6 !important;
     min-width: 280px !important;
     max-width: 350px !important;
@@ -930,7 +930,20 @@ span[role="img"][aria-label]:active {
     max-width: 350px !important;
     margin-left: 12px !important;
     z-index: 1001 !important;
-    white-space: pre-wrap !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+}
+
+.html-tooltip b {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.html-tooltip br {
+    display: block;
+    content: '';
+    margin: 6px 0;
 }
 
 .html-tooltip::before {

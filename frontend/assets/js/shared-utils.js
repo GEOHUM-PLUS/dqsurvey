@@ -37,14 +37,33 @@ export function initializeTooltips() {
     const html = el.getAttribute('data-tooltip');
 
     el.addEventListener('mouseenter', () => {
+      // Remove any existing tooltip
+      el.querySelector('.html-tooltip')?.remove();
+      
       const tooltip = document.createElement('div');
       tooltip.className = 'html-tooltip';
       tooltip.innerHTML = html;
+      
+      el.style.position = 'relative';
       el.appendChild(tooltip);
     });
 
     el.addEventListener('mouseleave', () => {
       el.querySelector('.html-tooltip')?.remove();
+    });
+    
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tooltip = el.querySelector('.html-tooltip');
+      if (tooltip) {
+        tooltip.remove();
+      } else {
+        const newTooltip = document.createElement('div');
+        newTooltip.className = 'html-tooltip';
+        newTooltip.innerHTML = html;
+        el.style.position = 'relative';
+        el.appendChild(newTooltip);
+      }
     });
   });
 }

@@ -263,10 +263,6 @@ Evaluation type and reason
 </div>
 
 
-<!-- =============================== -->
-<!--     AREA OF INTEREST (AOI)      -->
-<!-- =============================== -->
-
 <div class="mb-3">
     <label class="required" for="aoiType">
         Area of Interest (AOI)
@@ -285,38 +281,20 @@ Evaluation type and reason
 </div>
 
 
-
-<!-- =============================== -->
-<!-- 1) SELECT2-STYLE SEARCH DROPDOWN -->
-<!-- =============================== -->
-
 <div class="mt-2" id="aoi-dropdown" style="display:none;">
     <label class="form-label">
-        Geographical Identifier
+        Select Country
         <span class="info-icon" tabindex="0" role="img"
-              data-tooltip="<b>Geographical Identifier:</b><br>Search countries and regions (ISO 3166 codes).">
+              data-tooltip="<b>Select a country or region:</b><br>Choose from dropdown or select Global/Multi-Region.">
             ?
         </span>
     </label>
-
-    <div class="custom-select2" id="aoiSelect2">
-        <div class="select2-display" id="aoiSelect2Display">Select location…</div>
-
-        <div class="select2-dropdown" id="aoiSelect2Dropdown">
-            <input type="text" class="select2-search" id="aoiSelect2Search" placeholder="Search…">
-            <ul class="select2-results" id="aoiSelect2Results"></ul>
-        </div>
-    </div>
-
-    <!-- Final selected value -->
-    <input type="hidden" id="aoiLocationValue" value="">
+    
+    <select class="form-select" id="aoiDropdown">
+        <option value="">-- Select a country --</option>
+    </select>
 </div>
 
-
-
-<!-- =============================== -->
-<!-- 2) COORDINATES INPUT            -->
-<!-- =============================== -->
 
 <div class="mt-2" id="aoi-coordinates" style="display:none;">
     <label class="form-label">
@@ -349,12 +327,6 @@ Evaluation type and reason
         </div>
     </div>
 </div>
-
-
-
-<!-- =============================== -->
-<!-- 3) FILE UPLOAD                  -->
-<!-- =============================== -->
 
 <div class="mt-2" id="aoi-upload" style="display:none;">
     <label class="form-label">
@@ -393,6 +365,7 @@ Evaluation type and reason
 
 
 <script type="module" src="../assets/js/section1.js"></script><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <footer class="text-center py-3 mt-auto bg-light border-top">
 <small>© 2025 Data Quality Evaluation • Created by Khizer &amp; Team</small>
 </footer>

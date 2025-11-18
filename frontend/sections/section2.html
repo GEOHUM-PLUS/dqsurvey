@@ -49,23 +49,34 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Metadata Documentation</strong></h4>
 <div class="mb-3">
-<label>Identifier</label>
+<label>Identifier
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Identifier:</b><br>Unique identifier such as DOI, URL, or institutional reference number.">?
+</span>
+</label>
 <input class="form-control" id="identifier" placeholder="DOI or other unique reference" type="text"/>
 </div>
 <div class="mb-3">
-<label>Dataset Description</label>
+<label>Dataset Description
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Dataset Description:</b><br>Brief summary and link to full description or abstract.">?
+</span>
+</label>
 <input class="form-control" id="datasetDescription" placeholder="Brief description" type="text"/>
 <input class="form-control" id="datasetDescriptionLink" placeholder="Link to summary / abstract / description" type="url"/>
 </div>
 <div class="mb-3 position-relative">
-<label>Subject/Keywords</label>
-<div class="form-text">Start typing to see suggestions. Press Enter or click to add.</div>
+<label>Subject/Keywords
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Subject/Keywords:</b><br>Tags or keywords describing the dataset content.">?
+</span>
+</label>
 <input class="form-control" id="keyword-input" placeholder="Type a keyword..."/>
 <ul class="list-group position-absolute w-100 suggestion-list" id="suggestions" style="top: 100%; display: none;"></ul>
 <div class="mt-2 d-flex flex-wrap gap-2" id="keyword-tags"></div>
 </div>
 <div class="mb-3">
-<label>Language</label>
+<label>Language
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Language:</b><br>Primary language of the dataset documentation and content.">?
+</span>
+</label>
 <select class="form-select" id="languageDropdown">
 <option value="">Select language</option>
 <option value="English">English</option>
@@ -82,10 +93,15 @@
 </div>
 
 <div class="mb-3">
-<label>Metadata Documentation</label>
+<label>Metadata Documentation
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Metadata Documentation:</b><br>Completeness and understandability of metadata documentation.">?
+</span>
+</label>
 <input class="form-control" id="metadataDoc" placeholder="Completeness, and understandability of metadata" type="text"/>
-<label class="mt-2" for="metadata-conformance">Metadata Standards</label>
-<div class="form-text">Conformance to established standards</div>
+<label class="mt-2" for="metadata-conformance">Metadata Standards
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Metadata Standards:</b><br>Whether metadata conforms to established standards.">?
+</span>
+</label>
 <select class="form-select" id="metadata-conformance">
 <option value="">Select conformance</option>
 <option value="no">No</option>
@@ -121,7 +137,10 @@
 </fieldset>
 </div>
 <div class="mb-3">
-<label>Score Metadata Documentation</label>
+<label>Score Metadata Documentation
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Metadata Documentation:</b><br>Rate the completeness and clarity of metadata documentation (1-4).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="descriptives">
 <option value="">Select score</option>
 <option value="1">1: Documentation largely missing</option>
@@ -137,7 +156,10 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Accessibility</strong></h4>
 <div class="mb-3">
-<label>Access Restrictions</label>
+<label>Access Restrictions
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Access Restrictions:</b><br>Whether the dataset is public, internal, restricted, or has other access limitations.">?
+</span>
+</label>
 <div class="form-check">
 <input class="form-check-input access-check" id="accessPublic" type="checkbox" value="Public"/>
 <label class="form-check-label" for="accessPublic">Public</label>
@@ -159,7 +181,10 @@
 </div>
 </div>
 <div class="mb-3">
-<label>Retrieval – API availability</label>
+<label>Retrieval – API availability
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>API Availability:</b><br>Whether data can be retrieved manually, via partial API, commercial API, or open API.">?
+</span>
+</label>
 <div class="form-check">
 <input class="form-check-input api-radio" id="apiManual" name="apiAvailability" type="radio" value="manual"/>
 <label class="form-check-label" for="apiManual">Manual download</label>
@@ -181,7 +206,10 @@
 </div>
 </div>
 <div class="mb-3">
-<label>Usage rights / License</label>
+<label>Usage rights / License
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Usage Rights / License:</b><br>Whether the data has open, restricted, commercial, or unknown usage rights.">?
+</span>
+</label>
 <div class="form-check">
 <input class="form-check-input" id="licenseOpen" name="usageRights" type="radio" value="Open"/>
 <label class="form-check-label" for="licenseOpen">Open</label>
@@ -195,12 +223,19 @@
 <label class="form-check-label" for="licenseCommercial">Commercial</label>
 </div>
 <div class="form-check">
+<input class="form-check-input" id="licenseArcGIS" name="usageRights" type="radio" value="ArcGIS REST API"/>
+<label class="form-check-label" for="licenseArcGIS">ArcGIS REST API</label>
+</div>
+<div class="form-check">
 <input class="form-check-input" id="licenseUnknown" name="usageRights" type="radio" value="Unknown"/>
 <label class="form-check-label" for="licenseUnknown">Unknown</label>
 </div>
 </div>
 <div class="mb-3">
-<label>Data Format</label>
+<label>Data Format
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Data Format:</b><br>File format in which the data is distributed (CSV, GeoJSON, Shapefile, etc.).">?
+</span>
+</label>
 <select class="form-select" id="dataFormat">
 <option value="">Select format</option>
 <option value="CSV">CSV</option>
@@ -216,8 +251,10 @@
 </select>
 </div>
 <div class="mb-3">
-<label>Format Standards</label>
-<div class="form-text">auto-filled via metadata conformance</div>
+<label>Format Standards
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Format Standards:</b><br>Whether the data format conforms to standardized specifications like OGC standards.">?
+</span>
+</label>
 <div class="form-check">
 <input class="form-check-input" id="formatNo" name="formatStandards" type="radio" value="No"/>
 <label class="form-check-label" for="formatNo">No</label>
@@ -236,7 +273,10 @@
 </div>
 </div>
 <div class="mb-3">
-<label>Score Accessibility</label>
+<label>Score Accessibility
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Accessibility:</b><br>Rate the accessibility and openness of the data (1-4).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="accessibility">
 <option value="">Select score</option>
 <option value="1">1: Strongly restricted (private use, manual download, uncommon format)</option>
@@ -252,7 +292,10 @@
 <div class="subsection">
 <h4 class="text-danger"><strong>Spatial Accuracy</strong></h4>
 <div class="mb-3">
-<label>CRS / Projection</label>
+<label>CRS / Projection
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>CRS / Projection:</b><br>Coordinate Reference System used (e.g., WGS84, UTM, etc.).">?
+</span>
+</label>
 <select class="form-select" id="crsSelect" name="crs">
 <option value="">Select Coordinate Reference System</option>
 <option value="WGS84">WGS 84</option>
@@ -271,15 +314,24 @@
 </div>
 </div>
 <div class="mb-3">
-<label>Positional Accuracy</label>
+<label>Positional Accuracy
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Positional Accuracy:</b><br>Documented positional inaccuracies, shifts, or measurement errors.">?
+</span>
+</label>
 <input class="form-control" id="positionalAccuracy" placeholder="Positional (in)accuracies, shifts, measurement errors" type="text"/>
 </div>
 <div class="mb-3">
-<label>Spatial Uncertainty</label>
+<label>Spatial Uncertainty
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Spatial Uncertainty:</b><br>Uncertainty about geolocation or topological conditions.">?
+</span>
+</label>
 <input class="form-control" id="spatialUncertainty" placeholder="doubt about geolocation or topological conditions" type="text"/>
 </div>
 <div class="mb-3">
-<label>Score Spatial Accuracy</label>
+<label>Score Spatial Accuracy
+<span class="info-icon" tabindex="0" role="img" data-tooltip="<b>Score Spatial Accuracy:</b><br>Rate the spatial accuracy and coordinate reference system quality (1-4).">?
+</span>
+</label>
 <select class="form-select score-field" data-scoregroup="spatial-accuracy">
 <option value="">Select score</option>
 <option value="1">1: Location unknown, no projection info</option>
