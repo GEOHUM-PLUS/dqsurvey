@@ -4,7 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const db = require('./config/connection');
 const datasetEvaluationRoutes = require('./routes/dataset_evaluation');
-
+const section1Routes = require('./routes/section1');
+const section2Routes = require('./routes/section2');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -14,6 +15,8 @@ const api = process.env.API_URL;
 app.use(cors());
 app.use(bodyParser.json());
 app.use('/dataset', datasetEvaluationRoutes);
+app.use('/section1', section1Routes);
+app.use('/section2', section2Routes);
 
 // Route example
 app.get('/', (req, res) => {

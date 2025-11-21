@@ -1,9 +1,17 @@
-// ============================================
-// SECTION 3: DESIGN
-// ============================================
-
-import { DataManager, initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
+import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
 import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
+import { initializePage } from './core/init.js';
+import { DataManager } from './core/datamanager.js';
+
+document.addEventListener("DOMContentLoaded", () => {
+  const data = JSON.parse(localStorage.getItem("section2_data"));
+console.log("section 2 data in section 3: ",data);
+  if (!data) return;
+
+  document.getElementById("titlePreview").innerText = data.title;
+  document.getElementById("evaluatorPreview").innerText = data.evaluator;
+});
+
 
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize shared features
