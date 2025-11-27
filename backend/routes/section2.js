@@ -9,21 +9,28 @@ router.post('/', (req, res) => {
     if (!data.section1Id) {
         return res.status(400).json({ message: 'section1Id is required' });
     }
-
-    const sql = `
+console.log("Received Section2 Payload:", data);
+    // const sql = `
+    // INSERT INTO section2 
+    // (section1_id, identifier, dataset_description, dataset_description_link, keywords,language, metadata_documentation, metadata_standards, score_metadata_documentation,
+    //  access_restrictions, api_availability, usage_rights, data_format, format_standards, score_accessibility,
+    //  crs, positional_accuracy, spatial_uncertainty, score_spatial_accuracy)
+    // VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    // `;
+const sql = `
     INSERT INTO section2 
-    (section1_id, identifier, dataset_description, dataset_description_link, keywords,language, metadata_documentation, metadata_standards, score_metadata_documentation,
+    (section1Id, identifier, dataset_description,keywords, dataset_description_link,language, metadata_documentation, metadata_standards, score_metadata_documentation,
      access_restrictions, api_availability, usage_rights, data_format, format_standards, score_accessibility,
      crs, positional_accuracy, spatial_uncertainty, score_spatial_accuracy)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
-
     const values = [
         data.section1Id,
         data.identifier || null,
         data.dataset_description || null,
-        data.dataset_description_link || null,
+       
         data.keywords || null,  
+         data.dataset_description_link || null,
         data.language || null,
         data.metadata_documentation || null,
         data.metadata_standards || null,
@@ -49,6 +56,9 @@ router.post('/', (req, res) => {
         }
         res.json({ message: 'Section 2 data saved successfully', id: result.insertId });
     });
+    console.error("MYSQL ERROR:", err.sqlMessage);
+console.log("Received Section2 Payload:", data);
+
 });
 
 module.exports = router;

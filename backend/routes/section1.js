@@ -63,4 +63,81 @@ const values = [
     });
 });
 
+
+// ----------------------
+// GET ALL  /section1
+// ----------------------
+router.get('/get', async (req, res) => {
+    const sql = `SELECT * FROM section1 ORDER BY id DESC`;
+
+    try {
+        const [rows] = await db.query(sql);  // <- use await
+        res.json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Error fetching data' });
+    }
+});
+
+router.get('/latest', async (req, res) => {
+    const sql = "SELECT * FROM section1 ORDER BY id DESC LIMIT 1";
+
+    try {
+        const [results] = await db.query(sql);
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No entries found" });
+        }
+
+        res.json({
+            message: "Latest Section1 entry",
+            data: results[0]
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error fetching data" });
+    }
+});
+// ----------------------
+// GET BY ID  /section1/:id
+// ----------------------
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    const sql = "SELECT * FROM section1 WHERE id = ?";
+
+    try {
+        const [results] = await db.query(sql, [id]); // <- promise style
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No record found" });
+        }
+
+        res.json(results[0]);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Database error" });
+    }
+});
+
+// ----------------------
+// GET /section1/latest  → returns the last inserted row
+// ----------------------
+// router.get('/latest', async (req, res) => {
+//     const sql = "SELECT * FROM section1 ORDER BY id DESC LIMIT 1";
+
+//     try {
+//         const [results] = await db.query(sql); // <- promise style
+//         if (results.length === 0) {
+//             return res.status(404).json({ message: "No entries found" });
+//         }
+
+//         res.json({
+//             message: "Latest Section1 entry",
+//             data: results[0]
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).json({ message: "Error fetching data" });
+//     }
+// });
+
+
 module.exports = router;
