@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 : document.getElementById("languageDropdown")?.value,
 
             metadata_documentation: document.getElementById("metadataDoc")?.value.trim(),
-            metadata_standards: document.getElementById("metadataConformance")?.value,
+            metadata_standards: document.getElementById("metadata-conformance")?.value,
 
             score_metadata_documentation:
                 document.querySelector('.score-field[data-scoregroup="descriptives"]')?.value,
