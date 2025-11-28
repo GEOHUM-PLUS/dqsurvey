@@ -12,8 +12,17 @@ const PORT = process.env.PORT || 5000;
 const api = process.env.API_URL;
 
 // Middleware
+// app.use(cors());
+// const cors = require('cors');
+
 app.use(cors());
-app.use(bodyParser.json());
+// app.options('*', cors()); // handle preflight
+
+
+// app.use(bodyParser.json());
+app.use(express.json());
+
+// Routes
 app.use('/dataset', datasetEvaluationRoutes);
 app.use('/section1', section1Routes);
 app.use('/section2', section2Routes);

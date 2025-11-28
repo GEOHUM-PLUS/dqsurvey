@@ -3,30 +3,6 @@ import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from '.
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Initialize DataManager if needed
-//     DataManager.init();
-
-//     // Get the saved data
-//     const surveyData = DataManager.get();
-
-//     // Access Section 1 data
-//     const section1Data = surveyData.section1;
-
-//     console.log("Section 1 data:", section1Data);
-
-//     // Example: Use datasetTitle in Section 2
-//     const datasetTitleInput = document.getElementById('datasetTitleSection2');
-//     if (datasetTitleInput && section1Data?.basic?.datasetTitle) {
-//         datasetTitleInput.value = section1Data.basic.datasetTitle;
-//     }
-
-//     // You can similarly access:
-//     // section1Data.basic.evaluatorName
-//     // section1Data.useCase.description
-//     // etc.
-// });
-
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize shared features
   initializeHighlighting();
@@ -262,7 +238,6 @@ const KEYWORDS_BANK = [
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
-
     // ---------- FETCH LATEST SECTION1 ID FROM BACKEND ----------
     async function fetchLatestSection1Id() {
         try {
@@ -281,8 +256,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return null;
         }
     }
-
-
     // ---------- WHEN USER CLICKS THE NEXT BUTTON ----------
     document.getElementById("section2save").addEventListener("click", async (e) => {
         e.preventDefault();
@@ -298,13 +271,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         console.log("✔ Section1 ID FOUND →", section1Id);
-
-
         // ---------- COLLECT KEYWORDS ----------
         const keywordsArray = Array.from(
-            document.querySelectorAll(".keyword-chip")
-        ).map(k => k.textContent.trim());
-
+            document.querySelectorAll(".badge")
+        ).map(b => b.textContent.replace('×','').trim());
 
         // ---------- BUILD PAYLOAD ----------
         const payload = {
@@ -369,51 +339,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         //     const result = await response.json();
-        //     // if (response.ok) {
-        //     //     console.log("✔ Section 2 Saved:", result);
-        //     //     window.location.href = "section3.html";  // MOVE TO NEXT PAGE
-        //     // }
+        //     if (response.ok) {
+        //         console.log("✔ Section 2 Saved:", result);
+        //         window.location.href = "section3.html";  // MOVE TO NEXT PAGE
+        //     }
         //     // if (response.ok) window.location.href = "section3.html"
  
-        //     // else {
-        //     //     alert("Error saving Section 2: " + result.message);
-        //     // }
+        //     else {
+        //         alert("Error saving Section 2: " + result.message);
+        //     }
             
         // } catch (err) {
         //     console.error("Network error:", err);
         //     alert("Network error saving Section 2.");
         // }
-
-
-        const response = await fetch("http://localhost:8020/section2", {
+const response = await fetch("http://localhost:8020/section2", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
 });
 
-let result;
-try {
-    if (!response.ok) {
-        // Attempt to parse error JSON, fallback to text
-        try {
-            result = await response.json();
-        } catch {
-            const text = await response.text();
-            console.error("Server error response:", text);
-            alert("Server error saving Section 2");
-            return;
-        }
-        alert("Error saving Section 2: " + result.message);
-        return;
-    }
-    result = await response.json();
-    console.log("✔ Section 2 Saved:", result);
-    window.location.href = "section3.html";
-} catch(err) {
-    console.error("Network error:", err);
-    alert("Network error saving Section 2");
+const result = await response.json();
+
+if (!response.ok) {
+    console.error("❌ Error saving Section 2:", result);
+    alert("❌ Failed to save Section 2");
+    return;
 }
 
+console.log("✅ Section 2 saved!", result);
+window.location.href = "section3.html";
+
+
+
+     
 
     });
 

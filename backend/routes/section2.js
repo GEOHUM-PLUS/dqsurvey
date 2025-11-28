@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/connection'); // your MySQL connection
 
+
 // POST /section2
 router.post('/', (req, res) => {
     const data = req.body;
@@ -9,21 +10,16 @@ router.post('/', (req, res) => {
     if (!data.section1Id) {
         return res.status(400).json({ message: 'section1Id is required' });
     }
-console.log("Received Section2 Payload:", data);
-    // const sql = `
-    // INSERT INTO section2 
-    // (section1_id, identifier, dataset_description, dataset_description_link, keywords,language, metadata_documentation, metadata_standards, score_metadata_documentation,
-    //  access_restrictions, api_availability, usage_rights, data_format, format_standards, score_accessibility,
-    //  crs, positional_accuracy, spatial_uncertainty, score_spatial_accuracy)
-    // VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    // `;
-const sql = `
-    INSERT INTO section2 
-    (section1Id, identifier, dataset_description,keywords, dataset_description_link,language, metadata_documentation, metadata_standards, score_metadata_documentation,
-     access_restrictions, api_availability, usage_rights, data_format, format_standards, score_accessibility,
-     crs, positional_accuracy, spatial_uncertainty, score_spatial_accuracy)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+     console.log("BODY RECEIVED:", req.body);
+    res.json({ message: "Section2 route hit successfully" });
+
+    const sql = `
+        INSERT INTO section2 
+        (section1Id, identifier, dataset_description,keywords, dataset_description_link,language, metadata_documentation, metadata_standards, score_metadata_documentation,
+        access_restrictions, api_availability, usage_rights, data_format, format_standards, score_accessibility,
+        crs, positional_accuracy, spatial_uncertainty, score_spatial_accuracy)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
     const values = [
         data.section1Id,
         data.identifier || null,
@@ -48,16 +44,16 @@ const sql = `
         data.spatial_uncertainty || null,
         data.score_spatial_accuracy || null
     ];
+    //  res.json({ message: 'Section 2 data saved successfully', id: result.insertId });
 
     db.query(sql, values, (err, result) => {
         if (err) {
-            console.error(err);
+            console.error("MYSQL ERROR:", err.sqlMessage); // move it here
             return res.status(500).json({ message: 'Error saving Section 2 data' });
         }
         res.json({ message: 'Section 2 data saved successfully', id: result.insertId });
     });
-    console.error("MYSQL ERROR:", err.sqlMessage);
-console.log("Received Section2 Payload:", data);
+
 
 });
 
