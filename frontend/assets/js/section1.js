@@ -257,84 +257,172 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
+// function getUnitValue(id) {
+//     const el = document.getElementById(id);
+
+//     if (!el) return null;           // dropdown doesn't exist → NULL
+//     if (!el.value || el.value === "") return null;  // user didn't select anything → NULL
+
+//     return el.value;  // return selected unit
+// }
+
+
+// document.getElementById('Initial-info').addEventListener('click', function(e) {
+//     e.preventDefault(); // prevent default link
+
+//     // Gather data from form
+//     const data = {
+//         datasetTitle: document.getElementById('datasetTitle').value,
+//         evaluatorName: document.getElementById('evaluatorName').value,
+//         affiliation: document.getElementById('evaluatorOrg').value,
+//         dataProcessingLevel: document.getElementById('dataprocessinglevel').value,
+//         dataType: document.getElementById('dataType').value,
+//         dataTypeOther: document.getElementById('dataTypeOtherInput')?.value || '',
+//         evaluationType: document.getElementById('evaluationType').value,
+//         useCaseDescription: document.getElementById('useCaseDescription')?.value || '',
+//         optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
+//         optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
+//         optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
+//         optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
+//         optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
+//         optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
+//         optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
+//         optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
+//         optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
+//         optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || '',
+//         optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || '',
+//         optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || '',
+//         optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || '',
+//         aoiType: document.getElementById('aoiType')?.value || '',
+//         aoiLocation: document.getElementById('aoiDropdown')?.value || '',
+//         minLat: document.getElementById('minLat')?.value || null,
+//         maxLat: document.getElementById('maxLat')?.value || null,
+//         minLon: document.getElementById('minLon')?.value || null,
+//         maxLon: document.getElementById('maxLon')?.value || null,
+//         aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || '',
+//         otherRequirements: document.getElementById('otherRequirements')?.value || '',
+//     };
+
+//     fetch('http://localhost:8020/section1', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(data)
+//     })
+//     .then(res => res.json())
+ 
+//     // .then(response => {
+//     //     console.log(response);
+//     //     window.location.href = 'section2.html';
+//     // })
+//     .then(response => {
+//     console.log("Server Response:", response);
+
+//     // STORE SECTION1 ID IN LOCAL STORAGE
+//     if (response.id) {
+//         localStorage.setItem("section1_id", response.id);
+//         console.log("Saved Section 1 ID:", response.id);
+//     }
+
+//     window.location.href = 'section2.html';
+// })
+
+//     .catch(err => {
+//         console.error('Error saving Section1 data:', err);
+//         alert('Error saving data. Please try again.');
+//     });
+// });
 function getUnitValue(id) {
     const el = document.getElementById(id);
-
-    if (!el) return null;           // dropdown doesn't exist → NULL
-    if (!el.value || el.value === "") return null;  // user didn't select anything → NULL
-
-    return el.value;  // return selected unit
+    return el && el.value ? el.value : null;
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    initializeHighlighting();
+    initializeTooltips();
 
-document.getElementById('Initial-info').addEventListener('click', function(e) {
-    e.preventDefault(); // prevent default link
+    const saveBtn = document.getElementById('Initial-info');
+    if (!saveBtn) return;
 
-    // Gather data from form
-    const data = {
-        datasetTitle: document.getElementById('datasetTitle').value,
-        evaluatorName: document.getElementById('evaluatorName').value,
-        affiliation: document.getElementById('evaluatorOrg').value,
-        dataProcessingLevel: document.getElementById('dataprocessinglevel').value,
-        dataType: document.getElementById('dataType').value,
-        dataTypeOther: document.getElementById('dataTypeOtherInput')?.value || '',
-        evaluationType: document.getElementById('evaluationType').value,
-        useCaseDescription: document.getElementById('useCaseDescription')?.value || '',
-        optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
-        optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
-        optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
-        optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
-        optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
-        optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
-        optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
-        optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
-        optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
-        optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || '',
-        optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || '',
-        optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || '',
-        optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || '',
-        aoiType: document.getElementById('aoiType')?.value || '',
-        aoiLocation: document.getElementById('aoiDropdown')?.value || '',
-        minLat: document.getElementById('minLat')?.value || null,
-        maxLat: document.getElementById('maxLat')?.value || null,
-        minLon: document.getElementById('minLon')?.value || null,
-        maxLon: document.getElementById('maxLon')?.value || null,
-        aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || '',
-        otherRequirements: document.getElementById('otherRequirements')?.value || '',
-    };
+    saveBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
 
-    fetch('http://localhost:8020/section1', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(res => res.json())
- 
-    // .then(response => {
-    //     console.log(response);
-    //     window.location.href = 'section2.html';
-    // })
-    .then(response => {
-    console.log("Server Response:", response);
+        // Validate required fields
+        const datasetTitle = document.getElementById('datasetTitle')?.value.trim();
+        const dataProcessing = document.getElementById('dataprocessinglevel')?.value.trim();
+        const dataType = document.getElementById('dataType')?.value.trim();
+        const evaluationType = document.getElementById('evaluationType')?.value.trim();
 
-    // STORE SECTION1 ID IN LOCAL STORAGE
-    if (response.id) {
-        localStorage.setItem("section1_id", response.id);
-        console.log("Saved Section 1 ID:", response.id);
-    }
+        if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
+            alert("Please fill all required fields (*) before proceeding.");
+            return;
+        }
 
-    window.location.href = 'section2.html';
-})
+        // Gather payload
+        const payload = {
+            datasetTitle,
+            evaluatorName: document.getElementById('evaluatorName')?.value || '',
+            affiliation: document.getElementById('evaluatorOrg')?.value || '',
+            dataProcessingLevel: dataProcessing,
+            dataType,
+            dataTypeOther: dataType === 'other' ? document.getElementById('dataTypeOtherInput')?.value || '' : null,
+            evaluationType,
+            useCaseDescription: evaluationType === 'use-case-adequacy' ? document.getElementById('useCaseDescription')?.value || '' : null,
+            optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
+            optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
+            optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
+            optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
+            optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
+            optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
+            optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
+            optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
+            optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
+            optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || null,
+            optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || null,
+            optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || null,
+            optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
+            aoiType: document.getElementById('aoiType')?.value || null,
+            aoiLocation: document.getElementById('aoiDropdown')?.value || null,
+            minLat: document.getElementById('minLat')?.value || null,
+            maxLat: document.getElementById('maxLat')?.value || null,
+            minLon: document.getElementById('minLon')?.value || null,
+            maxLon: document.getElementById('maxLon')?.value || null,
+            aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || null,
+            otherRequirements: document.getElementById('otherRequirements')?.value || null
+        };
 
-    .catch(err => {
-        console.error('Error saving Section1 data:', err);
-        alert('Error saving data. Please try again.');
+        console.log("🚀 Sending Section1 payload:", payload);
+
+        try {
+            const response = await fetch("http://localhost:8020/section1", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error("❌ Error saving Section1:", result);
+                alert("Failed to save Section1: " + result.message);
+                return;
+            }
+
+            console.log("✅ Section1 saved:", result);
+
+            // Save Section1 ID for later
+            if (result.id) {
+                localStorage.setItem("section1_id", result.id);
+            }
+
+            // Redirect to Section2
+            window.location.href = "section2.html";
+
+        } catch (err) {
+            console.error("Network error:", err);
+            alert("Network error while saving Section1. Check backend.");
+        }
     });
 });
-
-// ---------------------------
-// NEXT BUTTON → Save & Go to Section 2
-// ---------------------------
 document.getElementById('Initial-info')?.addEventListener('click', function (e) {
   
   e.preventDefault(); // prevent default <a> navigation
