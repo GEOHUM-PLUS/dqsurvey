@@ -15,9 +15,13 @@ const api = process.env.API_URL;
 // app.use(cors());
 // const cors = require('cors');
 
-app.use(cors());
+// app.use(cors());
 // app.options('*', cors()); // handle preflight
-
+app.use(cors({
+  origin: "https://geohum-plus.github.io",
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
+}));
 
 // app.use(bodyParser.json());
 app.use(express.json());
