@@ -393,7 +393,8 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("🚀 Sending Section1 payload:", payload);
 
         try {
-            const response = await fetch("http://localhost:8020/section1", {
+            // const response = await fetch("http://localhost:8020/section1", {
+            const response = await fetch(`${CONFIG.API_URL}/section1`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
