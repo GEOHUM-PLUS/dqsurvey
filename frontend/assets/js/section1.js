@@ -3,6 +3,7 @@ import { initializeHighlighting, applyConformanceVisibility, updateNavigationBut
 import { setDataType, setEvaluationType, setProcessingLevel, getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
+import { CONFIG } from './core/config.js';  // adjust path relative to section1.js
 
 function debounce(func, wait = 300) {
   let timeout;
@@ -336,9 +337,147 @@ function getUnitValue(id) {
     return el && el.value ? el.value : null;
 }
 
+// document.addEventListener('DOMContentLoaded', function () {
+//   debugger;
+//     initializeHighlighting();
+//     initializeTooltips();
+
+//     const saveBtn = document.getElementById('Initial-info');
+//     if (!saveBtn) return;
+
+//     saveBtn.addEventListener('click', async (e) => {
+//         e.preventDefault();
+
+//         // Validate required fields
+//         const datasetTitle = document.getElementById('datasetTitle')?.value.trim();
+//         const dataProcessing = document.getElementById('dataprocessinglevel')?.value.trim();
+//         const dataType = document.getElementById('dataType')?.value.trim();
+//         const evaluationType = document.getElementById('evaluationType')?.value.trim();
+
+//         if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
+//             alert("Please fill all required fields (*) before proceeding.");
+//             return;
+//         }
+
+//         // Gather payload
+//         const payload = {
+//             datasetTitle,
+//             evaluatorName: document.getElementById('evaluatorName')?.value || '',
+//             affiliation: document.getElementById('evaluatorOrg')?.value || '',
+//             dataProcessingLevel: dataProcessing,
+//             dataType,
+//             dataTypeOther: dataType === 'other' ? document.getElementById('dataTypeOtherInput')?.value || '' : null,
+//             evaluationType,
+//             useCaseDescription: evaluationType === 'use-case-adequacy' ? document.getElementById('useCaseDescription')?.value || '' : null,
+//             optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
+//             optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
+//             optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
+//             optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
+//             optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
+//             optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
+//             optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
+//             optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
+//             optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
+//             optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || null,
+//             optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || null,
+//             optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || null,
+//             optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
+//             aoiType: document.getElementById('aoiType')?.value || null,
+//             aoiLocation: document.getElementById('aoiDropdown')?.value || null,
+//             minLat: document.getElementById('minLat')?.value || null,
+//             maxLat: document.getElementById('maxLat')?.value || null,
+//             minLon: document.getElementById('minLon')?.value || null,
+//             maxLon: document.getElementById('maxLon')?.value || null,
+//             aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || null,
+//             otherRequirements: document.getElementById('otherRequirements')?.value || null
+//         };
+
+//         console.log("🚀 Sending Section1 payload:", payload);
+
+//         try {
+//             const response = await fetch("http://localhost:8020/section1", {
+//                 method: "POST",
+//                 headers: { "Content-Type": "application/json" },
+//                 body: JSON.stringify(payload)
+//             });
+
+//             const result = await response.json();
+
+//             if (!response.ok) {
+//                 console.error("❌ Error saving Section1:", result);
+//                 alert("Failed to save Section1: " + result.message);
+//                 return;
+//             }
+
+//             console.log("✅ Section1 saved:", result);
+
+//             // Save Section1 ID for later
+//             if (result.id) {
+//                 localStorage.setItem("section1_id", result.id);
+//             }
+
+//             // Redirect to Section2
+//             window.location.href = "section2.html";
+
+//         } catch (err) {
+//             console.error("Network error:", err);
+//             alert("Network error while saving Section1. Check backend.");
+//         }
+//     });
+// });
+// document.getElementById('Initial-info')?.addEventListener('click', function (e) {
+  
+//   e.preventDefault(); // prevent default <a> navigation
+
+//   // Validate required fields
+//   const datasetTitle = document.getElementById('datasetTitle').value.trim();
+//   const dataProcessing = document.getElementById('dataprocessinglevel').value.trim();
+//   const dataType = document.getElementById('dataType').value.trim();
+//   const evaluationType = document.getElementById('evaluationType').value.trim();
+
+//   if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
+//     alert("Please fill all required fields (*) before proceeding.");
+//     return;
+//   }
+
+//   // BUILD SAVED DATA OBJECT
+//   const section1Data = {
+//     basic: {
+
+//       datasetTitle,
+//       evaluatorName: document.getElementById('evaluatorName').value || "",
+//       evaluatorOrg: document.getElementById('evaluatorOrg').value || "",
+//       dataProcessing,
+//       dataType,
+//       dataTypeOther: dataType === "other"
+//         ? document.getElementById('dataTypeOtherInput').value || ""
+//         : null,
+//       evaluationType
+//     },
+
+//     useCase:
+//       evaluationType === "use-case-adequacy"
+//         ? {
+//             description: document.getElementById('useCaseDescription').value || "",
+//             optimumDataCollection: document.getElementById('optimumDataCollection').value || "",
+//             otherRequirements: document.getElementById('otherRequirements').value || "",
+//           }
+//         : null
+//   };
+
+//   // SAVE TO LOCAL STORAGE USING YOUR datamanager
+//   DataManager.save("section1", null, section1Data);
+
+//   // NAVIGATE TO NEXT PAGE
+//   // window.location.href = "section2.html";
+// });
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     initializeHighlighting();
     initializeTooltips();
+    initializePage('section1');
 
     const saveBtn = document.getElementById('Initial-info');
     if (!saveBtn) return;
@@ -346,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function () {
     saveBtn.addEventListener('click', async (e) => {
         e.preventDefault();
 
-        // Validate required fields
+        // --- VALIDATE REQUIRED FIELDS ---
         const datasetTitle = document.getElementById('datasetTitle')?.value.trim();
         const dataProcessing = document.getElementById('dataprocessinglevel')?.value.trim();
         const dataType = document.getElementById('dataType')?.value.trim();
@@ -357,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // Gather payload
+        // --- BUILD PAYLOAD FOR API ---
         const payload = {
             datasetTitle,
             evaluatorName: document.getElementById('evaluatorName')?.value || '',
@@ -390,82 +529,59 @@ document.addEventListener('DOMContentLoaded', function () {
             otherRequirements: document.getElementById('otherRequirements')?.value || null
         };
 
-        console.log("🚀 Sending Section1 payload:", payload);
+        // --- SAVE TO LOCAL STORAGE ---
+        const section1Data = {
+            basic: {
+                datasetTitle,
+                evaluatorName: payload.evaluatorName,
+                evaluatorOrg: payload.affiliation,
+                dataProcessing,
+                dataType,
+                dataTypeOther: payload.dataTypeOther,
+                evaluationType
+            },
+            useCase: evaluationType === 'use-case-adequacy' ? {
+                description: payload.useCaseDescription,
+                optimumDataCollection: payload.optimumDataCollection,
+                otherRequirements: payload.otherRequirements
+            } : null
+        };
 
+        DataManager.save("section1", null, section1Data);
+        console.log("💾 Saved Section1 locally:", section1Data);
+
+        // --- SEND TO BACKEND ---
         try {
-            const response = await fetch("http://localhost:8020/section1", {
+            const response = await fetch('http://localhost:8020/section1', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
+//             const response = await fetch(`${CONFIG.API_URL}/section1`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(payload)
+// });
 
             const result = await response.json();
 
             if (!response.ok) {
                 console.error("❌ Error saving Section1:", result);
-                alert("Failed to save Section1: " + result.message);
+                alert("Failed to save Section1: " + (result.message || 'Unknown error'));
                 return;
             }
 
-            console.log("✅ Section1 saved:", result);
+            console.log("✅ Section1 saved on backend:", result);
 
-            // Save Section1 ID for later
-            if (result.id) {
-                localStorage.setItem("section1_id", result.id);
-            }
+            // Save backend-generated ID for later use
+            if (result.id) localStorage.setItem("section1_id", result.id);
 
-            // Redirect to Section2
+            // --- REDIRECT TO SECTION2 ---
             window.location.href = "section2.html";
 
         } catch (err) {
-            console.error("Network error:", err);
-            alert("Network error while saving Section1. Check backend.");
+            console.error("🌐 Network error while saving Section1:", err);
+            alert("Network error. Please check your backend server.");
         }
     });
-});
-document.getElementById('Initial-info')?.addEventListener('click', function (e) {
-  
-  e.preventDefault(); // prevent default <a> navigation
-
-  // Validate required fields
-  const datasetTitle = document.getElementById('datasetTitle').value.trim();
-  const dataProcessing = document.getElementById('dataprocessinglevel').value.trim();
-  const dataType = document.getElementById('dataType').value.trim();
-  const evaluationType = document.getElementById('evaluationType').value.trim();
-
-  if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
-    alert("Please fill all required fields (*) before proceeding.");
-    return;
-  }
-
-  // BUILD SAVED DATA OBJECT
-  const section1Data = {
-    basic: {
-
-      datasetTitle,
-      evaluatorName: document.getElementById('evaluatorName').value || "",
-      evaluatorOrg: document.getElementById('evaluatorOrg').value || "",
-      dataProcessing,
-      dataType,
-      dataTypeOther: dataType === "other"
-        ? document.getElementById('dataTypeOtherInput').value || ""
-        : null,
-      evaluationType
-    },
-
-    useCase:
-      evaluationType === "use-case-adequacy"
-        ? {
-            description: document.getElementById('useCaseDescription').value || "",
-            optimumDataCollection: document.getElementById('optimumDataCollection').value || "",
-            otherRequirements: document.getElementById('otherRequirements').value || "",
-          }
-        : null
-  };
-
-  // SAVE TO LOCAL STORAGE USING YOUR datamanager
-  DataManager.save("section1", null, section1Data);
-
-  // NAVIGATE TO NEXT PAGE
-  window.location.href = "section2.html";
 });
