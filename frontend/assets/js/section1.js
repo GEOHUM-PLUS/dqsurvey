@@ -61,6 +61,15 @@ document.addEventListener('DOMContentLoaded', function () {
     evaluationType.dispatchEvent(new Event('change'));
   }
 
+  // ---- EVALUATOR NAME ----
+  const evaluatorNameInput = document.getElementById('evaluatorName');
+  if (evaluatorNameInput) {
+    evaluatorNameInput.addEventListener('change', function () {
+      sessionStorage.setItem('evaluatorName', this.value);
+      window.dispatchEvent(new CustomEvent('evaluatorNameChanged', { detail: { evaluatorName: this.value } }));
+    });
+  }
+
   // ---- DATA TYPE (crucial for other sections) ----
   const dataTypeSelect = document.getElementById('dataType');
   const dataTypeOtherContainer = document.getElementById('datatype-other-container');
@@ -333,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function () {
         payload.step1 = 1;
 
         // Redirect to next section
-        window.location.href = './sections/section2.html';
+        window.location.href = './section2.html';
       } else {
         console.error('Save failed:', data.error);
         alert('Failed to save Section 1: ' + data.error);

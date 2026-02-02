@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', function () {
     handleProcessingLevelChange(processingLevel);
   });
   
+  // Listen for evaluator name changes from section1
+  window.addEventListener('evaluatorNameChanged', function(event) {
+    const evaluatorName = event.detail.evaluatorName;
+    console.log('Section 2: Evaluator name changed to:', evaluatorName);
+    handleEvaluatorNameChange(evaluatorName);
+  });
+  
   // Listen for evaluation type changes from section1
   window.addEventListener('evaluationTypeChanged', function(event) {
     const evaluationType = event.detail.evaluationType;
@@ -50,6 +57,11 @@ document.addEventListener('DOMContentLoaded', function () {
     handleDataTypeChange(currentDataType);
   }
   
+  const currentEvaluatorName = sessionStorage.getItem('evaluatorName');
+  if (currentEvaluatorName) {
+    handleEvaluatorNameChange(currentEvaluatorName);
+  }
+  
   const currentProcessingLevel = sessionStorage.getItem('dataProcessingLevel');
   if (currentProcessingLevel) {
     handleProcessingLevelChange(currentProcessingLevel);
@@ -63,6 +75,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const currentAggregationLevel = sessionStorage.getItem('optimumAggregationLevel');
   if (currentAggregationLevel) {
     handleAggregationLevelChange(currentAggregationLevel);
+  }
+  
+  function handleEvaluatorNameChange(evaluatorName) {
+    console.log('Section 2 updating UI for evaluator name:', evaluatorName);
   }
   
   function handleDataTypeChange(dataType) {
@@ -213,18 +229,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-//   // ---- SAVE FORM DATA ----
-//   window.addEventListener('beforeunload', () => {
-//     // Don't save if form has been submitted
-//     if (sessionStorage.getItem('formSubmitted')) {
-//       return;
-//     }
-//     const formData = DataManager.collectCurrentPageData();
-//     DataManager.saveSection('section2', 'general', formData);
-//   });
-  
-//   // Restore saved data on page load
-//   DataManager.restorePageData();
+
 });
 
 // ---------------------- KEYWORDS BANK ----------------------
@@ -237,143 +242,293 @@ const KEYWORDS_BANK = [
     'Emergency Management', 'Precision Mapping'
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
-    // ---------- FETCH LATEST SECTION1 ID FROM BACKEND ----------
-    async function fetchLatestSection1Id() {
-        try {
-            const res = await fetch("http://localhost:8020/section1/latest");
-            const data = await res.json();
+// document.addEventListener("DOMContentLoaded", () => {
+//     // ---------- FETCH LATEST SECTION1 ID FROM BACKEND ----------
+//     async function fetchLatestSection1Id() {
+//         try {
+//             const res = await fetch("http://localhost:8020/section1/latest");
+//             const data = await res.json();
 
-            if (!res.ok) {
-                console.error("Error fetching latest Section1:", data.message);
-                return null;
-            }
+//             if (!res.ok) {
+//                 console.error("Error fetching latest Section1:", data.message);
+//                 return null;
+//             }
 
-            console.log("Latest Section1 from backend:", data.data);
-            return data.data.id;   // return latest ID
-        } catch (err) {
-            console.error("Network error fetching Section1 ID:", err);
-            return null;
-        }
-    }
-    // ---------- WHEN USER CLICKS THE NEXT BUTTON ----------
-    document.getElementById("section2save").addEventListener("click", async (e) => {
-        e.preventDefault();
+//             console.log("Latest Section1 from backend:", data.data);
+//             return data.data.id;   // return latest ID
+//         } catch (err) {
+//             console.error("Network error fetching Section1 ID:", err);
+//             return null;
+//         }
+//     }
+//     // ---------- WHEN USER CLICKS THE NEXT BUTTON ----------
+//     document.getElementById("section2save").addEventListener("click", async (e) => {
+//         e.preventDefault();
 
-        console.log("▶ NEXT BUTTON CLICKED — Now saving Section 2...");
+//         console.log("▶ NEXT BUTTON CLICKED — Now saving Section 2...");
 
-        // Fetch Section1 ID (NO LOCALSTORAGE)
-        const section1Id = await fetchLatestSection1Id();
+//         // Fetch Section1 ID (NO LOCALSTORAGE)
+//         const section1Id = await fetchLatestSection1Id();
 
-        if (!section1Id) {
-            alert("❌ Error: Section 1 ID missing. Please save Section 1 first.");
-            return;
-        }
+//         if (!section1Id) {
+//             alert("❌ Error: Section 1 ID missing. Please save Section 1 first.");
+//             return;
+//         }
 
-        console.log("✔ Section1 ID FOUND →", section1Id);
-        // ---------- COLLECT KEYWORDS ----------
-        const keywordsArray = Array.from(
-            document.querySelectorAll(".badge")
-        ).map(b => b.textContent.replace('×','').trim());
+//         console.log("✔ Section1 ID FOUND →", section1Id);
+//         // ---------- COLLECT KEYWORDS ----------
+//         const keywordsArray = Array.from(
+//             document.querySelectorAll(".badge")
+//         ).map(b => b.textContent.replace('×','').trim());
 
-        // ---------- BUILD PAYLOAD ----------
-        const payload = {
-            section1Id,
-            identifier: document.getElementById("identifier")?.value.trim(),
-            dataset_description: document.getElementById("datasetDescription")?.value.trim(),
-            dataset_description_link: document.getElementById("datasetDescriptionLink")?.value.trim(),
-            keywords: JSON.stringify(keywordsArray),
+//         // ---------- BUILD PAYLOAD ----------
+//         const payload = {
+//             section1Id,
+//             identifier: document.getElementById("identifier")?.value.trim(),
+//             dataset_description: document.getElementById("datasetDescription")?.value.trim(),
+//             dataset_description_link: document.getElementById("datasetDescriptionLink")?.value.trim(),
+//             keywords: JSON.stringify(keywordsArray),
 
-            language: document.getElementById("languageDropdown")?.value === "other"
-                ? document.getElementById("languageOtherInput")?.value.trim()
-                : document.getElementById("languageDropdown")?.value,
+//             language: document.getElementById("languageDropdown")?.value === "other"
+//                 ? document.getElementById("languageOtherInput")?.value.trim()
+//                 : document.getElementById("languageDropdown")?.value,
 
-            metadata_documentation: document.getElementById("metadataDoc")?.value.trim(),
-            metadata_standards: document.getElementById("metadata-conformance")?.value,
+//             metadata_documentation: document.getElementById("metadataDoc")?.value.trim(),
+//             metadata_standards: document.getElementById("metadata-conformance")?.value,
 
-            score_metadata_documentation:
-                document.querySelector('.score-field[data-scoregroup="descriptives"]')?.value,
+//             score_metadata_documentation:
+//                 document.querySelector('.score-field[data-scoregroup="descriptives"]')?.value,
 
-            access_restrictions:
-                Array.from(document.querySelectorAll('.access-check'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value)
-                    .join(", "),
+//             access_restrictions:
+//                 Array.from(document.querySelectorAll('.access-check'))
+//                     .filter(cb => cb.checked)
+//                     .map(cb => cb.value)
+//                     .join(", "),
 
-            api_availability:
-                Array.from(document.querySelectorAll('.api-radio'))
-                    .find(rb => rb.checked)?.value || "",
+//             api_availability:
+//                 Array.from(document.querySelectorAll('.api-radio'))
+//                     .find(rb => rb.checked)?.value || "",
 
-            usage_rights:
-                Array.from(document.querySelectorAll('input[name="usageRights"]'))
-                    .find(rb => rb.checked)?.value || "",
+//             usage_rights:
+//                 Array.from(document.querySelectorAll('input[name="usageRights"]'))
+//                     .find(rb => rb.checked)?.value || "",
 
-            data_format: document.getElementById("dataFormat")?.value,
+//             data_format: document.getElementById("dataFormat")?.value,
 
-            format_standards:
-                Array.from(document.querySelectorAll('input[name="formatStandards"]'))
-                    .find(rb => rb.checked)?.value || "",
+//             format_standards:
+//                 Array.from(document.querySelectorAll('input[name="formatStandards"]'))
+//                     .find(rb => rb.checked)?.value || "",
 
-            score_accessibility:
-                document.querySelector('.score-field[data-scoregroup="accessibility"]')?.value,
+//             score_accessibility:
+//                 document.querySelector('.score-field[data-scoregroup="accessibility"]')?.value,
 
-            crs: document.getElementById("crsSelect")?.value,
-            positional_accuracy: document.getElementById("positionalAccuracy")?.value.trim(),
-            spatial_uncertainty: document.getElementById("spatialUncertainty")?.value.trim(),
+//             crs: document.getElementById("crsSelect")?.value,
+//             positional_accuracy: document.getElementById("positionalAccuracy")?.value.trim(),
+//             spatial_uncertainty: document.getElementById("spatialUncertainty")?.value.trim(),
 
-            score_spatial_accuracy:
-                document.querySelector('.score-field[data-scoregroup="spatial-accuracy"]')?.value
-        };
-
-
-        console.log("🚀 Section 2 Payload:", payload);
+//             score_spatial_accuracy:
+//                 document.querySelector('.score-field[data-scoregroup="spatial-accuracy"]')?.value
+//         };
 
 
-        // ---------- API CALL ----------
-        // try {
-        //     const response = await fetch("http://localhost:8020/section2", {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify(payload)
-        //     });
+//         console.log("🚀 Section 2 Payload:", payload);
 
 
-        //     const result = await response.json();
-        //     if (response.ok) {
-        //         console.log("✔ Section 2 Saved:", result);
-        //         window.location.href = "section3.html";  // MOVE TO NEXT PAGE
-        //     }
-        //     // if (response.ok) window.location.href = "section3.html"
+//         // ---------- API CALL ----------
+//         // try {
+//         //     const response = await fetch("http://localhost:8020/section2", {
+//         //         method: "POST",
+//         //         headers: { "Content-Type": "application/json" },
+//         //         body: JSON.stringify(payload)
+//         //     });
+
+
+//         //     const result = await response.json();
+//         //     if (response.ok) {
+//         //         console.log("✔ Section 2 Saved:", result);
+//         //         window.location.href = "section3.html";  // MOVE TO NEXT PAGE
+//         //     }
+//         //     // if (response.ok) window.location.href = "section3.html"
  
-        //     else {
-        //         alert("Error saving Section 2: " + result.message);
-        //     }
+//         //     else {
+//         //         alert("Error saving Section 2: " + result.message);
+//         //     }
             
-        // } catch (err) {
-        //     console.error("Network error:", err);
-        //     alert("Network error saving Section 2.");
-        // }
-const response = await fetch("http://localhost:8020/section2", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-});
+//         // } catch (err) {
+//         //     console.error("Network error:", err);
+//         //     alert("Network error saving Section 2.");
+//         // }
+// const response = await fetch("http://localhost:8020/section2", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify(payload)
+// });
 
-const result = await response.json();
+// const result = await response.json();
 
-if (!response.ok) {
-    console.error("❌ Error saving Section 2:", result);
-    alert("❌ Failed to save Section 2");
-    return;
-}
+// if (!response.ok) {
+//     console.error("❌ Error saving Section 2:", result);
+//     alert("❌ Failed to save Section 2");
+//     return;
+// }
 
-console.log("✅ Section 2 saved!", result);
-window.location.href = "section3.html";
+// console.log("✅ Section 2 saved!", result);
+// window.location.href = "section3.html";
 
 
 
      
 
+//     });
+
+// });
+document.addEventListener("DOMContentLoaded", () => {
+
+    // ---------- FETCH section1_id by evaluatorName ----------
+    async function fetchSection1IdByEvaluator() {
+        const evaluatorName = sessionStorage.getItem("evaluatorName");
+
+        if (!evaluatorName) {
+            console.error("Evaluator name missing in sessionStorage");
+            return null;
+        }
+
+        try {
+            const res = await fetch(
+              `http://localhost:8020/section1/byEvaluator/${encodeURIComponent(evaluatorName)}`
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error("Error fetching Section1 ID:", data.message);
+                return null;
+            }
+
+            console.log("✔ Section1 ID fetched:", data.id);
+            return data.id;
+
+        } catch (err) {
+            console.error("Network error fetching Section1 ID:", err);
+            return null;
+        }
+    }
+
+
+    // ---------- WHEN USER CLICKS SAVE / NEXT ----------
+    document.getElementById("section2save").addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        console.log("▶ Saving Section 2...");
+
+        // Fetch section1_id safely
+        const section1Id = await fetchSection1IdByEvaluator();
+
+        if (!section1Id) {
+            alert("❌ Section 1 not found. Please complete Section 1 first.");
+            return;
+        }
+
+        // ---------- COLLECT KEYWORDS ----------
+        const keywordsArray = Array.from(
+            document.querySelectorAll(".badge")
+        ).map(b => b.textContent.replace('×','').trim());
+
+
+        // ---------- SAFE VALUE HELPER ----------
+        const val = (id) => {
+            const el = document.getElementById(id);
+            return el && el.value ? el.value.trim() : null;
+        };
+
+
+        // ---------- BUILD PAYLOAD ----------
+        const payload = {
+            section1Id,
+
+            identifier: val("identifier"),
+            dataset_description: val("datasetDescription"),
+            dataset_description_link: val("datasetDescriptionLink"),
+            // keywords: JSON.stringify(keywordsArray),
+          keywords: keywordsArray,
+
+
+            language: (() => {
+                const lang = document.getElementById("languageDropdown")?.value;
+                if (!lang) return null;
+                return lang === "other" ? val("languageOtherInput") : lang;
+            })(),
+
+            metadata_documentation: val("metadataDoc"),
+            metadata_standards: document.getElementById("metadata-conformance")?.value || null,
+
+            score_metadata_documentation:
+                document.querySelector('.score-field[data-scoregroup="descriptives"]')?.value
+                ? parseInt(document.querySelector('.score-field[data-scoregroup="descriptives"]').value)
+                : null,
+
+            access_restrictions:
+                Array.from(document.querySelectorAll('.access-check'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(", ") || null,
+
+            api_availability:
+                Array.from(document.querySelectorAll('.api-radio'))
+                    .find(rb => rb.checked)?.value || null,
+
+            usage_rights:
+                Array.from(document.querySelectorAll('input[name="usageRights"]'))
+                    .find(rb => rb.checked)?.value || null,
+
+            data_format: val("dataFormat"),
+
+            format_standards:
+                Array.from(document.querySelectorAll('input[name="formatStandards"]'))
+                    .find(rb => rb.checked)?.value || null,
+
+            score_accessibility:
+                document.querySelector('.score-field[data-scoregroup="accessibility"]')?.value
+                ? parseInt(document.querySelector('.score-field[data-scoregroup="accessibility"]').value)
+                : null,
+
+            crs: val("crsSelect"),
+            positional_accuracy: val("positionalAccuracy"),
+            spatial_uncertainty: val("spatialUncertainty"),
+
+            score_spatial_accuracy:
+                document.querySelector('.score-field[data-scoregroup="spatial-accuracy"]')?.value
+                ? parseInt(document.querySelector('.score-field[data-scoregroup="spatial-accuracy"]').value)
+                : null
+        };
+
+
+        console.log("🚀 Section2 Payload:", payload);
+
+
+        // ---------- API CALL ----------
+        try {
+            const response = await fetch("http://localhost:8020/section2/section2", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                console.error("❌ Error saving Section2:", result);
+                alert("❌ Failed to save Section 2: " + result.message);
+                return;
+            }
+
+            console.log("✅ Section 2 saved!", result);
+            window.location.href = "section3.html";
+
+        } catch (err) {
+            console.error("Network error:", err);
+            alert("❌ Network error saving Section 2.");
+        }
     });
 
 });
