@@ -1,8 +1,8 @@
-
 import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
 import { setDataType, setEvaluationType, setProcessingLevel, getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
+import { CONFIG } from './core/config.js';  // adjust path relative to section1.js
 
 function debounce(func, wait = 300) {
   let timeout;
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // ---- DATA PROCESSING LEVEL (Primary vs Products) 
   const dataProcessingLevel = document.getElementById('dataprocessinglevel');
   if (dataProcessingLevel) {
-    dataProcessingLevel.addEventListener('change', function() {
+    dataProcessingLevel.addEventListener('change', function () {
       setProcessingLevel(this.value);
       applyConformanceVisibility(this.value);
       updateNavigationButtons();
@@ -32,22 +32,22 @@ document.addEventListener('DOMContentLoaded', function () {
   // ---- EVALUATION TYPE (Use-case vs General)
   const evaluationType = document.getElementById('evaluationType');
   const useCaseSection = document.getElementById('use-case-section');
-  
+
   if (evaluationType) {
-    evaluationType.addEventListener('change', function() {
+    evaluationType.addEventListener('change', function () {
       setEvaluationType(this.value);
-      
+
       const isUseCase = this.value === 'use-case-adequacy';
       if (useCaseSection) useCaseSection.style.display = isUseCase ? 'block' : 'none';
-      
+
       document.querySelectorAll('.use-case-only').forEach(el => {
         el.style.display = isUseCase ? 'block' : 'none';
       });
-      
+
       document.querySelectorAll('.general-design-only').forEach(el => {
         el.style.display = isUseCase ? 'none' : 'block';
       });
-      
+
       // Auto-fill optimum date into design section
       const optimumDateInput = document.getElementById('optimumDataCollection');
       const autoFillField = document.getElementById('optimumCollectionAuto');
@@ -61,11 +61,20 @@ document.addEventListener('DOMContentLoaded', function () {
     evaluationType.dispatchEvent(new Event('change'));
   }
 
+  // ---- EVALUATOR NAME ----
+  const evaluatorNameInput = document.getElementById('evaluatorName');
+  if (evaluatorNameInput) {
+    evaluatorNameInput.addEventListener('change', function () {
+      sessionStorage.setItem('evaluatorName', this.value);
+      window.dispatchEvent(new CustomEvent('evaluatorNameChanged', { detail: { evaluatorName: this.value } }));
+    });
+  }
+
   // ---- DATA TYPE (crucial for other sections) ----
   const dataTypeSelect = document.getElementById('dataType');
   const dataTypeOtherContainer = document.getElementById('datatype-other-container');
   const spatialResolutionContainer = document.getElementById('spatial-resolution-container').parentElement; // Parent div with label
-  
+
   // Resolution containers for each data type
   const rsPixelResolution = document.getElementById('rs-pixel-resolution');
   const gisGridResolution = document.getElementById('gis-grid-resolution');
@@ -74,25 +83,25 @@ document.addEventListener('DOMContentLoaded', function () {
   const surveyAggregation = document.getElementById('survey-aggregation');
   const otherResolution = document.getElementById('other-resolution');
   if (dataTypeSelect) {
-    
-    dataTypeSelect.addEventListener('change', function() {
+
+    dataTypeSelect.addEventListener('change', function () {
       setDataType(this.value);
       if (dataTypeOtherContainer) {
         dataTypeOtherContainer.style.display = this.value === 'other' ? 'block' : 'none';
       }
-      
+
       // Show/hide entire spatial resolution section based on data type selection
       if (spatialResolutionContainer) {
         spatialResolutionContainer.style.display = this.value ? 'block' : 'none';
       }
-      
+
       // Hide all resolution inputs first
       [rsPixelResolution, gisGridResolution, mlResolution, predictionResolution, surveyAggregation, otherResolution].forEach(el => {
         if (el) el.style.display = 'none';
       });
-      
+
       // Show appropriate resolution input based on data type
-      switch(this.value) {
+      switch (this.value) {
         case 'remote-sensing':
           if (rsPixelResolution) rsPixelResolution.style.display = 'block';
           console.log('Showing Remote Sensing pixel resolution input');
@@ -118,13 +127,13 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('Showing free-form resolution description input');
           break;
       }
-      
+
       // Broadcast data-type change to all sections via custom event
       window.dispatchEvent(new CustomEvent('dataTypeChanged', { detail: { dataType: this.value } }));
     });
     if (dataTypeSelect.value) dataTypeSelect.dispatchEvent(new Event('change'));
   }
-  
+
   // ---- SAVE SPATIAL RESOLUTION INPUTS ----
   const resolutionInputs = [
     { id: 'optimumPixelResolution', key: 'optimumPixelResolution' },
@@ -135,11 +144,11 @@ document.addEventListener('DOMContentLoaded', function () {
     { id: 'optimumSurveyAggregation', key: 'optimumSurveyAggregation' },
     { id: 'optimumOtherResolution', key: 'optimumOtherResolution' }
   ];
-  
+
   resolutionInputs.forEach(({ id, key }) => {
     const element = document.getElementById(id);
     if (element) {
-      element.addEventListener('change', function() {
+      element.addEventListener('change', function () {
         sessionStorage.setItem(key, this.value);
       });
     }
@@ -152,11 +161,11 @@ document.addEventListener('DOMContentLoaded', function () {
     { id: 'optimumMLResolutionUnit', key: 'optimumMLResolutionUnit' },
     { id: 'optimumPredictionSpatialResolutionUnit', key: 'optimumPredictionSpatialResolutionUnit' }
   ];
-  
+
   unitDropdowns.forEach(({ id, key }) => {
     const element = document.getElementById(id);
     if (element) {
-      element.addEventListener('change', function() {
+      element.addEventListener('change', function () {
         sessionStorage.setItem(key, this.value);
       });
     }
@@ -167,25 +176,25 @@ document.addEventListener('DOMContentLoaded', function () {
   const aoiDropdownContainer = document.getElementById('aoi-dropdown');
   const aoiCoordinates = document.getElementById('aoi-coordinates');
   const aoiUpload = document.getElementById('aoi-upload');
-  
+
   if (aoiType) {
-    aoiType.addEventListener('change', function() {
+    aoiType.addEventListener('change', function () {
       sessionStorage.setItem('aoiType', this.value);
-      
+
       [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
         if (el) el.style.display = 'none';
       });
-      
+
       if (this.value === 'dropdown' && aoiDropdownContainer) aoiDropdownContainer.style.display = 'block';
       else if (this.value === 'coordinates' && aoiCoordinates) aoiCoordinates.style.display = 'block';
       else if (this.value === 'upload' && aoiUpload) aoiUpload.style.display = 'block';
     });
     aoiType.dispatchEvent(new Event('change'));
   }
- // AOI DROPDOWN - Simple Implementation
+  // AOI DROPDOWN - Simple Implementation
   const aoiSelect = document.getElementById('aoiDropdown');
   // console.log('aoiSelect element:', aoiSelect);
-  
+
   if (aoiSelect) {
     // Load countries.json and populate dropdown
     fetch('../assets/data/countries.json')
@@ -195,15 +204,15 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .then(data => {
         console.log('Data loaded:', data);
-        
+
         // Flatten countries array
         let allCountries = [];
-        
+
         // Add global options
         if (data.global) {
           allCountries.push(...data.global);
         }
-        
+
         // Add countries from all continents
         if (data.continents) {
           data.continents.forEach(continent => {
@@ -212,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function () {
             }
           });
         }
-        
+
         console.log('Total countries to add:', allCountries.length);
-        
+
         // Populate dropdown
         allCountries.forEach(country => {
           const option = document.createElement('option');
@@ -222,13 +231,13 @@ document.addEventListener('DOMContentLoaded', function () {
           option.textContent = country.label;
           aoiSelect.appendChild(option);
         });
-        
+
         console.log('Dropdown populated with', allCountries.length, 'items');
       })
       .catch(error => console.error('Error loading countries:', error));
-    
+
     // Save selected value
-    aoiSelect.addEventListener('change', function() {
+    aoiSelect.addEventListener('change', function () {
       console.log('Selected:', this.value);
       sessionStorage.setItem('aoiLocation', this.value);
     });
@@ -240,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ['minLat', 'maxLat', 'minLon', 'maxLon'].forEach(id => {
     const field = document.getElementById(id);
     if (field) {
-      field.addEventListener('change', function() {
+      field.addEventListener('change', function () {
         sessionStorage.setItem(id, this.value);
       });
     }
@@ -249,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // ---- AOI FILE UPLOAD ----
   const aoiFile = document.getElementById('aoiFile');
   if (aoiFile) {
-    aoiFile.addEventListener('change', function() {
+    aoiFile.addEventListener('change', function () {
       if (this.files.length > 0) {
         sessionStorage.setItem('aoiFileName', this.files[0].name);
       }
@@ -257,216 +266,91 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 });
 
-// function getUnitValue(id) {
-//     const el = document.getElementById(id);
 
-//     if (!el) return null;           // dropdown doesn't exist → NULL
-//     if (!el.value || el.value === "") return null;  // user didn't select anything → NULL
-
-//     return el.value;  // return selected unit
-// }
-
-
-// document.getElementById('Initial-info').addEventListener('click', function(e) {
-//     e.preventDefault(); // prevent default link
-
-//     // Gather data from form
-//     const data = {
-//         datasetTitle: document.getElementById('datasetTitle').value,
-//         evaluatorName: document.getElementById('evaluatorName').value,
-//         affiliation: document.getElementById('evaluatorOrg').value,
-//         dataProcessingLevel: document.getElementById('dataprocessinglevel').value,
-//         dataType: document.getElementById('dataType').value,
-//         dataTypeOther: document.getElementById('dataTypeOtherInput')?.value || '',
-//         evaluationType: document.getElementById('evaluationType').value,
-//         useCaseDescription: document.getElementById('useCaseDescription')?.value || '',
-//         optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
-//         optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
-//         optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
-//         optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
-//         optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
-//         optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
-//         optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
-//         optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
-//         optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
-//         optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || '',
-//         optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || '',
-//         optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || '',
-//         optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || '',
-//         aoiType: document.getElementById('aoiType')?.value || '',
-//         aoiLocation: document.getElementById('aoiDropdown')?.value || '',
-//         minLat: document.getElementById('minLat')?.value || null,
-//         maxLat: document.getElementById('maxLat')?.value || null,
-//         minLon: document.getElementById('minLon')?.value || null,
-//         maxLon: document.getElementById('maxLon')?.value || null,
-//         aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || '',
-//         otherRequirements: document.getElementById('otherRequirements')?.value || '',
-//     };
-
-//     fetch('http://localhost:8020/section1', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(data)
-//     })
-//     .then(res => res.json())
- 
-//     // .then(response => {
-//     //     console.log(response);
-//     //     window.location.href = 'section2.html';
-//     // })
-//     .then(response => {
-//     console.log("Server Response:", response);
-
-//     // STORE SECTION1 ID IN LOCAL STORAGE
-//     if (response.id) {
-//         localStorage.setItem("section1_id", response.id);
-//         console.log("Saved Section 1 ID:", response.id);
-//     }
-
-//     window.location.href = 'section2.html';
-// })
-
-//     .catch(err => {
-//         console.error('Error saving Section1 data:', err);
-//         alert('Error saving data. Please try again.');
-//     });
-// });
 function getUnitValue(id) {
-    const el = document.getElementById(id);
-    return el && el.value ? el.value : null;
+  const el = document.getElementById(id);
+  return el && el.value ? el.value : null;
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
-    initializeHighlighting();
-    initializeTooltips();
+  const nextBtn = document.getElementById('Initial-info');
 
-    const saveBtn = document.getElementById('Initial-info');
-    if (!saveBtn) return;
+  if (!nextBtn) return;
 
-    saveBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
+  nextBtn.addEventListener('click', async function (e) {
+    e.preventDefault();
 
-        // Validate required fields
-        const datasetTitle = document.getElementById('datasetTitle')?.value.trim();
-        const dataProcessing = document.getElementById('dataprocessinglevel')?.value.trim();
-        const dataType = document.getElementById('dataType')?.value.trim();
-        const evaluationType = document.getElementById('evaluationType')?.value.trim();
+    // Gather form data
+    const payload = {
+      datasetTitle: document.getElementById('datasetTitle')?.value || null,
+      evaluatorName: document.getElementById('evaluatorName')?.value || null,
+      evaluatorOrg: document.getElementById('evaluatorOrg')?.value || null,
+      dataProcessingLevel: document.getElementById('dataprocessinglevel')?.value || null,
+      dataType: document.getElementById('dataType')?.value || null,
+      dataTypeOther: document.getElementById('dataTypeOtherInput')?.value || null,
+      evaluationType: document.getElementById('evaluationType')?.value || null,
+      useCaseDescription: document.getElementById('useCaseDescription')?.value || null,
+      optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
 
-        if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
-            alert("Please fill all required fields (*) before proceeding.");
-            return;
-        }
+      optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
+      optimumPixelResolutionUnit: document.getElementById('optimumPixelResolutionUnit')?.value || null,
 
-        // Gather payload
-        const payload = {
-            datasetTitle,
-            evaluatorName: document.getElementById('evaluatorName')?.value || '',
-            affiliation: document.getElementById('evaluatorOrg')?.value || '',
-            dataProcessingLevel: dataProcessing,
-            dataType,
-            dataTypeOther: dataType === 'other' ? document.getElementById('dataTypeOtherInput')?.value || '' : null,
-            evaluationType,
-            useCaseDescription: evaluationType === 'use-case-adequacy' ? document.getElementById('useCaseDescription')?.value || '' : null,
-            optimumDataCollection: document.getElementById('optimumDataCollection')?.value || null,
-            optimumPixelResolution: document.getElementById('optimumPixelResolution')?.value || null,
-            optimumPixelResolutionUnit: getUnitValue('optimumPixelResolutionUnit'),
-            optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
-            optimumGISResolutionUnit: getUnitValue('optimumGISResolutionUnit'),
-            optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
-            optimumMLResolutionUnit: getUnitValue('optimumMLResolutionUnit'),
-            optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
-            optimumPredictionSpatialResolutionUnit: getUnitValue('optimumPredictionSpatialResolutionUnit'),
-            optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || null,
-            optimumSurveyAggregationPrimary: document.getElementById('optimumSurveyAggregation1')?.value || null,
-            optimumSurveyAggregationSecondary: document.getElementById('optimumSurveyAggregation2')?.value || null,
-            optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
-            aoiType: document.getElementById('aoiType')?.value || null,
-            aoiLocation: document.getElementById('aoiDropdown')?.value || null,
-            minLat: document.getElementById('minLat')?.value || null,
-            maxLat: document.getElementById('maxLat')?.value || null,
-            minLon: document.getElementById('minLon')?.value || null,
-            maxLon: document.getElementById('maxLon')?.value || null,
-            aoiFileName: document.getElementById('aoiFile')?.files[0]?.name || null,
-            otherRequirements: document.getElementById('otherRequirements')?.value || null
-        };
+      optimumGISResolution: document.getElementById('optimumGISResolution')?.value || null,
+      optimumGISResolutionUnit: document.getElementById('optimumGISResolutionUnit')?.value || null,
 
-        console.log("🚀 Sending Section1 payload:", payload);
+      optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
+      optimumMLUnit: document.getElementById('optimumMLUnit')?.value || null,
 
-        try {
-            // const response = await fetch("http://localhost:8020/section1", {
-            const response = await fetch(`${CONFIG.API_URL}/section1`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+      optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
+      optimumPredictionSpatialResolutionUnit: document.getElementById('optimumPredictionSpatialResolutionUnit')?.value || null,
+      optimumPredictionTemporalResolution: document.getElementById('optimumPredictionTemporalResolution')?.value || null,
 
-            const result = await response.json();
+      optimumSurveyAggregation1: document.getElementById('optimumSurveyAggregation1')?.value || null,
+      optimumSurveyAggregation2: document.getElementById('optimumSurveyAggregation2')?.value || null,
 
-            if (!response.ok) {
-                console.error("❌ Error saving Section1:", result);
-                alert("Failed to save Section1: " + result.message);
-                return;
-            }
+      optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
 
-            console.log("✅ Section1 saved:", result);
+      aoiType: document.getElementById('aoiType')?.value || null,
+      aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
 
-            // Save Section1 ID for later
-            if (result.id) {
-                localStorage.setItem("section1_id", result.id);
-            }
+      minLat: document.getElementById('minLat')?.value || null,
+      maxLat: document.getElementById('maxLat')?.value || null,
+      minLon: document.getElementById('minLon')?.value || null,
+      maxLon: document.getElementById('maxLon')?.value || null,
 
-            // Redirect to Section2
-            window.location.href = "section2.html";
+      aoiFileName: sessionStorage.getItem('aoiFileName') || null,
 
-        } catch (err) {
-            console.error("Network error:", err);
-            alert("Network error while saving Section1. Check backend.");
-        }
-    });
+      otherRequirements: document.getElementById('otherRequirements')?.value || null,
+
+      step1: 0 // default step
+    };
+
+    try {
+      const res = await fetch('http://localhost:8020/section1/section1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        console.log('Section 1 saved, ID:', data.id);
+
+        // Update step1 to 1 in session
+        payload.step1 = 1;
+
+        // Redirect to next section
+        window.location.href = './section2.html';
+      } else {
+        console.error('Save failed:', data.error);
+        alert('Failed to save Section 1: ' + data.error);
+      }
+    } catch (err) {
+      console.error('Error submitting Section 1:', err);
+      alert('Error submitting Section 1: ' + err.message);
+    }
+  });
 });
-document.getElementById('Initial-info')?.addEventListener('click', function (e) {
-  
-  e.preventDefault(); // prevent default <a> navigation
 
-  // Validate required fields
-  const datasetTitle = document.getElementById('datasetTitle').value.trim();
-  const dataProcessing = document.getElementById('dataprocessinglevel').value.trim();
-  const dataType = document.getElementById('dataType').value.trim();
-  const evaluationType = document.getElementById('evaluationType').value.trim();
-
-  if (!datasetTitle || !dataProcessing || !dataType || !evaluationType) {
-    alert("Please fill all required fields (*) before proceeding.");
-    return;
-  }
-
-  // BUILD SAVED DATA OBJECT
-  const section1Data = {
-    basic: {
-
-      datasetTitle,
-      evaluatorName: document.getElementById('evaluatorName').value || "",
-      evaluatorOrg: document.getElementById('evaluatorOrg').value || "",
-      dataProcessing,
-      dataType,
-      dataTypeOther: dataType === "other"
-        ? document.getElementById('dataTypeOtherInput').value || ""
-        : null,
-      evaluationType
-    },
-
-    useCase:
-      evaluationType === "use-case-adequacy"
-        ? {
-            description: document.getElementById('useCaseDescription').value || "",
-            optimumDataCollection: document.getElementById('optimumDataCollection').value || "",
-            otherRequirements: document.getElementById('otherRequirements').value || "",
-          }
-        : null
-  };
-
-  // SAVE TO LOCAL STORAGE USING YOUR datamanager
-  DataManager.save("section1", null, section1Data);
-
-  // NAVIGATE TO NEXT PAGE
-  window.location.href = "section2.html";
-});
