@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // AOI DROPDOWN - Simple Implementation
   const aoiSelect = document.getElementById('aoiDropdown');
-  // console.log('aoiSelect element:', aoiSelect);
+  console.log('aoiSelect element:', aoiSelect.value);
 
   if (aoiSelect) {
     // Load countries.json and populate dropdown
@@ -312,7 +312,8 @@ document.addEventListener('DOMContentLoaded', function () {
       optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
 
       aoiType: document.getElementById('aoiType')?.value || null,
-      aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
+      // aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
+aoiDropdown: document.getElementById('aoiDropdown')?.selectedOptions[0]?.text || null,
 
       minLat: document.getElementById('minLat')?.value || null,
       maxLat: document.getElementById('maxLat')?.value || null,
