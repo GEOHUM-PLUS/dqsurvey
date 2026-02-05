@@ -3,6 +3,17 @@ import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from '.
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
 
+// if section1_id missing, redirect to section1
+document.addEventListener('DOMContentLoaded', () => {
+  const section1Id = sessionStorage.getItem('section1_id');
+  if (!section1Id) {
+    alert('Session expired. Please start again.');
+    window.location.href = 'section1.html';
+  }
+});
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
   // Initialize shared features
   initializeHighlighting();
@@ -242,179 +253,7 @@ const KEYWORDS_BANK = [
     'Emergency Management', 'Precision Mapping'
 ];
 
-// document.addEventListener("DOMContentLoaded", () => {
-//     // ---------- FETCH LATEST SECTION1 ID FROM BACKEND ----------
-//     async function fetchLatestSection1Id() {
-//         try {
-//             const res = await fetch("http://localhost:8020/section1/latest");
-//             const data = await res.json();
-
-//             if (!res.ok) {
-//                 console.error("Error fetching latest Section1:", data.message);
-//                 return null;
-//             }
-
-//             console.log("Latest Section1 from backend:", data.data);
-//             return data.data.id;   // return latest ID
-//         } catch (err) {
-//             console.error("Network error fetching Section1 ID:", err);
-//             return null;
-//         }
-//     }
-//     // ---------- WHEN USER CLICKS THE NEXT BUTTON ----------
-//     document.getElementById("section2save").addEventListener("click", async (e) => {
-//         e.preventDefault();
-
-//         console.log("▶ NEXT BUTTON CLICKED — Now saving Section 2...");
-
-//         // Fetch Section1 ID (NO LOCALSTORAGE)
-//         const section1Id = await fetchLatestSection1Id();
-
-//         if (!section1Id) {
-//             alert("❌ Error: Section 1 ID missing. Please save Section 1 first.");
-//             return;
-//         }
-
-//         console.log("✔ Section1 ID FOUND →", section1Id);
-//         // ---------- COLLECT KEYWORDS ----------
-//         const keywordsArray = Array.from(
-//             document.querySelectorAll(".badge")
-//         ).map(b => b.textContent.replace('×','').trim());
-
-//         // ---------- BUILD PAYLOAD ----------
-//         const payload = {
-//             section1Id,
-//             identifier: document.getElementById("identifier")?.value.trim(),
-//             dataset_description: document.getElementById("datasetDescription")?.value.trim(),
-//             dataset_description_link: document.getElementById("datasetDescriptionLink")?.value.trim(),
-//             keywords: JSON.stringify(keywordsArray),
-
-//             language: document.getElementById("languageDropdown")?.value === "other"
-//                 ? document.getElementById("languageOtherInput")?.value.trim()
-//                 : document.getElementById("languageDropdown")?.value,
-
-//             metadata_documentation: document.getElementById("metadataDoc")?.value.trim(),
-//             metadata_standards: document.getElementById("metadata-conformance")?.value,
-
-//             score_metadata_documentation:
-//                 document.querySelector('.score-field[data-scoregroup="descriptives"]')?.value,
-
-//             access_restrictions:
-//                 Array.from(document.querySelectorAll('.access-check'))
-//                     .filter(cb => cb.checked)
-//                     .map(cb => cb.value)
-//                     .join(", "),
-
-//             api_availability:
-//                 Array.from(document.querySelectorAll('.api-radio'))
-//                     .find(rb => rb.checked)?.value || "",
-
-//             usage_rights:
-//                 Array.from(document.querySelectorAll('input[name="usageRights"]'))
-//                     .find(rb => rb.checked)?.value || "",
-
-//             data_format: document.getElementById("dataFormat")?.value,
-
-//             format_standards:
-//                 Array.from(document.querySelectorAll('input[name="formatStandards"]'))
-//                     .find(rb => rb.checked)?.value || "",
-
-//             score_accessibility:
-//                 document.querySelector('.score-field[data-scoregroup="accessibility"]')?.value,
-
-//             crs: document.getElementById("crsSelect")?.value,
-//             positional_accuracy: document.getElementById("positionalAccuracy")?.value.trim(),
-//             spatial_uncertainty: document.getElementById("spatialUncertainty")?.value.trim(),
-
-//             score_spatial_accuracy:
-//                 document.querySelector('.score-field[data-scoregroup="spatial-accuracy"]')?.value
-//         };
-
-
-//         console.log("🚀 Section 2 Payload:", payload);
-
-
-//         // ---------- API CALL ----------
-//         // try {
-//         //     const response = await fetch("http://localhost:8020/section2", {
-//         //         method: "POST",
-//         //         headers: { "Content-Type": "application/json" },
-//         //         body: JSON.stringify(payload)
-//         //     });
-
-
-//         //     const result = await response.json();
-//         //     if (response.ok) {
-//         //         console.log("✔ Section 2 Saved:", result);
-//         //         window.location.href = "section3.html";  // MOVE TO NEXT PAGE
-//         //     }
-//         //     // if (response.ok) window.location.href = "section3.html"
- 
-//         //     else {
-//         //         alert("Error saving Section 2: " + result.message);
-//         //     }
-            
-//         // } catch (err) {
-//         //     console.error("Network error:", err);
-//         //     alert("Network error saving Section 2.");
-//         // }
-// const response = await fetch("http://localhost:8020/section2", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(payload)
-// });
-
-// const result = await response.json();
-
-// if (!response.ok) {
-//     console.error("❌ Error saving Section 2:", result);
-//     alert("❌ Failed to save Section 2");
-//     return;
-// }
-
-// console.log("✅ Section 2 saved!", result);
-// window.location.href = "section3.html";
-
-
-
-     
-
-//     });
-
-// });
 document.addEventListener("DOMContentLoaded", () => {
-
-    // ---------- FETCH section1_id by evaluatorName ----------
-    async function fetchSection1IdByEvaluator() {
-        const evaluatorName = sessionStorage.getItem("evaluatorName");
-
-        if (!evaluatorName) {
-            console.error("Evaluator name missing in sessionStorage");
-            return null;
-        }
-
-        try {
-            const res = await fetch(
-              `http://localhost:8020/section1/byEvaluator/${encodeURIComponent(evaluatorName)}`
-            );
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                console.error("Error fetching Section1 ID:", data.message);
-                return null;
-            }
-
-            console.log("✔ Section1 ID fetched:", data.id);
-            return data.id;
-
-        } catch (err) {
-            console.error("Network error fetching Section1 ID:", err);
-            return null;
-        }
-    }
-
-
     // ---------- WHEN USER CLICKS SAVE / NEXT ----------
     document.getElementById("section2save").addEventListener("click", async (e) => {
         e.preventDefault();
@@ -422,7 +261,14 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("▶ Saving Section 2...");
 
         // Fetch section1_id safely
-        const section1Id = await fetchSection1IdByEvaluator();
+
+        const section1Id = sessionStorage.getItem("section1_id");
+
+        if (!section1Id) {
+          alert("❌ Section 1 not found. Please complete Section 1 first.");
+          window.location.href = "section1.html";
+          return;
+        }
 
         if (!section1Id) {
             alert("❌ Section 1 not found. Please complete Section 1 first.");
@@ -521,8 +367,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("❌ Failed to save Section 2: " + result.message);
                 return;
             }
-
             console.log("✅ Section 2 saved!", result);
+           // 🔑 Save Section2 ID to sessionStorage
+            sessionStorage.setItem("section2_id", result.id);
             window.location.href = "section3.html";
 
         } catch (err) {

@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       aoiType: document.getElementById('aoiType')?.value || null,
       // aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
-aoiDropdown: document.getElementById('aoiDropdown')?.selectedOptions[0]?.text || null,
+      aoiDropdown: document.getElementById('aoiDropdown')?.selectedOptions[0]?.text || null,
 
       minLat: document.getElementById('minLat')?.value || null,
       maxLat: document.getElementById('maxLat')?.value || null,
@@ -342,6 +342,13 @@ aoiDropdown: document.getElementById('aoiDropdown')?.selectedOptions[0]?.text ||
         // Update step1 to 1 in session
         payload.step1 = 1;
 
+        // 🔑 SAVE ID FOR NEXT SECTIONS
+        sessionStorage.setItem('section1_id', data.id);
+
+        // (optional but useful)
+        sessionStorage.setItem('evaluatorName', payload.evaluatorName);
+        sessionStorage.setItem('dataType', payload.dataType);
+        
         // Redirect to next section
         window.location.href = './section2.html';
       } else {
