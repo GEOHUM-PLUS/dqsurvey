@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
   // AOI DROPDOWN - Simple Implementation
   const aoiSelect = document.getElementById('aoiDropdown');
-  // console.log('aoiSelect element:', aoiSelect);
+  console.log('aoiSelect element:', aoiSelect.value);
 
   if (aoiSelect) {
     // Load countries.json and populate dropdown
@@ -312,7 +312,8 @@ document.addEventListener('DOMContentLoaded', function () {
       optimumOtherResolution: document.getElementById('optimumOtherResolution')?.value || null,
 
       aoiType: document.getElementById('aoiType')?.value || null,
-      aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
+      // aoiDropdown: document.getElementById('aoiDropdown')?.value || null,
+      aoiDropdown: document.getElementById('aoiDropdown')?.selectedOptions[0]?.text || null,
 
       minLat: document.getElementById('minLat')?.value || null,
       maxLat: document.getElementById('maxLat')?.value || null,
@@ -341,6 +342,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update step1 to 1 in session
         payload.step1 = 1;
 
+        // 🔑 SAVE ID FOR NEXT SECTIONS
+        sessionStorage.setItem('section1_id', data.id);
+
+        // (optional but useful)
+        sessionStorage.setItem('evaluatorName', payload.evaluatorName);
+        sessionStorage.setItem('dataType', payload.dataType);
+        
         // Redirect to next section
         window.location.href = './section2.html';
       } else {

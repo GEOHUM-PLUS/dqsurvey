@@ -104,7 +104,7 @@ export function updateNavigationButtons() {
   const savedProcessingLevel = sessionStorage.getItem('dataProcessingLevel');
   const isConformanceHidden = savedProcessingLevel === 'primary';
   
-  console.log('updateNavigationButtons called, isConformanceHidden:', isConformanceHidden);
+  // console.log('updateNavigationButtons called, isConformanceHidden:', isConformanceHidden);
   
   const currentPage = window.location.pathname.split('/').pop();
   

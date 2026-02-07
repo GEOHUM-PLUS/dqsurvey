@@ -56,23 +56,46 @@
                 <div class="mb-3">
                     <label class="required">Spatial Resolution</label>
                     <div id="resolution-inputs">
-                        <div id="pixel-resolution" style="display: none;">
+                        <div id="pixel-resolution" >
                             <div class="input-group">
-                                <input class="form-control" id="pixelResolutionValue" placeholder="Enter pixel size"
-                                    type="number" required />
-                                <span class="input-group-text">meters</span>
+                                <input class="form-control" id="pixelResolutionValue" placeholder="Enter pixel size" type="number" required />
+                                <select class="form-select" id="pixelResolutionUnit" style="flex: 0 0 140px;">
+                                    <option value="">Select Unit</option>
+                                    <option value="m">meters (m)</option>
+                                    <option value="cm">centimeters (cm)</option>
+                                    <option value="km">kilometers (km)</option>
+                                    <option value="deg">degrees (°)</option>
+                                </select>
                             </div>
                             <div class="form-text">Pixel size for Remote Sensing data</div>
                         </div>
-                        <div id="grid-resolution" style="display: none;">
+                        <div id="grid-resolution" >
                             <div class="input-group">
-                                <input class="form-control" id="gridResolutionValue" placeholder="Enter grid size"
-                                    type="number" required />
-                                <span class="input-group-text">meters</span>
+                                <input class="form-control" id="gridResolutionValue" placeholder="Enter grid size" type="number" required />
+                                <select class="form-select" id="gridResolutionUnit" style="flex: 0 0 140px;">
+                                    <option value="">Select Unit</option>
+                                    <option value="m">meters (m)</option>
+                                    <option value="cm">centimeters (cm)</option>
+                                    <option value="km">kilometers (km)</option>
+                                    <option value="deg">degrees (°)</option>
+                                </select>
                             </div>
                             <div class="form-text">Grid size for other data types</div>
                         </div>
-                        <div id="aggregation-resolution" style="display: none;">
+                        <div id="output-resolution" >                           
+                            <div class="input-group">
+                                <input class="form-control" id="outputResolutionValue" placeholder="Enter output grid size" type="number" required />
+                                <select class="form-select" id="outputResolutionUnit" style="flex: 0 0 140px;">
+                                    <option value="">Select Unit</option>
+                                    <option value="m">meters (m)</option>
+                                    <option value="cm">centimeters (cm)</option>
+                                    <option value="km">kilometers (km)</option>
+                                    <option value="deg">degrees (°)</option>
+                                </select>
+                            </div>
+                            <div class="form-text">Output Resolution for other data types</div>
+                        </div>
+                        <div id="aggregation-resolution">
                             <select class="form-select" id="aggregationResolutionLevel" required>
                                 <option value="">Select aggregation level</option>
                                 <option value="country">Country/Federation</option>
@@ -82,53 +105,45 @@
                             </select>
                             <div class="form-text">Aggregation level for administrative data</div>
                         </div>
-                        <!-- Manual selection option (if auto-detection fails) -->
-                        <div id="manual-resolution-selection" style="display: none;">
-                            <div class="alert alert-info">
-                                <strong>Manual Selection:</strong> Choose the appropriate resolution type for your data.
-                            </div>
-                            <div class="mb-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="resolutionType" id="selectPixel"
-                                        value="pixel">
-                                    <label class="form-check-label" for="selectPixel">Pixel size (Remote
-                                        Sensing)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="resolutionType" id="selectGrid"
-                                        value="grid">
-                                    <label class="form-check-label" for="selectGrid">Grid size (Regular grid
-                                        data)</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="resolutionType"
-                                        id="selectAggregation" value="aggregation">
-                                    <label class="form-check-label" for="selectAggregation">Aggregation level
-                                        (Administrative data)</label>
-                                </div>
-                            </div>
-                        </div>
+                      
+                      
+                    </div>
+                    <!-- General Design Scoring -->
+                    <div class="mb-3 general-design-only">
+                        <label>Score general design spatial resolution</label>
+                        <select class="form-select score-field" id="generalResolutionScore"
+                            data-scoregroup="design-resolution">
+                            <option value="">Select score (1 to 4)</option>
+                            <option value="1">1: &gt;30m (RS/grid) / country/federation</option>
+                            <option value="2">2: 5–30m (RS/grid) / region, province, state</option>
+                            <option value="3">3: 1–5m (RS/grid) / city, city district, village</option>
+                            <option value="4">4: &lt;1m (RS/grid) / household</option>
+                        </select>
+                        <div class="form-text" id="auto-score-suggestion" style="display: none;"></div>
                     </div>
                 </div>
-                <!-- General Design Scoring -->
-                <div class="mb-3 general-design-only">
-                    <label>Score general design spatial resolution</label>
-                    <select class="form-select score-field" id="generalResolutionScore"
-                        data-scoregroup="design-resolution">
-                        <option value="">Select score (1 to 4)</option>
-                        <option value="1">1: &gt;30m (RS/grid) / country/federation</option>
-                        <option value="2">2: 5–30m (RS/grid) / region, province, state</option>
-                        <option value="3">3: 1–5m (RS/grid) / city, city district, village</option>
-                        <option value="4">4: &lt;1m (RS/grid) / household</option>
-                    </select>
-                    <div class="form-text" id="auto-score-suggestion" style="display: none;"></div>
-                </div>
+                
                 <!-- Use-case specific fields -->
-                <div class="use-case-only" style="display:none;">
+                <div class="use-case-only">
                     <div class="mb-3">
-                        <label>Optimal spatial resolution (auto-filled)</label>
-                        <input class="form-control" id="optimalResolution" readonly="" type="text" />
+                       <label>Optimal spatial resolution </label>     <!-- to be filled auto  -->
+                        <!-- <input class="form-control" id="optimalResolution" readonly="" type="text" /> -->
+                          <input class="form-control" id="optimalResolution"  type="text" />
                     </div>
+                    <!-- General Design Scoring -->
+                    <div class="mb-3 use-design-only">
+                        <label>Score Use Case adequancy spatial resolution</label>
+                        <select class="form-select score-field" id="useCaseResolutionScore"
+                            data-scoregroup="design-resolution">
+                            <option value="">Select score (1 to 4)</option>
+                            <option value="1">1: &gt;30m (RS/grid) / country/federation</option>
+                            <option value="2">2: 5–30m (RS/grid) / region, province, state</option>
+                            <option value="3">3: 1–5m (RS/grid) / city, city district, village</option>
+                            <option value="4">4: &lt;1m (RS/grid) / household</option>
+                        </select>
+                        <div class="form-text" id="auto-score-suggestion" style="display: none;"></div>
+                    </div>
+                    <!-- score of spatial resolution to shown here -->
                     <div class="mb-3">
                         <label>Spatial fit for purpose</label>
                         <textarea class="form-control" id="spatialFit"
@@ -136,22 +151,18 @@
                     </div>
                     <div class="mb-3">
                         <label>Deviation from optimum spatial resolution</label>
-                        <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" readonly=""
-                            type="text" />
+                        <!-- <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" readonly="" type="text" /> -->
+                          <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" type="text" />
                     </div>
                     <div class="mb-3">
                         <label>Score spatial fit for purpose</label>
                         <select class="form-select score-field" data-scoregroup="usecase-spatial-fit">
                             <option value="">Select score (1 to 4)</option>
-                            <!-- <option value="1">1: data cannot be used in a meaningful way</option>
+                            <option value="1">1: data cannot be used in a meaningful way</option>
                             <option value="2">2: data are coarse, but can be used</option>
                             <option value="3">3: spatial resolution is acceptable</option>
-                            <option value="4">4: very high fit of spatial resolution</option> -->
-                            <option value="1: data cannot be used in a meaningful way">1: data cannot be used in a meaningful way</option>
-                            <option value="2: data are coarse, but can be used">2: data are coarse, but can be used</option>
-                            <option value="3: spatial resolution is acceptable">3: spatial resolution is acceptable</option>
-                            <option value="4: very high fit of spatial resolution">4: very high fit of spatial resolution</option>
-                            
+                            <option value="4">4: very high fit of spatial resolution</option>
+                           
                         </select>
                     </div>
                 </div>
