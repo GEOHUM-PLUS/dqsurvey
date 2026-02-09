@@ -9,87 +9,44 @@
       rel="stylesheet"
     />
     <link href="../assets/css/sections.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
   </head>
   <body>
     <!-- Homepage Navigation Bar -->
-    <nav
-      class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top"
-    >
-      <div class="container-fluid">
-        <a
-          class="navbar-brand fw-bold"
-          href="../index.html"
-          style="color: #e10707"
-          >Data Quality Evaluation</a
-        >
-        <button
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          class="navbar-toggler"
-          data-bs-target="#navbarNav"
-          data-bs-toggle="collapse"
-          type="button"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <a class="nav-link" data-section="section1" href="section1.html"
-                >Initial Info</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-section="section2" href="section2.html"
-                >Descriptives</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-section="section3" href="section3.html"
-                >Design</a
-              >
-            </li>
-            <li class="nav-item" id="nav-conformance">
-              <a class="nav-link" data-section="section4" href="section4.html"
-                >Conformance</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-section="section5" href="section5.html"
-                >Context</a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                data-section="summary"
-                href="summary.html"
-                style="font-weight: bold"
-                >Summary</a
-              >
-            </li>
-          </ul>
-          <div class="navbar-logos">
-            <span class="funding-text me-2">Funded by:</span>
-            <a
-              href="https://www.plus.ac.at/"
-              target="_blank"
-              class="navbar-logo-item"
-            >
-              <img src="../logo2.png" alt="PLUS Logo" />
-            </a>
-            <a
-              href="https://geohum.eu/"
-              target="_blank"
-              class="navbar-logo-item"
-            >
-              <img src="../GEOHUM_background.PNG" alt="GEOHUM Logo" />
-            </a>
-          </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="../index.html" style="color: #e10707;">Data Quality Evaluation</a>
+            <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                class="navbar-toggler" data-bs-target="#navbarNav" data-bs-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link" data-section="section1" href="section1.html">Initial
+                            Info</a></li>
+                    <li class="nav-item"><a class="nav-link" data-section="section2"
+                            href="section2.html">Descriptives</a></li>
+                    <li class="nav-item"><a class="nav-link" data-section="section3" href="section3.html">Design</a>
+                    </li>
+                    <li class="nav-item" id="nav-conformance"><a class="nav-link" data-section="section4"
+                            href="section4.html">Conformance</a></li>
+                    <li class="nav-item"><a class="nav-link" data-section="section5" href="section5.html">Context</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" data-section="summary" href="summary.html">Summary</a></li>
+                </ul>
+                <div class="navbar-logos">
+                    <span class="funding-text me-2">Funded by:</span>
+                    <a href="https://www.plus.ac.at/" target="_blank" class="navbar-logo-item">
+                        <img src="../images/logo2.png" alt="PLUS Logo" />
+                    </a>
+                    <a href="https://geohum.eu/" target="_blank" class="navbar-logo-item">
+                        <img src="../images/GEOHUM_background.PNG" alt="GEOHUM Logo" />
+                    </a>
+                </div>
+            </div>
         </div>
-      </div>
     </nav>
 
     <div class="overlay"></div>
@@ -377,13 +334,7 @@
               <button class="btn btn-info" id="printReport">
                 🖨️ Print Report
               </button>
-              <button
-                class="btn btn-danger"
-                id="submitForm"
-                style="font-weight: bold"
-              >
-                ✅ Submit & Complete
-              </button>
+             
               <a href="section5.html" class="btn btn-outline-secondary"
                 >← Back to Context</a
               >
