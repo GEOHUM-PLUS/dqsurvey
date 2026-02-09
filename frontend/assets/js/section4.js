@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (!section1Id || !section2Id || !section3Id) {
     alert("❌ Required IDs missing. Please complete previous sections.");
-    // window.location.href = "section1.html"; // or section2.html
+    window.location.href = "section1.html"; // or section2.html
     return;
   }
 

@@ -3,6 +3,19 @@
    ======================================== */
 
 /* General Styles - Shared */
+@media print {
+    .btn, .btn-outline-secondary, #clearAllData {
+        display: none !important; /* Hide buttons on the PDF */
+    }
+    .card {
+        border: 1px solid #ccc !important;
+        break-inside: avoid;
+    }
+    .card-header {
+        background-color: #f8f9fa !important;
+        color: black !important;
+    }
+}
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
     line-height: 1.6;
