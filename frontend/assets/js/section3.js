@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("🚀 Section3 Payload:", payload);
       // Send to backend
       try {
-        const response = await fetch('http://localhost:8020/section3/section3', {
+        const response = await fetch('https://dqsurvey.onrender.com/section3/section3', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

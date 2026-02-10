@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     try {
 
-      const API = "http://localhost:8020";
+      const API = "https://dqsurvey.onrender.com";
 
       const section1Id = sessionStorage.getItem("section1_id");
       const section2Id = sessionStorage.getItem("section2_id");
@@ -191,7 +191,7 @@ let currentSummaryData = null; // declare globally at the top
 
 async function loadSummaryData() {
     try {
-        const API = "http://localhost:8020";
+        const API = "https://dqsurvey.onrender.com";
         const section1Id = sessionStorage.getItem("section1_id");
         const section2Id = sessionStorage.getItem("section2_id");
         const section3Id = sessionStorage.getItem("section3_id");

@@ -183,17 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
     radio.addEventListener('change', handleAccuracyTypeChange);
   });
 
-  // Restore selected accuracy type on page load
-  // setTimeout(() => {
-  //   const savedData = DataManager.getSection('section4', 'conformance');
-  //   if (savedData && savedData.accuracyType) {
-  //     const radioToCheck = document.querySelector(`input[name="accuracyType"][value="${savedData.accuracyType}"]`);
-  //     if (radioToCheck) {
-  //       radioToCheck.checked = true;
-  //       handleAccuracyTypeChange();
-  //     }
-  //   }
-  // }, 100);
 
   // ---- CONFORMANCE SCORING ----
   const conformanceScores = document.querySelectorAll('input[name="conformanceScore"]');
@@ -205,15 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-  // // ---- SAVE FORM DATA ----
-  // window.addEventListener('beforeunload', () => {
-  //   // Don't save if form has been submitted
-  //   if (sessionStorage.getItem('formSubmitted')) {
-  //     return;
-  //   }
-  //   const formData = DataManager.collectCurrentPageData();
-  //   DataManager.saveSection('section4', 'general', formData);
-  // });
+
 // ----------------------------------------
 // SUBMIT SECTION 4 TO BACKEND
 // ----------------------------------------
@@ -319,7 +300,7 @@ if (submitBtn) {
 
     // -------- API call --------
     try {
-      const res = await fetch('http://localhost:8020/section4/section4', {
+      const res = await fetch('https://dqsurvey.onrender.com/section4/section4', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

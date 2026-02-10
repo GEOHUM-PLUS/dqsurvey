@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // ---------- API CALL ----------
         try {
-            const response = await fetch("http://localhost:8020/section2/section2", {
+            const response = await fetch("https://dqsurvey.onrender.com/section2/section2", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)

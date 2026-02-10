@@ -328,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     try {
-      const res = await fetch('http://localhost:8020/section1/section1', {
+      const res = await fetch('https://dqsurvey.onrender.com/section1/section1', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

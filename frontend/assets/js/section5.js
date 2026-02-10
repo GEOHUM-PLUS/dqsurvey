@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // SEND TO BACKEND
       // -------------------------------
       try {
-        const response = await fetch("http://localhost:8020/section5/section5", {
+        const response = await fetch("https://dqsurvey.onrender.com/section5/section5", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
