@@ -378,6 +378,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Handle previous button click to send step1=1
+    document.getElementById('back2to1').addEventListener('click', function() {
+        sessionStorage.setItem('step1', '1');
+    });
+
 });
 
 
