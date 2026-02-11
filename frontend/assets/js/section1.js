@@ -3,6 +3,12 @@ import { setDataType, setEvaluationType, setProcessingLevel, getDataType, getEva
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
 import { CONFIG } from './core/config.js';  // adjust path relative to section1.js
+window.__desiredAOILabel = "";
+
+const fireChange = (id) => {
+  const el = document.getElementById(id);
+  if (el) el.dispatchEvent(new Event('change', { bubbles: true }));
+};
 
 function debounce(func, wait = 300) {
   let timeout;
@@ -127,6 +133,108 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('Showing free-form resolution description input');
           break;
       }
+      // ✅ CLEAR irrelevant resolution fields when switching data type
+const clear = (id, isSelect = false) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (isSelect) el.selectedIndex = 0;
+  else el.value = '';
+};
+
+if (this.value === 'remote-sensing') {
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+  clear('optimumOtherResolution');
+}
+
+if (this.value === 'gis') {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+  clear('optimumOtherResolution');
+}
+
+if (this.value === 'model-ml') {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+  clear('optimumOtherResolution');
+}
+
+if (this.value === 'prediction') {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+  clear('optimumOtherResolution');
+}
+
+if (this.value === 'survey') {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumOtherResolution');
+}
+
+if (this.value === 'other') {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+}
+
+// if user clears dataType entirely
+if (!this.value) {
+  clear('optimumPixelResolution');
+  clear('optimumPixelResolutionUnit', true);
+  clear('optimumGISResolution');
+  clear('optimumGISResolutionUnit', true);
+  clear('optimumMLResolution');
+  clear('optimumMLResolutionUnit', true);
+  clear('optimumPredictionSpatialResolution');
+  clear('optimumPredictionSpatialResolutionUnit', true);
+  clear('optimumPredictionTemporalResolution', true);
+  clear('optimumSurveyAggregation1', true);
+  clear('optimumSurveyAggregation2', true);
+  clear('optimumOtherResolution');
+}
+
 
       // Broadcast data-type change to all sections via custom event
       window.dispatchEvent(new CustomEvent('dataTypeChanged', { detail: { dataType: this.value } }));
@@ -177,20 +285,73 @@ document.addEventListener('DOMContentLoaded', function () {
   const aoiCoordinates = document.getElementById('aoi-coordinates');
   const aoiUpload = document.getElementById('aoi-upload');
 
-  if (aoiType) {
-    aoiType.addEventListener('change', function () {
-      sessionStorage.setItem('aoiType', this.value);
+  // if (aoiType) {
+  //   aoiType.addEventListener('change', function () {
+  //     sessionStorage.setItem('aoiType', this.value);
 
-      [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
-        if (el) el.style.display = 'none';
-      });
+  //     [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
+  //       if (el) el.style.display = 'none';
+  //     });
 
-      if (this.value === 'dropdown' && aoiDropdownContainer) aoiDropdownContainer.style.display = 'block';
-      else if (this.value === 'coordinates' && aoiCoordinates) aoiCoordinates.style.display = 'block';
-      else if (this.value === 'upload' && aoiUpload) aoiUpload.style.display = 'block';
+  //     if (this.value === 'dropdown' && aoiDropdownContainer) aoiDropdownContainer.style.display = 'block';
+  //     else if (this.value === 'coordinates' && aoiCoordinates) aoiCoordinates.style.display = 'block';
+  //     else if (this.value === 'upload' && aoiUpload) aoiUpload.style.display = 'block';
+  //   });
+  //   aoiType.dispatchEvent(new Event('change'));
+  // }
+if (aoiType) {
+  aoiType.addEventListener('change', function () {
+
+    sessionStorage.setItem('aoiType', this.value);
+
+    // Hide all
+    [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
+      if (el) el.style.display = 'none';
     });
-    aoiType.dispatchEvent(new Event('change'));
-  }
+
+    // Show selected panel
+    if (this.value === 'dropdown' && aoiDropdownContainer) {
+      aoiDropdownContainer.style.display = 'block';
+    } 
+    else if (this.value === 'coordinates' && aoiCoordinates) {
+      aoiCoordinates.style.display = 'block';
+    } 
+    else if (this.value === 'upload' && aoiUpload) {
+      aoiUpload.style.display = 'block';
+    }
+
+    // ✅ CLEAR irrelevant fields when switching type
+
+    if (this.value === 'dropdown') {
+      ['minLat','maxLat','minLon','maxLon'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      sessionStorage.removeItem('aoiFileName');
+    }
+
+    if (this.value === 'coordinates') {
+      const dd = document.getElementById('aoiDropdown');
+      if (dd) dd.selectedIndex = 0;
+      sessionStorage.removeItem('aoiFileName');
+    }
+
+    if (this.value === 'upload') {
+      const dd = document.getElementById('aoiDropdown');
+      if (dd) dd.selectedIndex = 0;
+
+      ['minLat','maxLat','minLon','maxLon'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+    }
+
+  });
+
+  aoiType.dispatchEvent(new Event('change'));
+}
+
+
   // AOI DROPDOWN - Simple Implementation
   const aoiSelect = document.getElementById('aoiDropdown');
   console.log('aoiSelect element:', aoiSelect.value);
@@ -233,6 +394,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         console.log('Dropdown populated with', allCountries.length, 'items');
+        // ✅ Apply selected country AFTER options are added (edit mode)
+        if (window.__desiredAOILabel) {
+          const desired = window.__desiredAOILabel;
+          const aoiSelect = document.getElementById("aoiDropdown");
+
+          for (let i = 0; i < aoiSelect.options.length; i++) {
+            if (aoiSelect.options[i].text === desired) {
+              aoiSelect.selectedIndex = i;
+              // trigger any listeners / session save
+              aoiSelect.dispatchEvent(new Event("change", { bubbles: true }));
+              break;
+            }
+          }
+        }
+
       })
       .catch(error => console.error('Error loading countries:', error));
 
@@ -272,15 +448,103 @@ function getUnitValue(id) {
   return el && el.value ? el.value : null;
 }
 
+// =============SECTION 1 CLEAN UNIFIED FRONTEND  CREATE + EDIT SUPPORT=====================================
 
-document.addEventListener('DOMContentLoaded', function () {
+let isEditMode = false;
+let section1Id = sessionStorage.getItem("section1_id");
+let step1Flag = parseInt(sessionStorage.getItem("step1") || "0");
+console.log("Loaded session values - section1_id:", section1Id, "step1:", step1Flag);
+// Detect Mode
+if (section1Id && step1Flag === 1) {
+  isEditMode = true;
+}
+console.log("Section1 Mode:", isEditMode ? "EDIT" : "CREATE");
+
+document.addEventListener('DOMContentLoaded', async function () {
+
   const nextBtn = document.getElementById('Initial-info');
-
   if (!nextBtn) return;
+
+  console.log("Section1 Mode in button:", isEditMode ? "EDIT" : "CREATE", section1Id,);
+
+  // ✅ REFILL FIELDS IF EDIT MODE
+  if (isEditMode && section1Id) {
+    try {
+      const res = await fetch(`https://dqsurvey.onrender.com/section1/${section1Id}`);
+      if (!res.ok) throw new Error('Failed to fetch Section 1 data');
+      const data = await res.json();
+      console.log('data:', data);
+      // Map each field to the corresponding input Map backend fields to frontend input IDs
+      document.getElementById('datasetTitle').value = data.dataset_title || '';
+      document.getElementById('evaluatorName').value = data.evaluator_name || '';
+      document.getElementById('evaluatorOrg').value = data.evaluator_org || '';
+      document.getElementById('dataprocessinglevel').value = data.data_processing_level || '';
+      document.getElementById('dataType').value = data.data_type || '';
+      document.getElementById('dataTypeOtherInput').value = data.data_type_other || '';
+      document.getElementById('evaluationType').value = data.evaluation_type || '';
+      document.getElementById('useCaseDescription').value = data.use_case_description || '';
+      document.getElementById('optimumDataCollection').value = data.optimum_data_collection || '';
+
+      document.getElementById('optimumPixelResolution').value = data.optimum_pixel_resolution || '';
+      document.getElementById('optimumPixelResolutionUnit').value = data.optimum_pixel_resolution_unit || '';
+      document.getElementById('optimumGISResolution').value = data.optimum_gis_resolution || '';
+      document.getElementById('optimumGISResolutionUnit').value = data.optimum_gis_resolution_unit || '';
+      document.getElementById('optimumMLResolution').value = data.optimum_ml_resolution || '';
+      // document.getElementById('optimumMLUnit').value = data.optimum_ml_unit || '';
+      document.getElementById('optimumMLResolutionUnit').value = data.optimum_ml_unit || '';
+
+      document.getElementById('optimumPredictionSpatialResolution').value = data.optimum_prediction_spatial_resolution || '';
+      document.getElementById('optimumPredictionSpatialResolutionUnit').value = data.optimum_prediction_spatial_resolution_unit || '';
+      document.getElementById('optimumPredictionTemporalResolution').value = data.optimum_prediction_temporal_resolution || '';
+      document.getElementById('optimumSurveyAggregation1').value = data.optimum_survey_aggregation1 || '';
+      document.getElementById('optimumSurveyAggregation2').value = data.optimum_survey_aggregation2 || '';
+      document.getElementById('optimumOtherResolution').value = data.optimum_other_resolution || '';
+
+      document.getElementById('aoiType').value = data.aoi_type || '';
+
+
+      document.getElementById('minLat').value = data.min_lat || '';
+      document.getElementById('maxLat').value = data.max_lat || '';
+      document.getElementById('minLon').value = data.min_lon || '';
+      document.getElementById('maxLon').value = data.max_lon || '';
+
+      document.getElementById('otherRequirements').value = data.other_requirements || '';
+
+      // ✅ NOW sync UI exactly like user left it
+      syncSection1UIFromValues();
+      applyEvaluationTypeUI();
+      fireChange('evaluationType');
+      fireChange('dataType');
+      fireChange('aoiType');
+
+      // const desired = sessionStorage.setItem("desiredAOILabel", data.aoidropdown || "");
+      const desired = data.aoi_dropdown || "";
+
+      window.__desiredAOILabel = data.aoi_dropdown || "";
+      sessionStorage.setItem("desiredAOILabel", window.__desiredAOILabel);
+
+      if (desired) {
+        const aoiSelect = document.getElementById("aoiDropdown");
+        for (let i = 0; i < aoiSelect.options.length; i++) {
+          if (aoiSelect.options[i].text === desired) {
+            aoiSelect.selectedIndex = i;
+            break;
+          }
+        }
+        // ✅ sync again after dropdown applied
+        syncSection1UIFromValues();
+        // after setting values in EDIT mode:
+        applyEvaluationTypeUI();
+      }
+
+      console.log('✅ Section 1 form refilled in EDIT mode.');
+    } catch (err) {
+      console.error('Error loading Section 1 for edit:', err);
+    }
+  }
 
   nextBtn.addEventListener('click', async function (e) {
     e.preventDefault();
-
     // Gather form data
     const payload = {
       datasetTitle: document.getElementById('datasetTitle')?.value || null,
@@ -300,7 +564,9 @@ document.addEventListener('DOMContentLoaded', function () {
       optimumGISResolutionUnit: document.getElementById('optimumGISResolutionUnit')?.value || null,
 
       optimumMLResolution: document.getElementById('optimumMLResolution')?.value || null,
-      optimumMLUnit: document.getElementById('optimumMLUnit')?.value || null,
+      // optimumMLUnit: document.getElementById('optimumMLUnit')?.value || null,
+      optimumMLUnit: document.getElementById('optimumMLResolutionUnit')?.value || null,
+
 
       optimumPredictionSpatialResolution: document.getElementById('optimumPredictionSpatialResolution')?.value || null,
       optimumPredictionSpatialResolutionUnit: document.getElementById('optimumPredictionSpatialResolutionUnit')?.value || null,
@@ -323,24 +589,32 @@ document.addEventListener('DOMContentLoaded', function () {
       aoiFileName: sessionStorage.getItem('aoiFileName') || null,
 
       otherRequirements: document.getElementById('otherRequirements')?.value || null,
+      step1: 0
 
-      step1: 0 // default step
     };
 
     try {
-      const res = await fetch('https://dqsurvey.onrender.com/section1/section1', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // const res = await fetch('https://dqsurvey.onrender.com/section1/section1', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(payload)
+      // });
+const url = (isEditMode && section1Id)
+  ? `https://dqsurvey.onrender.com/section1/section1/${section1Id}`
+  : `https://dqsurvey.onrender.com/section1/section1`;
+
+const method = (isEditMode && section1Id) ? 'PUT' : 'POST';
+
+const res = await fetch(url, {
+  method,
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+});
 
       const data = await res.json();
 
       if (data.success) {
         console.log('Section 1 saved, ID:', data.id);
-
-        // Update step1 to 1 in session
-        payload.step1 = 1;
 
         // 🔑 SAVE ID FOR NEXT SECTIONS
         sessionStorage.setItem('section1_id', data.id);
@@ -348,7 +622,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // (optional but useful)
         sessionStorage.setItem('evaluatorName', payload.evaluatorName);
         sessionStorage.setItem('dataType', payload.dataType);
-        
+
         // Redirect to next section
         window.location.href = './section2.html';
       } else {
@@ -361,4 +635,109 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 });
+// ===============================refills interaction logic for edit mode===============================
+// ✅ direct UI apply
+fireChange('evaluationType');          // ✅ if anything else depends on it
+
+function setValue(id, value) {
+  const el = document.getElementById(id);
+  if (!el) {
+    console.warn(`Missing element: #${id}`);
+    return;
+  }
+  el.value = value ?? '';
+}
+
+function syncSection1UIFromValues() {
+  // 1) Evaluation type => Use-case section show/hide
+  const evaluationType = document.getElementById("evaluationType");
+  const useCaseSection = document.getElementById("use-case-section");
+  if (evaluationType && useCaseSection) {
+    const isUseCase = evaluationType.value === "use-case-adequacy";
+    useCaseSection.style.display = isUseCase ? "block" : "none";
+
+    document.querySelectorAll(".use-case-only").forEach(el => {
+      el.style.display = isUseCase ? "block" : "none";
+    });
+
+    document.querySelectorAll(".general-design-only").forEach(el => {
+      el.style.display = isUseCase ? "none" : "block";
+    });
+  }
+
+  // 2) Data type => Resolution blocks show/hide
+  const dataTypeSelect = document.getElementById("dataType");
+  const dataTypeOtherContainer = document.getElementById("datatype-other-container");
+
+  const rsPixelResolution = document.getElementById("rs-pixel-resolution");
+  const gisGridResolution = document.getElementById("gis-grid-resolution");
+  const mlResolution = document.getElementById("ml-resolution");
+  const predictionResolution = document.getElementById("prediction-resolution");
+  const surveyAggregation = document.getElementById("survey-aggregation");
+  const otherResolution = document.getElementById("other-resolution");
+
+  // parent label div
+  const spatialResolutionContainerEl = document.getElementById("spatial-resolution-container");
+  const spatialResolutionContainer = spatialResolutionContainerEl ? spatialResolutionContainerEl.parentElement : null;
+
+  if (dataTypeSelect) {
+    const val = dataTypeSelect.value;
+
+    if (dataTypeOtherContainer) {
+      dataTypeOtherContainer.style.display = val === "other" ? "block" : "none";
+    }
+
+    if (spatialResolutionContainer) {
+      spatialResolutionContainer.style.display = val ? "block" : "none";
+    }
+
+    // hide all
+    [rsPixelResolution, gisGridResolution, mlResolution, predictionResolution, surveyAggregation, otherResolution]
+      .forEach(el => { if (el) el.style.display = "none"; });
+
+    // show selected
+    if (val === "remote-sensing" && rsPixelResolution) rsPixelResolution.style.display = "block";
+    if (val === "gis" && gisGridResolution) gisGridResolution.style.display = "block";
+    if (val === "model-ml" && mlResolution) mlResolution.style.display = "block";
+    if (val === "prediction" && predictionResolution) predictionResolution.style.display = "block";
+    if (val === "survey" && surveyAggregation) surveyAggregation.style.display = "block";
+    if (val === "other" && otherResolution) otherResolution.style.display = "block";
+  }
+
+  // 3) AOI type => which AOI panel show/hide
+  const aoiType = document.getElementById("aoiType");
+  const aoiDropdownContainer = document.getElementById("aoi-dropdown");
+  const aoiCoordinates = document.getElementById("aoi-coordinates");
+  const aoiUpload = document.getElementById("aoi-upload");
+
+  if (aoiType) {
+    const t = aoiType.value;
+
+    [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
+      if (el) el.style.display = "none";
+    });
+
+    if (t === "dropdown" && aoiDropdownContainer) aoiDropdownContainer.style.display = "block";
+    if (t === "coordinates" && aoiCoordinates) aoiCoordinates.style.display = "block";
+    if (t === "upload" && aoiUpload) aoiUpload.style.display = "block";
+  }
+}
+
+function applyEvaluationTypeUI() {
+  const evaluationType = document.getElementById('evaluationType');
+  const useCaseSection = document.getElementById('use-case-section');
+  if (!evaluationType || !useCaseSection) return;
+
+  const isUseCase = evaluationType.value === 'use-case-adequacy';
+  useCaseSection.style.display = isUseCase ? 'block' : 'none';
+
+  document.querySelectorAll('.use-case-only').forEach(el => {
+    el.style.display = isUseCase ? 'block' : 'none';
+  });
+
+  document.querySelectorAll('.general-design-only').forEach(el => {
+    el.style.display = isUseCase ? 'none' : 'block';
+  });
+}
+
 
