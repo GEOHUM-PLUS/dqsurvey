@@ -358,6 +358,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
-
+  // Handle previous button click to send step1=1
+    document.getElementById('back3to2').addEventListener('click', function() {
+        sessionStorage.setItem('step2', '1');
+    });
 
 });
