@@ -1,6 +1,6 @@
 // SUMMARY PAGE: SUMMARY & CREDITS
 // import {  initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, getGrade, getGradeColor, clearAllSurveyData } from './shared-utils.js';
-import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons} from './shared-utils.js';
+import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons } from './shared-utils.js';
 import { DataManager } from './core/datamanager.js';
 
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return;
   }
 
-   console.log("✔ Section5 loaded with IDs:", { section1Id, section2Id, section3Id, section4Id, section5Id });
+  console.log("✔ Section5 loaded with IDs:", { section1Id, section2Id, section3Id, section4Id, section5Id });
   // Initialize conformance visibility
   const savedProcessingLevel = localStorage.getItem('dataProcessingLevel');
   if (savedProcessingLevel) {
@@ -70,18 +70,18 @@ document.addEventListener('DOMContentLoaded', function () {
       ).then(r => r.json());
       // SECTION 2
       const section2 = await fetch(
-        `${API}/section2/bySection1/${section1Id}`
+        `${API}/section2/bySection1/${section2Id}/${section1Id}`
       ).then(r => r.json());
       // SECTION 3
       const section3 = await fetch(
-        `${API}/section3/bySection1And2/${section1Id}/${section2Id}`
+        `${API}/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`
       ).then(r => r.json());
       // SECTION 4 (OPTIONAL)
 
       let section4 = null;
       if (section4Id && section4Id !== "null") {
         section4 = await fetch(
-          `${API}/section4/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}`
+          `${API}/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`
         ).then(r => r.json());
       }
       // SECTION 5 (SMART NULL SUPPORT)
@@ -103,9 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
         section5
       });
 
-      // -----------------------------
       // POPULATE SUMMARY PAGE
-      // -----------------------------
       populateSummary(section1, section2, section3, section4, section5);
 
     } catch (err) {
@@ -113,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
       alert("Failed to load summary data");
     }
   }
-
+  // Helper to populate the summary page with fetched data
   function populateSummary(s1, s2, s3, s4, s5) {
 
     // -----------------------------
@@ -186,10 +184,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   loadSummaryData();
-// At the top of your DOMContentLoaded listener
-let currentSummaryData = null; // declare globally at the top
+  let currentSummaryData = null;
 
-async function loadSummaryData() {
+  // Helper to load all summary data from the backend using stored IDs
+  async function loadSummaryData() {
     try {
         const API = "https://dqsurvey.onrender.com";
         const section1Id = sessionStorage.getItem("section1_id");
@@ -198,118 +196,74 @@ async function loadSummaryData() {
         const section4Id = sessionStorage.getItem("section4_id");
         const section5Id = sessionStorage.getItem("section5_id");
 
-        // Fetch all sections
-        const [s1, s2, s3, s4, s5] = await Promise.all([
-            fetch(`${API}/section1/${section1Id}`).then(r => r.json()),
-            fetch(`${API}/section2/bySection1/${section1Id}`).then(r => r.json()),
-            fetch(`${API}/section3/bySection1And2/${section1Id}/${section2Id}`).then(r => r.json()),
-            (section4Id && section4Id !== "null")
-                ? fetch(`${API}/section4/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}`).then(r => r.json())
-                : Promise.resolve(null),
-            fetch(`${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/${section4Id || 'null'}/${section5Id}`).then(r => r.json())
-        ]);
+      // Fetch all sections
+      const [s1, s2, s3, s4, s5] = await Promise.all([
+        fetch(`${API}/section1/${section1Id}`).then(r => r.json()),
+        fetch(`${API}/section2/bySection1/${section2Id}/${section1Id}`).then(r => r.json()),
+        fetch(`${API}/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`).then(r => r.json()),
+        (section4Id && section4Id !== "null")
+          ? fetch(`${API}/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`).then(r => r.json())
+          : Promise.resolve(null),
+        fetch(`${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/${section4Id || 'null'}/${section5Id}`).then(r => r.json())
+      ]);
 
-        currentSummaryData = { s1, s2, s3, s4, s5 }; // ✅ now this works
-        console.log("✅ Summary Data Loaded:", currentSummaryData);
+      currentSummaryData = { s1, s2, s3, s4, s5 }; // ✅ now this works
+      console.log("✅ Summary Data Loaded:", currentSummaryData);
 
-        populateSummary(s1, s2, s3, s4, s5);
+      populateSummary(s1, s2, s3, s4, s5);
 
     } catch (err) {
-        console.error("❌ Error loading summary:", err);
-        alert("Failed to load summary data");
+      console.error("❌ Error loading summary:", err);
+      alert("Failed to load summary data");
     }
-}
+  }
 
-// Helper to generate the object used for downloads
-function generateSummaryData() {
+  // Helper to generate the object used for downloads
+  function generateSummaryData() {
     if (!currentSummaryData) return null;
     const { s1, s2, s3, s4, s5 } = currentSummaryData;
 
     return {
-        datasetTitle: s1?.dataset_title || "N/A",
-        dataType: s1?.data_type || "N/A",
-        processingLevel: s1?.processing_level || "N/A",
-        evaluationType: s1?.evaluation_type || "N/A",
-        language: s1?.language || "N/A",
-        evaluatorName: s1?.evaluator_name || "N/A",
-        evaluatorOrg: s1?.evaluator_org || "N/A",
-        useCaseDesc: s2?.usecase_description || "N/A",
-        optimumDate: s2?.optimum_date || "N/A",
-        spatialRes: s2?.spatial_resolution || "N/A",
-        areaOfInterest: s2?.area_of_interest || "N/A",
-        scores: {
-            resolution: parseFloat(s3?.score_resolution) || 0,
-            coverage: parseFloat(s3?.score_coverage) || 0,
-            timeliness: parseFloat(s3?.score_timeliness) || 0,
-            conformance: parseFloat(s4?.score_conformance) || 0,
-            context: parseFloat(s5?.score_transferability) || 0,
-            overall: 0 // You can calculate an average here if desired
-        },
-        timestamps: {
-            created: s1?.created_at || new Date(),
-            lastModified: new Date()
-        }
+      datasetTitle: s1?.dataset_title || "N/A",
+      dataType: s1?.data_type || "N/A",
+      processingLevel: s1?.processing_level || "N/A",
+      evaluationType: s1?.evaluation_type || "N/A",
+      language: s1?.language || "N/A",
+      evaluatorName: s1?.evaluator_name || "N/A",
+      evaluatorOrg: s1?.evaluator_org || "N/A",
+      useCaseDesc: s2?.usecase_description || "N/A",
+      optimumDate: s2?.optimum_date || "N/A",
+      spatialRes: s2?.spatial_resolution || "N/A",
+      areaOfInterest: s2?.area_of_interest || "N/A",
+      scores: {
+        resolution: parseFloat(s3?.score_resolution) || 0,
+        coverage: parseFloat(s3?.score_coverage) || 0,
+        timeliness: parseFloat(s3?.score_timeliness) || 0,
+        conformance: parseFloat(s4?.score_conformance) || 0,
+        context: parseFloat(s5?.score_transferability) || 0,
+        overall: 0 // You can calculate an average here if desired
+      },
+      timestamps: {
+        created: s1?.created_at || new Date(),
+        lastModified: new Date()
+      }
     };
-}
+  }
 
-// Helper to get grade based on score (0-5 scale assumed)
-function getGrade(score) {
+  // Helper to get grade based on score (0-5 scale assumed)
+  function getGrade(score) {
     if (score >= 4.5) return "Excellent";
     if (score >= 3.5) return "Good";
     if (score >= 2.5) return "Fair";
     return "Poor";
-}
+  }
 
 
-//   function downloadPDF() {
-//     const data = generateSummaryData();
-//     const pdfContent = `DATA QUALITY EVALUATION REPORT
-// =====================================
-// Generated: ${new Date().toLocaleString()}
-
-// DATASET INFORMATION:
-// - Title: ${data.datasetTitle}
-// - Data Type: ${data.dataType}
-// - Processing Level: ${data.processingLevel}
-// - Evaluation Type: ${data.evaluationType}
-// - Language: ${data.language}
-// - Evaluator: ${data.evaluatorName}
-// - Organization: ${data.evaluatorOrg}
-
-// USE-CASE INFORMATION:
-// - Description: ${data.useCaseDesc}
-// - Optimum Collection Date: ${data.optimumDate}
-// - Spatial Resolution: ${data.spatialRes}
-// - Area of Interest: ${data.areaOfInterest}
-
-// QUALITY ASSESSMENT SCORES:
-// - Overall: ${(data.scores.overall || 0).toFixed(1)} (${getGrade(data.scores.overall)})
-// - Resolution: ${(data.scores.resolution || 0).toFixed(1)} (${getGrade(data.scores.resolution)})
-// - Coverage: ${(data.scores.coverage || 0).toFixed(1)} (${getGrade(data.scores.coverage)})
-// - Timeliness: ${(data.scores.timeliness || 0).toFixed(1)} (${getGrade(data.scores.timeliness)})
-// - Conformance: ${(data.scores.conformance || 0).toFixed(1)} (${getGrade(data.scores.conformance)})
-// - Context/Transferability: ${(data.scores.context || 0).toFixed(1)} (${getGrade(data.scores.context)})
-
-// EVALUATION METADATA:
-// - Created: ${new Date(data.timestamps.created).toLocaleString()}
-// - Last Modified: ${new Date(data.timestamps.lastModified).toLocaleString()}
-
-// =====================================
-// End of Report`;
-
-//     const blob = new Blob([pdfContent], { type: 'text/plain' });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = `${data.datasetTitle.replace(/[^a-z0-9]/gi, '_')}_Report.pdf`;
-//     a.click();
-//     URL.revokeObjectURL(url);
-//   }
-  
-async function downloadPDF() {
+  // PDF download - uses the entire currentSummaryData object for a comprehensive export
+  async function downloadPDF() {
     if (!currentSummaryData) {
-        alert("Data not loaded yet!");
-        return;
+      alert("Data not loaded yet!");
+      return;
     }
 
     const { jsPDF } = window.jspdf;
@@ -319,8 +273,8 @@ async function downloadPDF() {
     const lineHeight = 8;
 
     const addLine = (text) => {
-        doc.text(10, y, text);
-        y += lineHeight;
+      doc.text(10, y, text);
+      y += lineHeight;
     }
 
     addLine("📊 DATA QUALITY EVALUATION SUMMARY");
@@ -329,43 +283,30 @@ async function downloadPDF() {
 
     // Loop through sections
     for (let section in currentSummaryData) {
-        addLine(`\n📁 ${section.toUpperCase()}`);
-        const data = currentSummaryData[section];
+      addLine(`\n📁 ${section.toUpperCase()}`);
+      const data = currentSummaryData[section];
 
-        for (let key in data) {
-            let value = data[key];
-            if (typeof value === 'object' && value !== null) {
-                addLine(`  ${key}:`);
-                for (let subKey in value) {
-                    addLine(`    ${subKey}: ${value[subKey]}`);
-                }
-            } else {
-                addLine(`  ${key}: ${value}`);
-            }
+      for (let key in data) {
+        let value = data[key];
+        if (typeof value === 'object' && value !== null) {
+          addLine(`  ${key}:`);
+          for (let subKey in value) {
+            addLine(`    ${subKey}: ${value[subKey]}`);
+          }
+        } else {
+          addLine(`  ${key}: ${value}`);
         }
+      }
     }
 
-    doc.save(`Summary_${new Date().toISOString().slice(0,10)}.pdf`);
-}
+    doc.save(`Summary_${new Date().toISOString().slice(0, 10)}.pdf`);
+  }
 
-
-  // function downloadJSON() {
-  //   const data = generateSummaryData();
-  //   const jsonData = JSON.stringify(data, null, 2);
-  //   const blob = new Blob([jsonData], { type: 'application/json' });
-  //   const url = URL.createObjectURL(blob);
-  //   const a = document.createElement('a');
-  //   a.href = url;
-  //   a.download = `${data.datasetTitle.replace(/[^a-z0-9]/gi, '_')}_Summary.json`;
-  //   a.click();
-  //   URL.revokeObjectURL(url);
-  // }
-
-  // ---- SUBMIT FORM ----
+  // JSON download - uses the entire currentSummaryData object for a comprehensive export
   function downloadJSON() {
     if (!currentSummaryData) {
-        alert("Data not loaded yet!");
-        return;
+      alert("Data not loaded yet!");
+      return;
     }
 
     const data = currentSummaryData; // use everything as-is
@@ -376,11 +317,11 @@ async function downloadPDF() {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Summary_${new Date().toISOString().slice(0,10)}.json`;
+    a.download = `Summary_${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
 
     URL.revokeObjectURL(url);
-}
+  }
 
   const submitBtn = document.getElementById('submitForm');
   if (submitBtn) {

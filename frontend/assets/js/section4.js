@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
 
+
   // ---- CONFORMANCE SCORING ----
   const conformanceScores = document.querySelectorAll('input[name="conformanceScore"]');
 
@@ -194,10 +195,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
-
-// ----------------------------------------
+ 
 // SUBMIT SECTION 4 TO BACKEND
-// ----------------------------------------
 const submitBtn = document.querySelector('.btn-next');
 
 if (submitBtn) {
@@ -326,5 +325,9 @@ if (submitBtn) {
   });
 }
 
+// Handle previous button click to send step1=1
+    document.getElementById('back4to3').addEventListener('click', function() {
+        sessionStorage.setItem('step3', '1');
+    });
 
 });
