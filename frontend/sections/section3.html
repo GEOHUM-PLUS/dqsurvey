@@ -151,12 +151,11 @@
                     </div>
                     <div class="mb-3">
                         <label>Deviation from optimum spatial resolution</label>
-                        <!-- <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" readonly="" type="text" /> -->
-                          <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" type="text" />
+                        <input class="form-control" id="spatialDeviation" placeholder="Auto-calculated" type="text" />
                     </div>
                     <div class="mb-3">
                         <label>Score spatial fit for purpose</label>
-                        <select class="form-select score-field" data-scoregroup="usecase-spatial-fit">
+                        <select class="form-select score-field" id="spatialFitScore"  data-scoregroup="usecase-spatial-fit">
                             <option value="">Select score (1 to 4)</option>
                             <option value="1">1: data cannot be used in a meaningful way</option>
                             <option value="2">2: data are coarse, but can be used</option>
@@ -190,16 +189,12 @@
                 <!-- General scoring -->
                 <div class="mb-3 general-design-only">
                     <label>Score general design spatial coverage</label>
-                    <select class="form-select score-field" data-scoregroup="design-coverage">
+                    <select class="form-select score-field" id="generalCoverageScore" data-scoregroup="design-coverage">
                         <option value="">Select score (1 to 4)</option>
-                        <!-- <option value="1">1: local, regional</option>
+                        <option value="1">1: local, regional</option>
                         <option value="2">2: country</option>
                         <option value="3">3: continent, multiple countries</option>
-                        <option value="4">4: global</option> -->
-                         <option value="1: local, regional">1: local, regional</option>
-                        <option value="2: country">2: country</option>
-                        <option value="3: continent, multiple countries">3: continent, multiple countries</option>
-                        <option value="4: global">4: global</option>
+                        <option value="4">4: global</option>
                     </select>
                 </div>
                 <!-- Use-case specific fields -->
@@ -222,8 +217,7 @@
                     </div>
                     <div class="mb-3">
                         <label>Score spatial fit of coverage</label>
-                        <select class="form-select score-field" data-scoregroup="usecase-coverage-fit"
-                            id="coverageFitScore">
+                        <select class="form-select score-field" data-scoregroup="usecase-coverage-fit" id="coverageFitScore">
                             <option value="">Select score (1 to 4)</option>
                             <option value="1">1: &lt;30%</option>
                             <option value="2">2: 30–60%</option>
@@ -274,23 +268,19 @@
                 <!-- General scoring -->
                 <div class="mb-3 general-design-only">
                     <label>Score general design timeliness</label>
-                    <select class="form-select score-field" data-scoregroup="design-timeliness">
+                    <select class="form-select score-field" id="generalTimelinessScore" data-scoregroup="design-timeliness">
                         <option value="">Select score (1 to 4)</option>
-                        <!-- <option value="1">1: single valid data collection</option>
+                        <option value="1">1: single valid data collection</option>
                         <option value="2">2: on demand or irregular data collection and updates</option>
                         <option value="3">3: regular data collection, long intervals; valid for years</option>
-                        <option value="4">4: regular data collection with short intervals; valid for decades</option> -->
-                         <option value="1: single valid data collection">1: single valid data collection</option>
-                        <option value="2: on demand or irregular data collection and updates">2: on demand or irregular data collection and updates</option>
-                        <option value="3: regular data collection, long intervals; valid for years">3: regular data collection, long intervals; valid for years</option>
-                        <option value="4: regular data collection with short intervals; valid for decades">4: regular data collection with short intervals; valid for decades</option>
+                        <option value="4">4: regular data collection with short intervals; valid for decades</option>
                     </select>
                 </div>
                 <!-- Use-case specific -->
                 <div class="use-case-only" style="display:none;">
                     <div class="mb-3">
                         <label>Optimum collection date (auto-filled)</label>
-                        <input class="form-control" id="optimumCollectionAuto" readonly="" type="text" />
+                        <input class="form-control" id="optimumCollectionDate" readonly="" type="text" />
                     </div>
                     <div class="mb-3">
                         <label>Deviation from optimum collection date</label>
@@ -299,16 +289,12 @@
                     </div>
                     <div class="mb-3">
                         <label>Score temporal fit</label>
-                        <select class="form-select score-field" data-scoregroup="usecase-temporal-fit">
+                        <select class="form-select score-field" id="temporalFitScore" data-scoregroup="usecase-temporal-fit">
                             <option value="">Select score (1 to 4)</option>
-                            <!-- <option value="1">1: out-dated data, cannot be used responsibly</option>
+                            <option value="1">1: out-dated data, cannot be used responsibly</option>
                             <option value="2">2: low temporal fit, but data are usable</option>
                             <option value="3">3: temporal deviation is acceptable</option>
-                            <option value="4">4: very high temporal fit</option> -->
-                            <option value="1: out-dated data, cannot be used responsibly">1: out-dated data, cannot be used responsibly</option>
-                            <option value="2: low temporal fit, but data are usable">2: low temporal fit, but data are usable</option>
-                            <option value="3: temporal deviation is acceptable">3: temporal deviation is acceptable</option>
-                            <option value="4: very high temporal fit">4: very high temporal fit</option>
+                            <option value="4">4: very high temporal fit</option>
                         </select>
                     </div>
                 </div>

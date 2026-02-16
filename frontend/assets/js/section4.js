@@ -325,5 +325,9 @@ if (submitBtn) {
   });
 }
 
+// Handle previous button click to send step1=1
+    document.getElementById('back4to3').addEventListener('click', function() {
+        sessionStorage.setItem('step3', '1');
+    });
 
 });
