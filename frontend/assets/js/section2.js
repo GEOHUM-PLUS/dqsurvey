@@ -384,12 +384,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---------- API CALL ----------
     try {
-      const response = await fetch("http://localhost:8020/section2/section2", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+      // const response = await fetch("http://localhost:8020/section2/section2", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(payload)
+      // });
+const section2Id = sessionStorage.getItem("section2_id");
+  const step2Flag = parseInt(sessionStorage.getItem("step2") || "0");
 
+  const isEditMode = !!section2Id && step2Flag === 1;
+
+  const url = isEditMode
+    ? `http://localhost:8020/section2/section2/${section2Id}`
+    : `http://localhost:8020/section2/section2`;
+
+  const method = isEditMode ? "PUT" : "POST";
+
+  console.log("📌 Section2 Save Mode:", isEditMode ? "UPDATE" : "CREATE", { url, method });
+
+  const response = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
       const result = await response.json();
 
       if (!response.ok) {

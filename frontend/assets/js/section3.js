@@ -27,7 +27,7 @@ const toDateInputValue = (v) => {
   try {
     const d = new Date(v);
     if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
-  } catch (e) {}
+  } catch (e) { }
   return v; // already YYYY-MM-DD
 };
 
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
     section2Id
   });
 
- // ✅ REFILL WHEN COMING BACK
+  // ✅ REFILL WHEN COMING BACK
   if (section3Id && step3Flag === 1) {
     refillSection3FromDB(section3Id, section1Id, section2Id);
   }
@@ -314,6 +314,12 @@ document.addEventListener('DOMContentLoaded', function () {
       const section1Id = sessionStorage.getItem("section1_id");
       const section2Id = sessionStorage.getItem("section2_id");
 
+      const section3Id = sessionStorage.getItem("section3_id");
+      const step3Flag = parseInt(sessionStorage.getItem("step3") || "0");
+
+      // ✅ edit mode if step3=1 and section3_id exists
+      const isEditMode = !!section3Id && step3Flag === 1;
+
       if (!section1Id || !section2Id) {
         alert("❌ Missing Section IDs. Please complete previous sections.");
         return;
@@ -371,12 +377,22 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log("🚀 Section3 Payload:", payload);
       // Send to backend
       try {
-        const response = await fetch('http://localhost:8020/section3/section3', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        // const response = await fetch('http://localhost:8020/section3/section3', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(payload)
+        // });
 
+const url = isEditMode
+  ? `http://localhost:8020/section3/section3/${section3Id}`
+  : `http://localhost:8020/section3/section3`;
+
+const method = isEditMode ? "PUT" : "POST";
+const response = await fetch(url, {
+  method,
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
         const result = await response.json();
         console.log('✅ Section 3 saved:', result);
 
@@ -392,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Go next
         // window.location.href = 'section4.html';
-    
+
         // Decide next section based on processing level
         const processingLevel =
           sessionStorage.getItem('products') ||
@@ -412,151 +428,80 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+// refill back from section 4
+  async function refillSection3FromDB(section3Id, section1Id, section2Id) {
+    try {
+      const url = `http://localhost:8020/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("Failed to fetch section3 data");
+      const data = await res.json();
 
-//   async function refillSection3FromDB(section3Id, section1Id, section2Id) {
-//   try {
-//     const url = `http://localhost:8020/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`;
-//     const res = await fetch(url);
-//     if (!res.ok) throw new Error("Failed to fetch section3 data");
-//     const data = await res.json();
+      console.log("✅ Section3 DB data:", data);
+      if (!data) return;
 
-//     console.log("✅ Section3 DB data:", data);
-//     if (!data) return;
+      // ✅ FIRST: ensure correct UI sections open (important!)
+      const currentDataType = sessionStorage.getItem("dataType");
+      if (currentDataType) handleDataTypeChange(currentDataType);
 
-//     const setVal = (id, v) => {
-//       const el = document.getElementById(id);
-//       if (el) el.value = (v ?? '');
-//     };
+      const currentEvaluationType = sessionStorage.getItem("evaluationType");
+      if (currentEvaluationType) handleEvaluationTypeChange(currentEvaluationType);
 
-//     // -------------------------
-//     // ✅ MAP DB FIELDS -> INPUT IDs
-//     // (IDs should match your form)
-//     // -------------------------
-//     setVal("pixelResolutionValue", data.pixel_resolution_value);
-//     setVal("pixelResolutionUnit", data.pixel_resolution_unit);
+      // ✅ NOW set values (normal inputs)
+      setVal("pixelResolutionValue", data.pixel_resolution_value);
+      setVal("pixelResolutionUnit", data.pixel_resolution_unit);
 
-//     setVal("gridResolutionValue", data.grid_resolution_value);
-//     setVal("gridResolutionUnit", data.grid_resolution_unit);
+      setVal("gridResolutionValue", data.grid_resolution_value);
+      setVal("gridResolutionUnit", data.grid_resolution_unit);
 
-//     setVal("outputResolutionValue", data.output_resolution_value);
-//     setVal("outputResolutionUnit", data.output_resolution_unit);
+      setVal("outputResolutionValue", data.output_resolution_value);
+      setVal("outputResolutionUnit", data.output_resolution_unit);
 
-//     setVal("aggregationResolutionLevel", data.aggregation_resolution_level);
+      setVal("aggregationResolutionLevel", data.aggregation_resolution_level);
 
-//     setVal("generalResolutionScore", data.general_resolution_score);
-//     setVal("useCaseResolutionScore", data.usecase_resolution_score);
-//     setVal("optimalResolution", data.optimal_resolution);
-//     setVal("spatialFit", data.spatial_fit);
-//     setVal("spatialDeviation", data.spatial_deviation);
-//     setVal("spatialFitScore", data.spatial_fit_score);
+      // ✅ SCORES (these are SELECT dropdowns usually)
+      setSelect("generalResolutionScore", data.general_resolution_score);
+      setSelect("useCaseResolutionScore", data.usecase_resolution_score);
+      setSelect("spatialFitScore", data.spatial_fit_score);
 
-//     setVal("generalExtent", data.general_extent);
-//     setVal("generalExtentDetails", data.general_extent_details);
-//     setVal("generalCoverageScore", data.general_coverage_score);
+      setSelect("generalCoverageScore", data.general_coverage_score);
+      setSelect("coverageFitScore", data.coverage_fit_score);
 
-//     setVal("aoiCoverage", data.aoi_coverage);
-//     setVal("cloudCover", data.cloud_cover);
-//     setVal("coverageDeviation", data.coverage_deviation);
-//     setVal("coverageFitScore", data.coverage_fit_score);
+      setSelect("generalTimelinessScore", data.general_timeliness_score);
+      setSelect("temporalFitScore", data.temporal_fit_score);
 
-//     setVal("collectionDate", data.collection_date);
-//     setVal("temporalResolution", data.temporal_resolution);
-//     setVal("latestUpdate", data.latest_update);
-//     setVal("temporalExtent", data.temporal_extent);
-//     setVal("temporalValidity", data.temporal_validity);
+      // ✅ TEXT INPUTS
+      setVal("optimalResolution", data.optimal_resolution);
+      setVal("spatialFit", data.spatial_fit);
+      setVal("spatialDeviation", data.spatial_deviation);
 
-//     setVal("generalTimelinessScore", data.general_timeliness_score);
-//     setVal("optimumCollectionDate", data.optimum_collection_date);
-//     setVal("temporalDeviation", data.temporal_deviation);
-//     setVal("temporalFitScore", data.temporal_fit_score);
+      setVal("generalExtent", data.general_extent);
+      setVal("generalExtentDetails", data.general_extent_details);
 
-//     // ✅ IMPORTANT: re-apply UI show/hide based on section1 values
-//     const currentDataType = sessionStorage.getItem("dataType");
-//     if (currentDataType) handleDataTypeChange(currentDataType);
+      setVal("aoiCoverage", data.aoi_coverage);
+      setVal("cloudCover", data.cloud_cover);
+      setVal("coverageDeviation", data.coverage_deviation);
 
-//     const currentEvaluationType = sessionStorage.getItem("evaluationType");
-//     if (currentEvaluationType) handleEvaluationTypeChange(currentEvaluationType);
+      setVal("temporalExtent", data.temporal_extent);
+      setVal("temporalValidity", data.temporal_validity);
+      setVal("temporalDeviation", data.temporal_deviation);
 
-//     console.log("✅ Section3 refill done.");
-//   } catch (err) {
-//     console.error("❌ Section3 refill error:", err);
-//   }
-// }
+      // ✅ DATES (use setDate!!)
+      setDate("collectionDate", data.collection_date);
+      setVal("temporalResolution", data.temporal_resolution);
+      setDate("optimumCollectionDate", data.optimum_collection_date);
 
-  // Handle previous button click to send step1=1
-   async function refillSection3FromDB(section3Id, section1Id, section2Id) {
-  try {
-    const url = `http://localhost:8020/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Failed to fetch section3 data");
-    const data = await res.json();
+      // These are often date or text — adjust based on your HTML type:
+      setDate("latestUpdate", data.latest_update); // if <input type="date">
+      // if latestUpdate is <input type="text"> then use setVal instead
 
-    console.log("✅ Section3 DB data:", data);
-    if (!data) return;
-
-    // ✅ FIRST: ensure correct UI sections open (important!)
-    const currentDataType = sessionStorage.getItem("dataType");
-    if (currentDataType) handleDataTypeChange(currentDataType);
-
-    const currentEvaluationType = sessionStorage.getItem("evaluationType");
-    if (currentEvaluationType) handleEvaluationTypeChange(currentEvaluationType);
-
-    // ✅ NOW set values (normal inputs)
-    setVal("pixelResolutionValue", data.pixel_resolution_value);
-    setVal("pixelResolutionUnit", data.pixel_resolution_unit);
-
-    setVal("gridResolutionValue", data.grid_resolution_value);
-    setVal("gridResolutionUnit", data.grid_resolution_unit);
-
-    setVal("outputResolutionValue", data.output_resolution_value);
-    setVal("outputResolutionUnit", data.output_resolution_unit);
-
-    setVal("aggregationResolutionLevel", data.aggregation_resolution_level);
-
-    // ✅ SCORES (these are SELECT dropdowns usually)
-    setSelect("generalResolutionScore", data.general_resolution_score);
-    setSelect("useCaseResolutionScore", data.usecase_resolution_score);
-    setSelect("spatialFitScore", data.spatial_fit_score);
-
-    setSelect("generalCoverageScore", data.general_coverage_score);
-    setSelect("coverageFitScore", data.coverage_fit_score);
-
-    setSelect("generalTimelinessScore", data.general_timeliness_score);
-    setSelect("temporalFitScore", data.temporal_fit_score);
-
-    // ✅ TEXT INPUTS
-    setVal("optimalResolution", data.optimal_resolution);
-    setVal("spatialFit", data.spatial_fit);
-    setVal("spatialDeviation", data.spatial_deviation);
-
-    setVal("generalExtent", data.general_extent);
-    setVal("generalExtentDetails", data.general_extent_details);
-
-    setVal("aoiCoverage", data.aoi_coverage);
-    setVal("cloudCover", data.cloud_cover);
-    setVal("coverageDeviation", data.coverage_deviation);
-
-    setVal("temporalExtent", data.temporal_extent);
-    setVal("temporalValidity", data.temporal_validity);
-    setVal("temporalDeviation", data.temporal_deviation);
-
-    // ✅ DATES (use setDate!!)
-    setDate("collectionDate", data.collection_date);
-    setVal("temporalResolution", data.temporal_resolution);
-    setDate("optimumCollectionDate", data.optimum_collection_date);
-
-    // These are often date or text — adjust based on your HTML type:
-    setDate("latestUpdate", data.latest_update); // if <input type="date">
-    // if latestUpdate is <input type="text"> then use setVal instead
-
-    console.log("✅ Section3 refill done.");
-  } catch (err) {
-    console.error("❌ Section3 refill error:", err);
+      console.log("✅ Section3 refill done.");
+    } catch (err) {
+      console.error("❌ Section3 refill error:", err);
+    }
   }
-}
 
-  document.getElementById('back3to2').addEventListener('click', function() {
-        sessionStorage.setItem('step2', '1');
-    });
+  document.getElementById('back3to2').addEventListener('click', function () {
+    sessionStorage.setItem('step2', '1');
+  });
 
 });
