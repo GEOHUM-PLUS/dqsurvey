@@ -134,106 +134,106 @@ document.addEventListener('DOMContentLoaded', function () {
           break;
       }
       // ✅ CLEAR irrelevant resolution fields when switching data type
-const clear = (id, isSelect = false) => {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (isSelect) el.selectedIndex = 0;
-  else el.value = '';
-};
+      const clear = (id, isSelect = false) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (isSelect) el.selectedIndex = 0;
+        else el.value = '';
+      };
 
-if (this.value === 'remote-sensing') {
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-  clear('optimumOtherResolution');
-}
+      if (this.value === 'remote-sensing') {
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+        clear('optimumOtherResolution');
+      }
 
-if (this.value === 'gis') {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-  clear('optimumOtherResolution');
-}
+      if (this.value === 'gis') {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+        clear('optimumOtherResolution');
+      }
 
-if (this.value === 'model-ml') {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-  clear('optimumOtherResolution');
-}
+      if (this.value === 'model-ml') {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+        clear('optimumOtherResolution');
+      }
 
-if (this.value === 'prediction') {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-  clear('optimumOtherResolution');
-}
+      if (this.value === 'prediction') {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+        clear('optimumOtherResolution');
+      }
 
-if (this.value === 'survey') {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumOtherResolution');
-}
+      if (this.value === 'survey') {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumOtherResolution');
+      }
 
-if (this.value === 'other') {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-}
+      if (this.value === 'other') {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+      }
 
-// if user clears dataType entirely
-if (!this.value) {
-  clear('optimumPixelResolution');
-  clear('optimumPixelResolutionUnit', true);
-  clear('optimumGISResolution');
-  clear('optimumGISResolutionUnit', true);
-  clear('optimumMLResolution');
-  clear('optimumMLResolutionUnit', true);
-  clear('optimumPredictionSpatialResolution');
-  clear('optimumPredictionSpatialResolutionUnit', true);
-  clear('optimumPredictionTemporalResolution', true);
-  clear('optimumSurveyAggregation1', true);
-  clear('optimumSurveyAggregation2', true);
-  clear('optimumOtherResolution');
-}
+      // if user clears dataType entirely
+      if (!this.value) {
+        clear('optimumPixelResolution');
+        clear('optimumPixelResolutionUnit', true);
+        clear('optimumGISResolution');
+        clear('optimumGISResolutionUnit', true);
+        clear('optimumMLResolution');
+        clear('optimumMLResolutionUnit', true);
+        clear('optimumPredictionSpatialResolution');
+        clear('optimumPredictionSpatialResolutionUnit', true);
+        clear('optimumPredictionTemporalResolution', true);
+        clear('optimumSurveyAggregation1', true);
+        clear('optimumSurveyAggregation2', true);
+        clear('optimumOtherResolution');
+      }
 
 
       // Broadcast data-type change to all sections via custom event
@@ -299,57 +299,57 @@ if (!this.value) {
   //   });
   //   aoiType.dispatchEvent(new Event('change'));
   // }
-if (aoiType) {
-  aoiType.addEventListener('change', function () {
+  if (aoiType) {
+    aoiType.addEventListener('change', function () {
 
-    sessionStorage.setItem('aoiType', this.value);
+      sessionStorage.setItem('aoiType', this.value);
 
-    // Hide all
-    [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
-      if (el) el.style.display = 'none';
+      // Hide all
+      [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
+        if (el) el.style.display = 'none';
+      });
+
+      // Show selected panel
+      if (this.value === 'dropdown' && aoiDropdownContainer) {
+        aoiDropdownContainer.style.display = 'block';
+      }
+      else if (this.value === 'coordinates' && aoiCoordinates) {
+        aoiCoordinates.style.display = 'block';
+      }
+      else if (this.value === 'upload' && aoiUpload) {
+        aoiUpload.style.display = 'block';
+      }
+
+      // ✅ CLEAR irrelevant fields when switching type
+
+      if (this.value === 'dropdown') {
+        ['minLat', 'maxLat', 'minLon', 'maxLon'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+        sessionStorage.removeItem('aoiFileName');
+      }
+
+      if (this.value === 'coordinates') {
+        const dd = document.getElementById('aoiDropdown');
+        if (dd) dd.selectedIndex = 0;
+        sessionStorage.removeItem('aoiFileName');
+      }
+
+      if (this.value === 'upload') {
+        const dd = document.getElementById('aoiDropdown');
+        if (dd) dd.selectedIndex = 0;
+
+        ['minLat', 'maxLat', 'minLon', 'maxLon'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+      }
+
     });
 
-    // Show selected panel
-    if (this.value === 'dropdown' && aoiDropdownContainer) {
-      aoiDropdownContainer.style.display = 'block';
-    } 
-    else if (this.value === 'coordinates' && aoiCoordinates) {
-      aoiCoordinates.style.display = 'block';
-    } 
-    else if (this.value === 'upload' && aoiUpload) {
-      aoiUpload.style.display = 'block';
-    }
-
-    // ✅ CLEAR irrelevant fields when switching type
-
-    if (this.value === 'dropdown') {
-      ['minLat','maxLat','minLon','maxLon'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-      sessionStorage.removeItem('aoiFileName');
-    }
-
-    if (this.value === 'coordinates') {
-      const dd = document.getElementById('aoiDropdown');
-      if (dd) dd.selectedIndex = 0;
-      sessionStorage.removeItem('aoiFileName');
-    }
-
-    if (this.value === 'upload') {
-      const dd = document.getElementById('aoiDropdown');
-      if (dd) dd.selectedIndex = 0;
-
-      ['minLat','maxLat','minLon','maxLon'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.value = '';
-      });
-    }
-
-  });
-
-  aoiType.dispatchEvent(new Event('change'));
-}
+    aoiType.dispatchEvent(new Event('change'));
+  }
 
 
   // AOI DROPDOWN - Simple Implementation
@@ -594,22 +594,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     };
 
     try {
-      // const res = await fetch('http://localhost:8020/section1/section1', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(payload)
-      // });
-const url = (isEditMode && section1Id)
-  ? `http://localhost:8020/section1/section1/${section1Id}`
-  : `http://localhost:8020/section1/section1`;
 
-const method = (isEditMode && section1Id) ? 'PUT' : 'POST';
+      const url = (isEditMode && section1Id)
+        ? `http://localhost:8020/section1/section1/${section1Id}`
+        : `http://localhost:8020/section1/section1`;
 
-const res = await fetch(url, {
-  method,
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload)
-});
+      const method = (isEditMode && section1Id) ? 'PUT' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
       const data = await res.json();
 

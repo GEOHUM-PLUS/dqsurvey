@@ -3,17 +3,6 @@ import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from '.
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
 
-// let isEditMode = false;
-// const section1Id = sessionStorage.getItem("section1_id");
-// const section2Id = sessionStorage.getItem("section2_id");
-// const section3Id = sessionStorage.getItem("section3_id");
-// let step3Flag = parseInt(sessionStorage.getItem("step3") || "0");
-// console.log("Loaded session values - section3_id:", section3Id, "step1:", step3Flag);
-// // Detect Mode
-// if (section3Id && step3Flag === 1) {
-//   isEditMode = true;
-// }
-// console.log("Section1 Mode:", isEditMode ? "EDIT" : "CREATE");
 const fireChange = (id) => {
   const el = document.getElementById(id);
   if (el) el.dispatchEvent(new Event("change", { bubbles: true }));
