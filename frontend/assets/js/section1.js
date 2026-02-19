@@ -460,6 +460,14 @@ if (section1Id && step1Flag === 1) {
 }
 console.log("Section1 Mode:", isEditMode ? "EDIT" : "CREATE");
 
+// universal value getter with trim and empty string to null conversion
+const val = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const v = (el.value ?? '').toString().trim();
+  return v === '' ? null : v;
+};
+
 document.addEventListener('DOMContentLoaded', async function () {
 
   const nextBtn = document.getElementById('Initial-info');
