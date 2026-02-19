@@ -30,7 +30,38 @@ document.addEventListener('DOMContentLoaded', function () {
     section3Id,
     section4Id
   });
- 
+ // -------------------------------
+// PREVIOUS BUTTON LOGIC (dynamic)
+// -------------------------------
+const backBtn = document.getElementById("back5");
+if (backBtn) {
+  backBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const section1Id = sessionStorage.getItem("section1_id");
+    const section2Id = sessionStorage.getItem("section2_id");
+    const section3Id = sessionStorage.getItem("section3_id");
+    const section4Id = sessionStorage.getItem("section4_id"); // may be null
+
+    // // if required IDs missing, send user to section1
+    // if (!section1Id || !section2Id || !section3Id) {
+    //   window.location.href = "section1.html";
+    //   return;
+    // }
+
+    // ✅ If section4Id exists -> go back to section4 and set step4=1
+    if (section4Id && section4Id !== "null" && section4Id !== "undefined" && section4Id !== "") {
+      sessionStorage.setItem("step4", "1");
+      window.location.href = "section4.html";
+      return;
+    }
+
+    // ✅ If section4Id not exists -> go back to section3 and set step3=1
+    sessionStorage.setItem("step3", "1");
+    window.location.href = "section3.html";
+  });
+}
+
   // Initialize conformance visibility
   const savedProcessingLevel = sessionStorage.getItem('dataProcessingLevel');
   if (savedProcessingLevel) {
