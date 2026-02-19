@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (!section1Id || !section2Id || !section3Id || !section5Id) {
     alert("❌ Required IDs missing. Please complete previous sections.");
-    window.location.href = "section1.html"; // or section2.html
+    // window.location.href = "section1.html"; // or section2.html
     return;
   }
 
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
       s1?.data_type || "N/A";
 
     document.getElementById("summaryProcessingLevel").textContent =
-      s1?.processing_level || "N/A";
+      s1?.data_processing_level || "N/A";
 
     document.getElementById("summaryEvaluationType").textContent =
       s1?.evaluation_type || "N/A";
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
       s1?.evaluator_org || "N/A";
 
     document.getElementById("summaryLanguage").textContent =
-      s1?.language || "N/A";
+      s2?.language || "N/A";
 
     document.getElementById("summaryDate").textContent =
       s1?.created_at
@@ -167,13 +167,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // SCORES
     // -----------------------------
     document.getElementById("scoreResolution").textContent =
-      s3?.score_resolution || "-";
+      s3?.general_resolution_score || "-";
 
     document.getElementById("scoreCoverage").textContent =
-      s3?.score_coverage || "-";
+      s3?.general_coverage_score|| "-";
 
     document.getElementById("scoreTimeliness").textContent =
-      s3?.score_timeliness || "-";
+      s3?.general_timeliness_score || "-";
 
     document.getElementById("scoreConformance").textContent =
       s4?.score_conformance || "-";
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function () {
       dataType: s1?.data_type || "N/A",
       processingLevel: s1?.processing_level || "N/A",
       evaluationType: s1?.evaluation_type || "N/A",
-      language: s1?.language || "N/A",
+      language: s2?.language || "N/A",
       evaluatorName: s1?.evaluator_name || "N/A",
       evaluatorOrg: s1?.evaluator_org || "N/A",
       useCaseDesc: s2?.usecase_description || "N/A",
