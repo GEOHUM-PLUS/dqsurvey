@@ -204,8 +204,37 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   });
 
+// --- Payload sanitization based on accuracy type (important to avoid backend errors and maintain data integrity)-----
+function nullify(payload, keys) {
+  keys.forEach(k => payload[k] = null);
+}
 
-  // SUBMIT SECTION 4 TO BACKEND
+function sanitizeSection4Payload(payload) {
+  const type = (payload.accuracyType || "").toLowerCase();
+
+  const oldThematic = payload.thematicAccuracy;
+  const oldAttr = payload.attributeAccuracy;
+  const oldModel = payload.modelPerformance;
+  const oldPlaus = payload.dataPlausibility;
+
+  // null all
+  payload.thematicAccuracy = null;
+  payload.attributeAccuracy = null;
+  payload.modelPerformance = null;
+  payload.dataPlausibility = null;
+
+  // restore only selected
+  if (type === "thematic") payload.thematicAccuracy = oldThematic;
+  if (type === "attribute") payload.attributeAccuracy = oldAttr;
+  if (type === "model") payload.modelPerformance = oldModel;
+  if (type === "plausibility") payload.dataPlausibility = oldPlaus;
+}
+
+
+
+
+
+  //----- SUBMIT SECTION 4 TO BACKEND
   const submitBtn = document.querySelector('.btn-next');
 
   if (submitBtn) {
@@ -266,7 +295,8 @@ document.addEventListener('DOMContentLoaded', function () {
         domainConsistency: val("domainConsistency"),
         thematicConsistency: val("thematicConsistency"),
         spatialConsistency: val("spatialConsistency"),
-        inconsistencySources: checkedValues('.inconsistency-check'),
+        // inconsistencySources: checkedValues('.inconsistency-check'),
+        inconsistencySources: checkedValues('input[name="inconsistencySources"]'),
         consistencyScore: document.querySelector('[data-scoregroup="conformance-consistency"]')?.value || null,
 
         // Accuracy
@@ -303,7 +333,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         inputDatasets
       };
-
+// ✅ prevent hidden old values from being sent
+sanitizeSection4Payload(payload);
       console.log("🚀 Section4 Payload:", payload);
 
       // -------- API call --------
