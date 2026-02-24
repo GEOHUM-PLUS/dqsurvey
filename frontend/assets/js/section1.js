@@ -626,7 +626,8 @@ document.addEventListener('DOMContentLoaded', async function () {
         // (optional but useful)
         sessionStorage.setItem('evaluatorName', payload.evaluatorName);
         sessionStorage.setItem('dataType', payload.dataType);
-
+        sessionStorage.setItem('evaluationType', payload.evaluationType);
+        sessionStorage.setItem('processingLevel', payload.dataProcessingLevel);
         // Redirect to next section
         window.location.href = './section2.html';
       } else {

@@ -417,6 +417,7 @@ const section2Id = sessionStorage.getItem("section2_id");
       console.log("✅ Section 2 saved!", result);
       // 🔑 Save Section2 ID to sessionStorage
       sessionStorage.setItem("section2_id", result.id);
+      sessionStorage.setItem("step2", "0");
       window.location.href = "section3.html";
 
     } catch (err) {

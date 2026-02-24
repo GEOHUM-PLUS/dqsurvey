@@ -11,8 +11,9 @@
 // - section5.js: Context section
 // - summary.js: Summary & Credits section
 
-import { DataManager, initializeHighlighting } from './shared-utils.js';
-
+import { initializeHighlighting } from './shared-utils.js';
+import { DataManager } from './core/datamanager.js';
+import { initializeTooltips } from './shared-utils.js';
 // ============================================
 // HOME PAGE INITIALIZATION
 // ============================================

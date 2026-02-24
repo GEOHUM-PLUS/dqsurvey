@@ -1,4 +1,5 @@
-import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
+import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons} from './shared-utils.js';
+import{initializeTooltips} from './shared-utils.js';
 import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
@@ -107,9 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Check current values from sessionStorage on page load
   const currentDataType = sessionStorage.getItem('dataType');
-  if (currentDataType) {
-    handleDataTypeChange(currentDataType);
-  }
+  // if (currentDataType) {
+  //   handleDataTypeChange(currentDataType);
+  // }
+  if (currentDataType) handleDataTypeChange(currentDataType, { silent: true });
 
   const currentProcessingLevel = sessionStorage.getItem('dataProcessingLevel');
   if (currentProcessingLevel) {
@@ -130,46 +132,92 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('Section 3 updating UI for processing level:', processingLevel);
   }
 
-  function handleDataTypeChange(dataType) {
-    console.log('Section 3: Filtering UI for data type:', dataType);
+  // function handleDataTypeChange(dataType) {
+  //   console.log('Section 3: Filtering UI for data type:', dataType);
 
-    // list of all resolution sections
-    const sections = {
-      'pixel': document.getElementById('pixel-resolution'),
-      'grid': document.getElementById('grid-resolution'),
-      'output': document.getElementById('output-resolution'),
-      'aggregation': document.getElementById('aggregation-resolution'),
-      'manual': document.getElementById('manual-resolution-selection')
-    };
+  //   // list of all resolution sections
+  //   const sections = {
+  //     'pixel': document.getElementById('pixel-resolution'),
+  //     'grid': document.getElementById('grid-resolution'),
+  //     'output': document.getElementById('output-resolution'),
+  //     'aggregation': document.getElementById('aggregation-resolution'),
+  //     'manual': document.getElementById('manual-resolution-selection')
+  //   };
 
-    // Step 1: initialize - hide all sections
-    Object.values(sections).forEach(el => {
-      if (el) {
-        el.style.display = 'none';
-        el.style.border = "none"; // remove temporary border
-      }
-    });
+  //   // Step 1: initialize - hide all sections
+  //   Object.values(sections).forEach(el => {
+  //     if (el) {
+  //       el.style.display = 'none';
+  //       el.style.border = "none"; // remove temporary border
+  //     }
+  //   });
 
-    // Step 2: conditional logic
-    const type = dataType ? dataType.toLowerCase() : '';
+  //   // Step 2: conditional logic
+  //   const type = dataType ? dataType.toLowerCase() : '';
 
-    if (type === 'remote sensing' || type === 'remote-sensing') {
-      if (sections.pixel) sections.pixel.style.display = 'block';
-    }
-    else if (type === 'gis') {
-      if (sections.grid) sections.grid.style.display = 'block';
-    }
-    else if (type === 'prediction' || type === 'model-ml' || type === 'model') {
-      if (sections.output) sections.output.style.display = 'block';
-    }
-    else if (type === 'survey' || type === 'administrative' || type === 'other') {
-      if (sections.aggregation) sections.aggregation.style.display = 'block';
-    }
-    else {
-      // Agar koi match na ho toh manual selection dikhayein
-      if (sections.manual) sections.manual.style.display = 'block';
-    }
+  //   if (type === 'remote sensing' || type === 'remote-sensing') {
+  //     if (sections.pixel) sections.pixel.style.display = 'block';
+  //   }
+  //   else if (type === 'gis') {
+  //     if (sections.grid) sections.grid.style.display = 'block';
+  //   }
+  //   else if (type === 'prediction' || type === 'model-ml' || type === 'model') {
+  //     if (sections.output) sections.output.style.display = 'block';
+  //   }
+  //   else if (type === 'survey' || type === 'administrative' || type === 'other') {
+  //     if (sections.aggregation) sections.aggregation.style.display = 'block';
+  //   }
+  //   else {
+  //     // Agar koi match na ho toh manual selection dikhayein
+  //     if (sections.manual) sections.manual.style.display = 'block';
+  //   }
+  // }
+function clearVal(id) {
+  const el = document.getElementById(id);
+  if (el) el.value = "";
+}
+
+function handleDataTypeChange(dataType, { silent = false } = {}) {
+  console.log("handleDataTypeChange:", dataType, "silent:", silent);
+
+  const sections = {
+    pixel: document.getElementById('pixel-resolution'),
+    grid: document.getElementById('grid-resolution'),
+    output: document.getElementById('output-resolution'),
+    aggregation: document.getElementById('aggregation-resolution'),
+    manual: document.getElementById('manual-resolution-selection')
+  };
+
+  // hide all sections
+  Object.values(sections).forEach(el => {
+    if (el) el.style.display = 'none';
+  });
+
+  // ✅ clear ONLY when user changes dataType (not during refill/init)
+  if (!silent) {
+    [
+      "pixelResolutionValue", "pixelResolutionUnit",
+      "gridResolutionValue", "gridResolutionUnit",
+      "outputResolutionValue", "outputResolutionUnit",
+      "aggregationResolutionLevel"
+    ].forEach(clearVal);
   }
+
+  const type = (dataType || '').toLowerCase();
+
+  if (type === 'remote sensing' || type === 'remote-sensing') {
+    if (sections.pixel) sections.pixel.style.display = 'block';
+  } else if (type === 'gis') {
+    if (sections.grid) sections.grid.style.display = 'block';
+  } else if (type === 'prediction' || type === 'model-ml' || type === 'model') {
+    if (sections.output) sections.output.style.display = 'block';
+  } else if (type === 'survey' || type === 'administrative' || type === 'other') {
+    if (sections.aggregation) sections.aggregation.style.display = 'block';
+  } else {
+    if (sections.manual) sections.manual.style.display = 'block';
+  }
+}
+
   function handleEvaluationTypeChange(evaluationType) {
     console.log('Section 3: Handling UI for evaluation type:', evaluationType);
     const useCaseSection = document.querySelector('.use-case-only');
@@ -248,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const el = document.querySelector('[name="processingLevel"], [name="processing-level"], [name="processing_level"]');
         if (el) val = el.value || el.getAttribute('value') || null;
       }
+      console.log('Resolving next button - found processing level value:', val);
       // decide next target: if value is 'primary' -> skip conformance -> go to context (section5)
       if (val && val.toString().toLowerCase().includes('primary')) {
         nextBtn.href = 'section5.html';
@@ -293,6 +342,54 @@ document.addEventListener('DOMContentLoaded', function () {
       optimumDateAuto.value = savedOptimumDate;
     }
   }
+  // ---- PAYLOAD SANITIZATION BEFORE SUBMIT ----
+  function nullify(payload, keys) {
+  keys.forEach(k => payload[k] = null);
+}
+
+function sanitizePayloadByDataType(payload) {
+  const dt = (sessionStorage.getItem("dataType") || "").toLowerCase();
+
+  const PIXEL = ["pixelResolutionValue", "pixelResolutionUnit"];
+  const GRID  = ["gridResolutionValue", "gridResolutionUnit"];
+  const OUT   = ["outputResolutionValue", "outputResolutionUnit"];
+  const AGG   = ["aggregationResolutionLevel"];
+
+  if (dt === "remote sensing" || dt === "remote-sensing") {
+    nullify(payload, [...GRID, ...OUT, ...AGG]);
+  } else if (dt === "gis") {
+    nullify(payload, [...PIXEL, ...OUT, ...AGG]);
+  } else if (dt === "prediction" || dt === "model-ml" || dt === "model") {
+    nullify(payload, [...PIXEL, ...GRID, ...AGG]);
+  } else if (dt === "survey" || dt === "administrative" || dt === "other") {
+    nullify(payload, [...PIXEL, ...GRID, ...OUT]);
+  } else {
+    // unknown => safest: null all resolution groups
+    nullify(payload, [...PIXEL, ...GRID, ...OUT, ...AGG]);
+  }
+}
+
+function sanitizePayloadByEvaluationType(payload) {
+  const ev = (sessionStorage.getItem("evaluationType") || "").toLowerCase();
+
+  const USECASE_FIELDS = [
+    "useCaseResolutionScore", "optimalResolution", "spatialFit", "spatialDeviation", "spatialFitScore",
+    "aoiCoverage", "cloudCover", "coverageDeviation", "coverageFitScore",
+    "optimumCollectionDate", "temporalDeviation", "temporalFitScore"
+  ];
+
+  const GENERAL_FIELDS = [
+    "generalResolutionScore", "generalCoverageScore", "generalTimelinessScore"
+  ];
+
+  if (ev.includes("general")) {
+    // general-quality => null use-case stuff
+    nullify(payload, USECASE_FIELDS);
+  } else if (ev.includes("use-case")) {
+    // use-case-adequacy => null general scores
+    nullify(payload, GENERAL_FIELDS);
+  }
+}
   // ---- SUBMIT SECTION 3 TO BACKEND ----
   const submitBtn = document.getElementById('Design');
 
@@ -363,6 +460,10 @@ document.addEventListener('DOMContentLoaded', function () {
         temporalFitScore: val("temporalFitScore")
       };
 
+// ✅ IMPORTANT: remove hidden/irrelevant values from payload
+sanitizePayloadByDataType(payload);
+sanitizePayloadByEvaluationType(payload);
+
       console.log("🚀 Section3 Payload:", payload);
       // Send to backend
       try {
@@ -430,7 +531,10 @@ const response = await fetch(url, {
 
       // ✅ FIRST: ensure correct UI sections open (important!)
       const currentDataType = sessionStorage.getItem("dataType");
-      if (currentDataType) handleDataTypeChange(currentDataType);
+      // if (currentDataType) handleDataTypeChange(currentDataType);
+      if (currentDataType) {
+  handleDataTypeChange(currentDataType, { silent: true });
+}
 
       const currentEvaluationType = sessionStorage.getItem("evaluationType");
       if (currentEvaluationType) handleEvaluationTypeChange(currentEvaluationType);
