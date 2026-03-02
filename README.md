@@ -77,30 +77,11 @@ This ensures methodological consistency across evaluation paths.
 
 ## Backend
 
-* Node.js / Express API
-* Hosted on **Render (Free Tier)**
-* Connected to **PostgreSQL database (Render-managed instance)**
+* Separate Node-based API
+* Deployed via Render
+* Uses PostgreSQL for data storage
 
-### Backend Responsibilities
-
-* Store submitted section data
-* Retrieve sections by ID
-* Reconstruct summary results
-
-### Deployment Flow
-
-1. Code pushed to backend repository
-2. Render auto-builds and deploys service
-3. PostgreSQL database managed via Render
-
----
-
-## Database
-
-* **PostgreSQL**
-* Managed and hosted via **Render**
-* Stores structured evaluation data
-* Linked securely to backend API service
+For backend implementation details, see the backend repository.
 
 ---
 
@@ -139,3 +120,4 @@ This ensures methodological consistency across evaluation paths.
 The Data Quality And Adequacy Assessment Tool (DQAAT) forms part of a peer-reviewed research manuscript currently under review.
 
 Full citation details will be shared upon publication.
+
