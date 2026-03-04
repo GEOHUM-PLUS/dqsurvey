@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     dataProcessingLevel.addEventListener('change', function () {
       setProcessingLevel(this.value);
       applyConformanceVisibility(this.value);
+      
       updateNavigationButtons();
     });
     dataProcessingLevel.dispatchEvent(new Event('change'));
@@ -285,20 +286,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const aoiCoordinates = document.getElementById('aoi-coordinates');
   const aoiUpload = document.getElementById('aoi-upload');
 
-  // if (aoiType) {
-  //   aoiType.addEventListener('change', function () {
-  //     sessionStorage.setItem('aoiType', this.value);
-
-  //     [aoiDropdownContainer, aoiCoordinates, aoiUpload].forEach(el => {
-  //       if (el) el.style.display = 'none';
-  //     });
-
-  //     if (this.value === 'dropdown' && aoiDropdownContainer) aoiDropdownContainer.style.display = 'block';
-  //     else if (this.value === 'coordinates' && aoiCoordinates) aoiCoordinates.style.display = 'block';
-  //     else if (this.value === 'upload' && aoiUpload) aoiUpload.style.display = 'block';
-  //   });
-  //   aoiType.dispatchEvent(new Event('change'));
-  // }
+ 
   if (aoiType) {
     aoiType.addEventListener('change', function () {
 
@@ -628,6 +616,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         sessionStorage.setItem('dataType', payload.dataType);
         sessionStorage.setItem('evaluationType', payload.evaluationType);
         sessionStorage.setItem('processingLevel', payload.dataProcessingLevel);
+        sessionStorage.setItem('dataprocessinglevel', payload.dataProcessingLevel);
         // Redirect to next section
         window.location.href = './section2.html';
       } else {
