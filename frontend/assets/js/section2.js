@@ -1,5 +1,5 @@
 import { initializeHighlighting, applyConformanceVisibility, updateNavigationButtons, initializeTooltips } from './shared-utils.js';
-import { getDataType, getEvaluationType, getProcessingLevel, subscribe } from './state.js';
+import { getDataType, getEvaluationType, getProcessingLevel, subscribe,setProcessingLevel } from './state.js';
 import { initializePage } from './core/init.js';
 import { DataManager } from './core/datamanager.js';
 
@@ -22,10 +22,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Initialize conformance visibility
   const savedProcessingLevel = sessionStorage.getItem('dataProcessingLevel');
-  if (savedProcessingLevel) {
-    applyConformanceVisibility(savedProcessingLevel);
-  }
-  updateNavigationButtons();
+  console.log('Initial processing level from session:', savedProcessingLevel);
+   if (savedProcessingLevel) {
+      savedProcessingLevel.addEventListener('change', function () {
+        setProcessingLevel(this.value);
+        applyConformanceVisibility(this.value);
+        debugger;
+        updateNavigationButtons();
+      });
+      savedProcessingLevel.dispatchEvent(new Event('change'));
+    }
+  // if (savedProcessingLevel) {
+  //   applyConformanceVisibility(savedProcessingLevel);
+  // }
+  // updateNavigationButtons();
 
   // Listen for data-type changes from section1
   window.addEventListener('dataTypeChanged', function (event) {

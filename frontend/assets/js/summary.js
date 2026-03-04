@@ -308,9 +308,26 @@ document.addEventListener('DOMContentLoaded', function () {
       alert("Data not loaded yet!");
       return;
     }
+  // 🔁 Key mapping
+  const keyMap = {
+    s1: "Initial Information",
+    s2: "Descriptives",
+    s3: "Design",
+    s4: "Conformance",
+    s5: "Context"
+   };
+//     const data = currentSummaryData; // use everything as-is
+//     const jsonData = JSON.stringify(data, null, 2);
 
-    const data = currentSummaryData; // use everything as-is
-    const jsonData = JSON.stringify(data, null, 2);
+ // 🧠 Create new object with descriptive keys
+  const formattedData = {};
+
+  Object.keys(currentSummaryData).forEach(key => {
+    const newKey = keyMap[key] || key; // fallback if key not found
+    formattedData[newKey] = currentSummaryData[key];
+  });
+  
+    const jsonData = JSON.stringify(formattedData, null, 2);
 
     const blob = new Blob([jsonData], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
