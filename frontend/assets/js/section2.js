@@ -218,14 +218,33 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // ---- LANGUAGE DROPDOWN ----
-  const languageDropdown = document.getElementById('languageDropdown');
-  if (languageDropdown) {
-    languageDropdown.addEventListener('change', function () {
-      // DataManager.saveSection('section2', 'descriptives', { language: this.value });
-      saveFormValue('language', this.value);
-    });
-  }
+  // // ---- LANGUAGE DROPDOWN ----
+  // const languageDropdown = document.getElementById('languageDropdown');
+  // if (languageDropdown) {
+  //   languageDropdown.addEventListener('change', function () {
+  //     // DataManager.saveSection('section2', 'descriptives', { language: this.value });
+  //     saveFormValue('language', this.value);
+  //   });
+  // }
+   // ---- LANGUAGE DROPDOWN ----
+    const languageDropdown = document.getElementById('languageDropdown');
+    if (languageDropdown) {
+      languageDropdown.addEventListener('change', function () {
+        const otherContainer = document.getElementById('language-other-container');
+        if (otherContainer) {
+          otherContainer.style.display = this.value === 'other' ? 'block' : 'none';
+        }
+        saveFormValue('language', this.value);
+      });
+    }
+
+    // ---- IDENTIFIER DROPDOWN ----
+    const identifierDropdown = document.getElementById('identifierDropdown');
+    if (identifierDropdown) {
+      identifierDropdown.addEventListener('change', function () {
+        saveFormValue('identifier_type', this.value);
+      });
+    }
 
   // ---- METADATA FIELDS ----
   const documentationInput = document.getElementById('documentation');
@@ -263,9 +282,6 @@ const KEYWORDS_BANK = [
   'Emergency Management', 'Precision Mapping'
 ];
 
-
-
-
 function addKeywordBadge(keyword) {
   const keywordTags = document.getElementById('keyword-tags');
   if (!keywordTags || !keyword) return;
@@ -283,7 +299,6 @@ function addKeywordBadge(keyword) {
   keywordTags.appendChild(badge);
 }
 
-
 document.addEventListener("DOMContentLoaded", () => {
 
   // ✅ STEP2 edit check on load (coming back from section3)
@@ -297,19 +312,14 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------- WHEN USER CLICKS SAVE / NEXT ----------
   document.getElementById("section2save").addEventListener("click", async (e) => {
     e.preventDefault();
-
     console.log("▶ Saving Section 2...");
-
     // Fetch section1_id safely
-
     const section1Id = sessionStorage.getItem("section1_id");
-
     if (!section1Id) {
       alert("❌ Section 1 not found. Please complete Section 1 first.");
       window.location.href = "section1.html";
       return;
     }
-
     if (!section1Id) {
       alert("❌ Section 1 not found. Please complete Section 1 first.");
       return;
@@ -333,16 +343,26 @@ document.addEventListener("DOMContentLoaded", () => {
       section1Id,
 
       identifier: val("identifier"),
+      identifier_type: val("identifierDropdown"),  // new field for identifier type
+     
       dataset_description: val("datasetDescription"),
       dataset_description_link: val("datasetDescriptionLink"),
       // keywords: JSON.stringify(keywordsArray),
       keywords: keywordsArray,
 
 
+      // language: (() => {
+      //   const lang = document.getElementById("languageDropdown")?.value;
+      //   if (!lang) return null;
+      //   return lang === "other" ? val("languageOtherInput") : lang;
+      // })(),
+ // ✅ FIX: use "other" text input if "other" is selected
       language: (() => {
-        const lang = document.getElementById("languageDropdown")?.value;
+        const lang = document.getElementById('languageDropdown')?.value;
         if (!lang) return null;
-        return lang === "other" ? val("languageOtherInput") : lang;
+        return lang === 'other'
+          ? (document.getElementById('languageOtherInput')?.value?.trim() || null)
+          : lang;
       })(),
 
       metadata_documentation: val("metadataDoc"),
@@ -481,13 +501,31 @@ const section2Id = sessionStorage.getItem("section2_id");
       setVal("crsSelect", data.crs);
       setVal("positionalAccuracy", data.positional_accuracy);
       setVal("spatialUncertainty", data.spatial_uncertainty);
+      setVal("identifierDropdown", data.identifier_type);
 
       // ---------- language ----------
-      setVal("languageDropdown", data.language);
+      // setVal("languageDropdown", data.language);
+      // // setVal("languageOtherInput", data.language === "other" ? data.language_other : '');
+      // // setVal("identifierDropdown", data.identifier_type);
 
-      // ✅ Trigger language UI (if "other" container exists in your code)
-      document.getElementById("languageDropdown")?.dispatchEvent(new Event("change", { bubbles: true }));
+      // // ✅ Trigger language UI (if "other" container exists in your code)
+      // document.getElementById("languageDropdown")?.dispatchEvent(new Event("change", { bubbles: true }));
+// ---------- language (FIXED) ----------
+      const langDropdown = document.getElementById('languageDropdown');
+      const langOtherInput = document.getElementById('languageOtherInput');
+      const langOtherContainer = document.getElementById('language-other-container');
+      const knownLanguages = ['English', 'French', 'German', 'Spanish', 'Chinese'];
 
+      if (langDropdown) {
+        if (knownLanguages.includes(data.language)) {
+          langDropdown.value = data.language;
+          if (langOtherContainer) langOtherContainer.style.display = 'none';
+        } else if (data.language) {
+          langDropdown.value = 'other';
+          if (langOtherContainer) langOtherContainer.style.display = 'block';
+          if (langOtherInput) langOtherInput.value = data.language;
+        }
+      }
       // ---------- scores ----------
       const scoreMeta = document.querySelector('.score-field[data-scoregroup="descriptives"]');
       if (scoreMeta) scoreMeta.value = data.score_metadata_documentation ?? '';
