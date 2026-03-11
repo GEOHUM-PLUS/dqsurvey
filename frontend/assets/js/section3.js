@@ -221,18 +221,25 @@ function handleDataTypeChange(dataType, { silent = false } = {}) {
   function handleEvaluationTypeChange(evaluationType) {
     console.log('Section 3: Handling UI for evaluation type:', evaluationType);
     const useCaseSection = document.querySelector('.use-case-only');
-    const generalSpatialSection = document.getElementById('resolution-inputs').parentElement;
+    // const generalSpatialSection = document.getElementById('resolution-inputs').parentElement;
+   const generalSpatialSection = document.querySelector('.general-design-only');
+  //  const resolutionLabel = document.getElementById('spatial-resolution-label');
+
     // 1. Use-Case Adequacy 
     if (evaluationType === 'use-case-adequacy') {
+      // if (resolutionLabel) resolutionLabel.textContent = 'Suitability';
       if (useCaseSection) useCaseSection.style.display = 'block';
       if (generalSpatialSection) generalSpatialSection.style.display = 'none'; // hide General data quality
+
     }
     else if (evaluationType === 'general-quality') {
+      // if (resolutionLabel) resolutionLabel.textContent = 'Granularity';
       if (useCaseSection) useCaseSection.style.display = 'none'; // hide Use-case specific (adequacy) 
       if (generalSpatialSection) generalSpatialSection.style.display = 'block';
     }
     // 3. Default: show both
     else {
+      // if (resolutionLabel) resolutionLabel.textContent = 'Spatial Resolution';
       if (useCaseSection) useCaseSection.style.display = 'block';
       if (generalSpatialSection) generalSpatialSection.style.display = 'block';
     }
