@@ -287,11 +287,11 @@ h1, h2 {
     color: #222;
     margin-bottom: 0;
 }
-
+/* 
 .chart-container {
     margin: 40px 0;
     height: 400px;
-}
+} */
 
 /* Table Styles */
 table {
@@ -970,5 +970,116 @@ span[role="img"][aria-label]:active {
     border-bottom: 6px solid transparent;
     border-right: 6px solid #212529;
     transform: translateY(-50%);
+}
+
+
+/* .chart-container {
+  width: 100%;
+  max-width: 700px;
+  height: 190px; 
+  margin: auto;
+  background: #ffffff; 
+  padding: 0;
+  border-radius: 10px;
+} */
+.summary-wrapper {
+  display: flex;
+  align-items: stretch;
+  max-width: 800px;
+  margin: auto;
+  gap: 15px; /* Space between legend and chart */
+}
+
+.custom-legend {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around; /* Aligns legend text with bars */
+  padding-bottom: 5px; /* Fine-tune based on axis borders */
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #777; /* Matches the grey text in image_396cd6.png */
+  font-family: sans-serif;
+  white-space: nowrap;
+}
+
+.dot {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+/* Colors matching your JS configuration */
+.orange { background-color: #d95f02; }
+.yellow { background-color: #fdbf00; }
+.blue   { background-color: #5b9bd5; }
+.green  { background-color: #70ad47; }
+
+.chart-container {
+  flex-grow: 1;
+  height: 170px; /* Adjust height to match your design */
+  /* margin: 40px 0; */
+}
+#scoresChart {
+  /* height: 320px !important; */
+}
+/* Container for equal spacing */
+.custom-info-section {
+    gap: 0px; /* Adjust this to control the space between columns */
+}
+
+.section-title {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.custom-bullet-list {
+    list-style: none; /* This removes the extra dot */
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Ensure the li doesn't have any inherited bullet styling */
+.custom-bullet-list li {
+    list-style-type: none; 
+    position: relative;
+    padding-left: 1.2rem;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+/* This is the only dot you want to keep */
+.custom-bullet-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Styling for the links mentioned in your image */
+.custom-bullet-list li a {
+    color: #2a7a78; /* Muted teal/green from your theme */
+    text-decoration: underline;
+}
+
+
+#descriptivesDetail h4 {
+    font-size: 1.8rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.detail-chart-wrapper {
+    margin-top: 10px;
 }
 

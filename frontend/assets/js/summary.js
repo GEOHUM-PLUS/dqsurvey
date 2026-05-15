@@ -112,6 +112,81 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
   // Helper to populate the summary page with fetched data
+  // function populateSummary(s1, s2, s3, s4, s5) {
+
+  //   // -----------------------------
+  //   // DATASET INFO
+  //   // -----------------------------
+  //   document.getElementById("summaryTitle").textContent =
+  //     s1?.dataset_title || "N/A";
+
+  //   document.getElementById("summaryDataType").textContent =
+  //     s1?.data_type || "N/A";
+
+  //   document.getElementById("summaryProcessingLevel").textContent =
+  //     s1?.data_processing_level || "N/A";
+
+  //   document.getElementById("summaryEvaluationType").textContent =
+  //     s1?.evaluation_type || "N/A";
+
+  //   document.getElementById("summaryEvaluator").textContent =
+  //     s1?.evaluator_name || "N/A";
+
+  //   document.getElementById("summaryOrg").textContent =
+  //     s1?.evaluator_org || "N/A";
+
+  //   document.getElementById("summaryLanguage").textContent =
+  //     s2?.language || "N/A";
+
+  //   document.getElementById("summaryDate").textContent =
+  //     s1?.created_at
+  //       ? new Date(s1.created_at).toLocaleDateString()
+  //       : "N/A";
+
+  //   // -----------------------------
+  //   // USE CASE SECTION
+  //   // -----------------------------
+  //   if (s2?.usecase_description) {
+
+  //     document.getElementById("useCaseCard").style.display = "block";
+
+  //     document.getElementById("summaryUseCaseDesc").textContent =
+  //       s2.usecase_description;
+
+  //     document.getElementById("summaryOptimumDate").textContent =
+  //       s2.optimum_date || "N/A";
+
+  //     document.getElementById("summarySpatialRes").textContent =
+  //       s2.spatial_resolution || "N/A";
+
+  //     document.getElementById("summaryAOI").textContent =
+  //       s2.area_of_interest || "N/A";
+  //   }
+
+  //   // -----------------------------
+  //   // SCORES
+  //   // -----------------------------
+  //   document.getElementById("scoreResolution").textContent =
+  //     s3?.general_resolution_score || "-";
+
+  //   document.getElementById("scoreCoverage").textContent =
+  //     s3?.general_coverage_score || "-";
+
+  //   document.getElementById("scoreTimeliness").textContent =
+  //     s3?.general_timeliness_score || "-";
+
+  //   document.getElementById("scoreConformance").textContent =
+  //     s4?.score_conformance || "-";
+
+  //   document.getElementById("scoreContext").textContent =
+  //     s5?.score_transferability || "-";
+
+  // }
+
+  // Helper to populate the summary page with fetched data
+  let scoresChart;
+  let gaugeChart;
+  let detailBarChart;
   function populateSummary(s1, s2, s3, s4, s5) {
 
     // -----------------------------
@@ -163,23 +238,154 @@ document.addEventListener('DOMContentLoaded', function () {
         s2.area_of_interest || "N/A";
     }
 
+
+    const labels = [
+      "Descriptives",
+      "Design",
+      "Conformance",
+      "Relevance"
+    ];
+    // confirm these variables (not that exact variables are used in the generateSummaryData function, so they should be consistent across the codebase)
+    const scores = [
+      Number(s3?.general_resolution_score || 0),
+      Number(s3?.general_coverage_score || 0),
+      Number(s4?.score_conformance || 0),
+      Number(s5?.score_transferability || 0)
+    ];
+
+    const colors = [
+      "#d95f02", // orange
+      "#fdbf00", // yellow
+      "#5b9bd5", // blue
+      "#70ad47"  // green
+    ];
+
+    const ctx = document.getElementById("scoresChart").getContext("2d");
+
+    if (scoresChart) {
+      scoresChart.destroy();
+    }
+
+    scoresChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          data: scores,
+          backgroundColor: colors,
+          borderRadius: 0,
+        }]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+        // These two settings remove the space between the bars
+        categoryPercentage: 1.0,
+        barPercentage: 1.0,
+
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+          datalabels: {
+            anchor: "end",
+            align: "left", // Changed to 'left' to keep labels inside the bars like image_39c6d3.png
+            offset: 10,
+            color: "#fff", // White text looks better inside colored bars
+            font: {
+              weight: "bold",
+              size: 14
+            },
+            formatter: (value) => value.toFixed(2)
+          }
+        },
+        scales: {
+          x: {
+            min: 0,
+            max: 5,
+            grid: { display: false },
+            ticks: { display: false },
+            border: { display: false }
+          },
+          y: {
+            grid: { display: false },
+            ticks: {
+              display: false // Hide Y labels to match the legend-style look in image_39c6d3.png
+            },
+            border: { display: false }
+          }
+        }
+      }
+    });
     // -----------------------------
-    // SCORES
+    // GAUGE CHART (Semi-circle)
     // -----------------------------
-    document.getElementById("scoreResolution").textContent =
-      s3?.general_resolution_score || "-";
+    const gaugeCtx = document.getElementById("gaugeChart").getContext("2d");
+    if (gaugeChart) gaugeChart.destroy();
 
-    document.getElementById("scoreCoverage").textContent =
-      s3?.general_coverage_score|| "-";
+    const totalScore = Number(s3?.general_resolution_score || 0); // Example score
 
-    document.getElementById("scoreTimeliness").textContent =
-      s3?.general_timeliness_score || "-";
+    gaugeChart = new Chart(gaugeCtx, {
+      type: 'doughnut',
+      data: {
+        datasets: [{
+          data: [totalScore, 5 - totalScore],
+          backgroundColor: ["#d95f02", "#e0e0e0"],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        rotation: -90,
+        circumference: 180,
+        cutout: '80%',
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      }
+    });
 
-    document.getElementById("scoreConformance").textContent =
-      s4?.score_conformance || "-";
+    // -----------------------------
+    // DETAIL BAR CHART (Sub-aspects)
+    // -----------------------------
+    const detailCtx = document.getElementById("detailBarChart").getContext("2d");
+    if (detailBarChart) detailBarChart.destroy();
 
-    document.getElementById("scoreContext").textContent =
-      s5?.score_transferability || "-";
+    detailBarChart = new Chart(detailCtx, {
+      type: 'bar',
+      data: {
+        labels: ["Accessibility", "Metadata", "Spatial Precision"],
+        datasets: [{
+          data: [4, 4, 4], // Replace with your actual sub-data variables
+          backgroundColor: ["#f7c6a3", "#f2a477", "#d95f02"], // Varying shades of orange
+          barPercentage: 1.0,
+          categoryPercentage: 1.0
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'left',
+            color: '#fff',
+            formatter: (v) => v.toFixed(2),
+            offset: 10,
+            font: {
+              weight: "bold",
+              size: 14
+            },
+          }
+        },
+        scales: {
+          x: { display: false, max: 5 },
+          y: { grid: { display: false }, border: { display: false } }
+        }
+      }
+    });
 
   }
 
@@ -308,25 +514,25 @@ document.addEventListener('DOMContentLoaded', function () {
       alert("Data not loaded yet!");
       return;
     }
-  // 🔁 Key mapping
-  const keyMap = {
-    s1: "Initial Information",
-    s2: "Descriptives",
-    s3: "Design",
-    s4: "Conformance",
-    s5: "Context"
-   };
-//     const data = currentSummaryData; // use everything as-is
-//     const jsonData = JSON.stringify(data, null, 2);
+    // 🔁 Key mapping
+    const keyMap = {
+      s1: "Initial Information",
+      s2: "Descriptives",
+      s3: "Design",
+      s4: "Conformance",
+      s5: "Context"
+    };
+    //     const data = currentSummaryData; // use everything as-is
+    //     const jsonData = JSON.stringify(data, null, 2);
 
- // 🧠 Create new object with descriptive keys
-  const formattedData = {};
+    // 🧠 Create new object with descriptive keys
+    const formattedData = {};
 
-  Object.keys(currentSummaryData).forEach(key => {
-    const newKey = keyMap[key] || key; // fallback if key not found
-    formattedData[newKey] = currentSummaryData[key];
-  });
-  
+    Object.keys(currentSummaryData).forEach(key => {
+      const newKey = keyMap[key] || key; // fallback if key not found
+      formattedData[newKey] = currentSummaryData[key];
+    });
+
     const jsonData = JSON.stringify(formattedData, null, 2);
 
     const blob = new Blob([jsonData], { type: 'application/json' });
