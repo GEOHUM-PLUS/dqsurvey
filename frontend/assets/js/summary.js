@@ -14,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function () {
   const section3Id = sessionStorage.getItem("section3_id");
   const section4Id = sessionStorage.getItem("section4_id");
   const section5Id = sessionStorage.getItem("section5_id");
+  
+const hasConformance =
+  section4Id &&
+  section4Id !== "null" &&
+  section4Id !== "undefined";
+
+const conformanceColumn = document.getElementById("conformanceColumn");
+
+if (conformanceColumn) {
+  conformanceColumn.style.display = hasConformance ? "block" : "none";
+}
 
   if (!section1Id || !section2Id || !section3Id || !section5Id) {
     alert("❌ Required IDs missing. Please complete previous sections.");
@@ -45,145 +56,39 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  let currentSummaryData = null;
+  // Helper to load all summary data from the backend using stored IDs
   async function loadSummaryData() {
-
     try {
-
       const API = "http://localhost:8020";
-
       const section1Id = sessionStorage.getItem("section1_id");
       const section2Id = sessionStorage.getItem("section2_id");
       const section3Id = sessionStorage.getItem("section3_id");
       const section4Id = sessionStorage.getItem("section4_id");
       const section5Id = sessionStorage.getItem("section5_id");
-      console.log("📡 Fetching summary data using IDs:", {
-        section1Id,
-        section2Id,
-        section3Id,
-        section4Id,
-        section5Id
-      });
 
-      // SECTION 1
-      const section1 = await fetch(
-        `${API}/section1/${section1Id}`
-      ).then(r => r.json());
-      // SECTION 2
-      const section2 = await fetch(
-        `${API}/section2/bySection1/${section2Id}/${section1Id}`
-      ).then(r => r.json());
-      // SECTION 3
-      const section3 = await fetch(
-        `${API}/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`
-      ).then(r => r.json());
-      // SECTION 4 (OPTIONAL)
+      // Fetch all sections
+      const [s1, s2, s3, s4, s5] = await Promise.all([
+        fetch(`${API}/section1/${section1Id}`).then(r => r.json()),
+        fetch(`${API}/section2/bySection1/${section2Id}/${section1Id}`).then(r => r.json()),
+        fetch(`${API}/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`).then(r => r.json()),
+        (section4Id && section4Id !== "null")
+          ? fetch(`${API}/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`).then(r => r.json())
+          : Promise.resolve(null),
+        fetch(`${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/${section4Id || 'null'}/${section5Id}`).then(r => r.json())
+      ]);
 
-      let section4 = null;
-      if (section4Id && section4Id !== "null") {
-        section4 = await fetch(
-          `${API}/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`
-        ).then(r => r.json());
-      }
-      // SECTION 5 (SMART NULL SUPPORT)
-      let section5Url;
+      currentSummaryData = { s1, s2, s3, s4, s5 }; // ✅ now this works
+      console.log("✅ Summary Data Loaded:", currentSummaryData);
 
-      if (section4Id && section5Id !== "null") {
-        section5Url = `${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/${section4Id}/${section5Id}`;
-      } else {
-        section5Url = `${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/null/${section5Id}`;
-      }
-
-      const section5 = await fetch(section5Url).then(r => r.json());
-
-      console.log("✅ Summary Data Loaded:", {
-        section1,
-        section2,
-        section3,
-        section4,
-        section5
-      });
-
-      // POPULATE SUMMARY PAGE
-      populateSummary(section1, section2, section3, section4, section5);
+      populateSummary(s1, s2, s3, s4, s5);
 
     } catch (err) {
       console.error("❌ Error loading summary:", err);
       alert("Failed to load summary data");
     }
   }
-  // Helper to populate the summary page with fetched data
-  // function populateSummary(s1, s2, s3, s4, s5) {
-
-  //   // -----------------------------
-  //   // DATASET INFO
-  //   // -----------------------------
-  //   document.getElementById("summaryTitle").textContent =
-  //     s1?.dataset_title || "N/A";
-
-  //   document.getElementById("summaryDataType").textContent =
-  //     s1?.data_type || "N/A";
-
-  //   document.getElementById("summaryProcessingLevel").textContent =
-  //     s1?.data_processing_level || "N/A";
-
-  //   document.getElementById("summaryEvaluationType").textContent =
-  //     s1?.evaluation_type || "N/A";
-
-  //   document.getElementById("summaryEvaluator").textContent =
-  //     s1?.evaluator_name || "N/A";
-
-  //   document.getElementById("summaryOrg").textContent =
-  //     s1?.evaluator_org || "N/A";
-
-  //   document.getElementById("summaryLanguage").textContent =
-  //     s2?.language || "N/A";
-
-  //   document.getElementById("summaryDate").textContent =
-  //     s1?.created_at
-  //       ? new Date(s1.created_at).toLocaleDateString()
-  //       : "N/A";
-
-  //   // -----------------------------
-  //   // USE CASE SECTION
-  //   // -----------------------------
-  //   if (s2?.usecase_description) {
-
-  //     document.getElementById("useCaseCard").style.display = "block";
-
-  //     document.getElementById("summaryUseCaseDesc").textContent =
-  //       s2.usecase_description;
-
-  //     document.getElementById("summaryOptimumDate").textContent =
-  //       s2.optimum_date || "N/A";
-
-  //     document.getElementById("summarySpatialRes").textContent =
-  //       s2.spatial_resolution || "N/A";
-
-  //     document.getElementById("summaryAOI").textContent =
-  //       s2.area_of_interest || "N/A";
-  //   }
-
-  //   // -----------------------------
-  //   // SCORES
-  //   // -----------------------------
-  //   document.getElementById("scoreResolution").textContent =
-  //     s3?.general_resolution_score || "-";
-
-  //   document.getElementById("scoreCoverage").textContent =
-  //     s3?.general_coverage_score || "-";
-
-  //   document.getElementById("scoreTimeliness").textContent =
-  //     s3?.general_timeliness_score || "-";
-
-  //   document.getElementById("scoreConformance").textContent =
-  //     s4?.score_conformance || "-";
-
-  //   document.getElementById("scoreContext").textContent =
-  //     s5?.score_transferability || "-";
-
-  // }
-
-  // Helper to populate the summary page with fetched data
+  loadSummaryData();
   let scoresChart;
   let gaugeChart;
   let detailBarChart;
@@ -255,13 +160,13 @@ document.addEventListener('DOMContentLoaded', function () {
       "Descriptives",
       "Design",
       "Conformance",
-      "Relevance"
+      "Context"
     ];
     // confirm these variables (not that exact variables are used in the generateSummaryData function, so they should be consistent across the codebase)
     const scores = [
       Number(s3?.general_resolution_score || 0),
       Number(s3?.general_coverage_score || 0),
-      Number(s4?.score_conformance || 0),
+      Number(s4?.score_conformance || 3),
       Number(s5?.score_transferability || 0)
     ];
 
@@ -340,9 +245,6 @@ document.addEventListener('DOMContentLoaded', function () {
       gaugeChart.destroy();
     }
 
-    // Main Descriptives score
-    // const totalScore = Number(s3?.general_resolution_score || 4);
-
     // Descriptives scores from Section 2 API
     const accessibilityScore = Number(s2?.score_accessibility ?? 0);
     const metadataScore = Number(s2?.score_metadata_documentation ?? 0);
@@ -371,7 +273,8 @@ document.addEventListener('DOMContentLoaded', function () {
         ctx.textBaseline = "middle";
 
         ctx.fillText("0", chartArea.left + 8, bottomY - 8);
-        ctx.fillText(totalScore.toFixed(0), centerX, bottomY - 8);
+        // ctx.fillText(totalScore.toFixed(0), centerX, bottomY - 8);
+        ctx.fillText(totalScore.toFixed(2), centerX, bottomY - 8);
         ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
 
         ctx.restore();
@@ -400,8 +303,6 @@ document.addEventListener('DOMContentLoaded', function () {
       },
       plugins: [descriptivesGaugeTextPlugin]
     });
-
-
     // -----------------------------
     // DESCRIPTIVES DETAIL BAR CHART
     // -----------------------------
@@ -417,11 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
       "Spatial precision"
     ];
 
-    // const descriptivesAspectScores = [
-    //   Number(s3?.accessibility_score || 4),
-    //   Number(s3?.metadata_score || 4),
-    //   Number(s3?.spatial_precision_score || 4)
-    // ];
     const descriptivesAspectScores = [
       accessibilityScore,
       metadataScore,
@@ -508,6 +404,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
+
+    // -----------------------------
+    // DESIGN VALUES
+    // -----------------------------
+    const timelinessScore = Number(s3?.general_timeliness_score ?? 0);
+    const spatialResolutionScore = Number(s3?.general_resolution_score ?? 0);
+    const coverageScore = Number(s3?.general_coverage_score ?? 0);
+
+    const designAspectScores = [
+      timelinessScore,
+      spatialResolutionScore,
+      coverageScore
+    ];
+
+    // Average of Timeliness, Spatial resolution, Coverage
+    const designTotalScore =
+      designAspectScores.reduce((sum, value) => sum + value, 0) /
+      designAspectScores.length;
+
+
     // -----------------------------
     // DESIGN GAUGE CHART
     // -----------------------------
@@ -517,11 +433,6 @@ document.addEventListener('DOMContentLoaded', function () {
       designGaugeChart.destroy();
     }
 
-    // Main Design score
-    // You can replace this with your actual total design score
-    const designTotalScore = Number(s3?.general_coverage_score || 0);
-
-    // Plugin for gauge text: 0, score, /4
     const designGaugeTextPlugin = {
       id: "designGaugeTextPlugin",
       afterDraw(chart) {
@@ -539,13 +450,11 @@ document.addEventListener('DOMContentLoaded', function () {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // left 0
         ctx.fillText("0", chartArea.left + 8, bottomY - 8);
 
-        // center score
-        ctx.fillText(designTotalScore.toFixed(0), centerX, bottomY - 8);
+        // Average value out of 4
+        ctx.fillText(designTotalScore.toFixed(2), centerX, bottomY - 8);
 
-        // right /4
         ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
 
         ctx.restore();
@@ -585,17 +494,10 @@ document.addEventListener('DOMContentLoaded', function () {
       designBarChart.destroy();
     }
 
-    // Replace these with your real values
     const designAspectLabels = [
       "Timeliness",
       "Spatial resolution",
       "Coverage"
-    ];
-
-    const designAspectScores = [
-      Number(s3?.timeliness_score || 2),
-      Number(s3?.spatial_resolution_score || 1),
-      Number(s3?.coverage_score || 4)
     ];
 
     const designAspectColors = [
@@ -645,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function () {
               size: 14
             },
             formatter: function (value) {
-              return value.toFixed(0);
+              return Number(value).toFixed(0);
             }
           }
         },
@@ -681,6 +583,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     // -----------------------------
+    // RELEVANCE VALUES
+    // -----------------------------
+    const relevanceScore = Number(s5?.score_relevance ?? 0);
+    const transferabilityScore = Number(s5?.score_transferability ?? 0);
+    const dataProducerScore = Number(s5?.score_reputation ?? 0);
+
+    const relevanceAspectScores = [
+      relevanceScore,
+      transferabilityScore,
+      dataProducerScore
+    ];
+
+    // Average of Relevance, Transferability, Data producer
+    const relevanceTotalScore =
+      relevanceAspectScores.reduce((sum, value) => sum + value, 0) /
+      relevanceAspectScores.length;
+
+
+    // -----------------------------
     // RELEVANCE GAUGE CHART
     // -----------------------------
     const relevanceGaugeCtx = document.getElementById("relevanceGaugeChart").getContext("2d");
@@ -688,9 +609,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (relevanceGaugeChart) {
       relevanceGaugeChart.destroy();
     }
-
-    // Main relevance score
-    const relevanceTotalScore = Number(s5?.score_transferability || 3.63);
 
     const relevanceGaugeTextPlugin = {
       id: "relevanceGaugeTextPlugin",
@@ -710,7 +628,10 @@ document.addEventListener('DOMContentLoaded', function () {
         ctx.textBaseline = "middle";
 
         ctx.fillText("0", chartArea.left + 8, bottomY - 8);
+
+        // Average value out of 4
         ctx.fillText(relevanceTotalScore.toFixed(2), centerX, bottomY - 8);
+
         ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
 
         ctx.restore();
@@ -756,17 +677,12 @@ document.addEventListener('DOMContentLoaded', function () {
       "Data producer"
     ];
 
-    const relevanceAspectScores = [
-      Number(s5?.score_relevance || 3),
-      Number(s5?.score_transferability || 4),
-      Number(s5?.score_data_producer || 4)
-    ];
-
     const relevanceAspectColors = [
       "#a7dd86",
       "#4fa382",
       "#2f8677"
     ];
+    //relevance, transferabolity and data producerfrom score_relevance ,score_transferability and score_reputation respectuavely
 
     relevanceBarChart = new Chart(relevanceBarCtx, {
       type: "bar",
@@ -809,7 +725,7 @@ document.addEventListener('DOMContentLoaded', function () {
               size: 14
             },
             formatter: function (value) {
-              return value.toFixed(0);
+              return Number(value).toFixed(0);
             }
           }
         },
@@ -842,15 +758,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
+      // -----------------------------
+// Check if conformance data is available and valid before trying to use it
+// This prevents errors if the API response is missing or indicates a failure
+  // -----------------------------
+const hasConformanceData =
+  s4 &&
+  s4.success !== false &&
+  !s4.message;
 
+const conformanceColumn = document.getElementById("conformanceColumn");
 
+if (conformanceColumn) {
+  conformanceColumn.style.display = hasConformanceData ? "block" : "none";
+}
+
+if (!hasConformanceData) {
+  return;
+}
 
     // -----------------------------
     // CONFORMANCE VALUES
     // -----------------------------
-    const consistencyScore = Number(s4?.score_consistency ?? 2);
-    const inputDataScore = Number(s4?.score_input_data ?? 3);
-    const reproducibilityScore = Number(s4?.score_reproducibility ?? 4);
+    if (hasConformanceData) {
+    const consistencyScore = Number(s4?.consistency_score ?? 0);
+    const inputDataScore = Number(s4?.input_score ?? 0);
+    const reproducibilityScore = Number(s4?.reproducibility_score ?? 0);
     const uncertaintyScore = Number(s4?.score_uncertainty ?? 2);
     const spatialHomogeneityScore = Number(s4?.score_spatial_homogeneity ?? 4);
     const validityScore = Number(s4?.score_validity ?? 4);
@@ -1133,43 +1066,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
+
+
   }
 
-  loadSummaryData();
-  let currentSummaryData = null;
-
-  // Helper to load all summary data from the backend using stored IDs
-  async function loadSummaryData() {
-    try {
-      const API = "http://localhost:8020";
-      const section1Id = sessionStorage.getItem("section1_id");
-      const section2Id = sessionStorage.getItem("section2_id");
-      const section3Id = sessionStorage.getItem("section3_id");
-      const section4Id = sessionStorage.getItem("section4_id");
-      const section5Id = sessionStorage.getItem("section5_id");
-
-      // Fetch all sections
-      const [s1, s2, s3, s4, s5] = await Promise.all([
-        fetch(`${API}/section1/${section1Id}`).then(r => r.json()),
-        fetch(`${API}/section2/bySection1/${section2Id}/${section1Id}`).then(r => r.json()),
-        fetch(`${API}/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`).then(r => r.json()),
-        (section4Id && section4Id !== "null")
-          ? fetch(`${API}/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`).then(r => r.json())
-          : Promise.resolve(null),
-        fetch(`${API}/section5/bySection1And2And3/${section1Id}/${section2Id}/${section3Id}/${section4Id || 'null'}/${section5Id}`).then(r => r.json())
-      ]);
-
-      currentSummaryData = { s1, s2, s3, s4, s5 }; // ✅ now this works
-      console.log("✅ Summary Data Loaded:", currentSummaryData);
-
-      populateSummary(s1, s2, s3, s4, s5);
-
-    } catch (err) {
-      console.error("❌ Error loading summary:", err);
-      alert("Failed to load summary data");
-    }
   }
-
   // Helper to generate the object used for downloads
   function generateSummaryData() {
     if (!currentSummaryData) return null;
