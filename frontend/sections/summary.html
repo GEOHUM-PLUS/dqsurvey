@@ -171,7 +171,7 @@
                   <div class="legend-item"><span class="dot orange"></span> Descriptives</div>
                   <div class="legend-item"><span class="dot yellow"></span> Design</div>
                   <div class="legend-item"><span class="dot blue"></span> Conformance</div>
-                  <div class="legend-item"><span class="dot green"></span> Relevance</div>
+                  <div class="legend-item"><span class="dot green"></span> Context</div>
                 </div>
                 <div class="chart-container">
                   <canvas id="scoresChart"></canvas>
@@ -179,25 +179,46 @@
 
               </div>
               <!-- Descriptives Detail Section -->
-              <div id="descriptivesDetail" class="mt-1 pt-3">
-                <div class="d-flex justify-content-between align-items-center mb-2"
+              <div id="descriptivesDetail" class="mt-3 pt-3 w-100">
+
+                <!-- Header + Gauge -->
+                <div class="descriptives-header d-flex justify-content-between align-items-center mb-2"
                   style="border-bottom: 1px solid #ccc;">
                   <div>
                     <h4 class="mb-0">Descriptives</h4>
                     <small class="text-muted">Data quality aspects</small>
                   </div>
-                  <!-- Semi-circle Gauge Container -->
-                  <div style="width: 120px; height: 60px;">
+
+                  <div class="descriptives-gauge-box">
                     <canvas id="gaugeChart"></canvas>
                   </div>
                 </div>
 
-                <!-- Legend and Detail Bar Chart -->
-                <div class="detail-chart-wrapper">
-                  <div class="chart-container" style="height: 150px;">
+                <!-- Descriptives Legend -->
+                <div class="descriptives-sub-legend">
+                  <div class="legend-item">
+                    <span class="dot descriptives-light"></span>
+                    Accessibility
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot descriptives-medium"></span>
+                    Metadata
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot descriptives-dark"></span>
+                    Spatial precision
+                  </div>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="descriptives-detail-chart-wrapper">
+                  <div class="chart-container descriptives-chart-container">
                     <canvas id="detailBarChart"></canvas>
                   </div>
                 </div>
+
               </div>
             </div>
             <div class="col-md-6">
@@ -232,34 +253,191 @@
             </div>
             <div class="col-md-6">
               <div class="d-flex flex-row align-items-start w-100 custom-info-section">
-                  <!-- Descriptives Detail Section -->
-                  <div id="designDetail" class="mt-1 pt-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2"
-                      style="border-bottom: 1px solid #ccc;">
-                      <div>
-                        <h4 class="mb-0">Design</h4>
-                        <small class="text-muted">Data quality aspects</small>
-                      </div>
-                      <!-- Semi-circle Gauge Container -->
-                      <div style="width: 120px; height: 60px;">
-                        <canvas id="designGaugeChart"></canvas>
-                      </div>
+
+                <div id="designDetail" class="mt-3 pt-3 w-100">
+
+                  <!-- Header + Gauge -->
+                  <div class="design-header d-flex justify-content-between align-items-center mb-2"
+                    style="border-bottom: 1px solid #ccc;">
+                    <div>
+                      <h4 class="mb-0">Design</h4>
+                      <small class="text-muted">Data quality aspects</small>
                     </div>
 
-                    <!-- Legend and Detail Bar Chart -->
-                    <div class="detail-chart-wrapper">
-                      <div class="chart-container" style="height: 150px;">
-                        <canvas id="designBarChart"></canvas>
-                      </div>
+                    <div class="design-gauge-box">
+                      <canvas id="designGaugeChart"></canvas>
                     </div>
                   </div>
-                
+
+                  <!-- Design Legend -->
+                  <div class="design-sub-legend">
+                    <div class="legend-item">
+                      <span class="dot design-light"></span>
+                      Timeliness
+                    </div>
+
+                    <div class="legend-item">
+                      <span class="dot design-medium"></span>
+                      Spatial resolution
+                    </div>
+
+                    <div class="legend-item">
+                      <span class="dot design-dark"></span>
+                      Coverage
+                    </div>
+                  </div>
+
+                  <!-- Design Detail Bar Chart -->
+                  <div class="design-detail-chart-wrapper">
+                    <div class="chart-container design-chart-container">
+                      <canvas id="designBarChart"></canvas>
+                    </div>
+                  </div>
+
+                </div>
+
               </div>
             </div>
+
+            <div class="col-md-6">
+
+              <div id="relevanceDetail" class="mt-3 pt-3 w-100">
+
+                <!-- Header + Gauge -->
+                <div class="relevance-header d-flex justify-content-between align-items-center mb-2"
+                  style="border-bottom: 1px solid #ccc;">
+                  <div>
+                    <h4 class="mb-0">Context</h4>
+                    <small class="text-muted">Data quality aspects</small>
+                  </div>
+
+                  <div class="relevance-gauge-box">
+                    <canvas id="relevanceGaugeChart"></canvas>
+                  </div>
+                </div>
+
+                <!-- Relevance Legend -->
+                <div class="relevance-sub-legend">
+                  <div class="legend-item">
+                    <span class="dot relevance-light"></span>
+                    Relevance
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot relevance-medium"></span>
+                    Transferability
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot relevance-dark"></span>
+                    Data producer
+                  </div>
+                </div>
+
+                <!-- Relevance Detail Bar Chart -->
+                <div class="relevance-detail-chart-wrapper">
+                  <div class="chart-container relevance-chart-container">
+                    <canvas id="relevanceBarChart"></canvas>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="col-md-6" id="conformanceColumn">
+              <div id="conformanceDetail" class="mt-3 pt-3 w-100">
+
+                <!-- Header + Gauge -->
+                <div class="conformance-header d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <h4 class="mb-0">Conformance</h4>
+                    <small class="text-muted">Data quality aspects</small>
+                  </div>
+
+                  <div class="conformance-gauge-box">
+                    <canvas id="conformanceGaugeChart"></canvas>
+                  </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="conformance-sub-legend">
+                  <div class="legend-item">
+                    <span class="dot conformance-light"></span>
+                    Consistency
+                  </div>
+                  <div class="legend-item">
+                    <span class="dot conformance-medium"></span>
+                    Input data 
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot conformance-dark"></span>
+                    Reproducability
+                  </div>
+
+                  <div class="legend-item">
+                    <span class="dot conformance1"></span>
+                    Uncertainty
+                  </div>
+
+                   <div class="legend-item">
+                    <span class="dot conformance2"></span>
+                    Spatial Homogeneity
+                  </div>
+
+                   <div class="legend-item">
+                    <span class="dot conformance3"></span>
+                    Validity
+                  </div>
+
+                </div>
+
+                <!-- Input Data Text -->
+                <div class="conformance-input-data">
+                  <strong>Input data:</strong>
+                  <ul>
+                    <li>NASA`s MODIS Aqua MYD09GA/GQ</li>
+                    <li>Terra MOD09A/GQ</li>
+                    <li>Flood Events DFO Flood Observatory</li>
+                  </ul>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="conformance-bar-wrapper">
+                  <div class="chart-container conformance-chart-container">
+                    <canvas id="conformanceBarChart"></canvas>
+                  </div>
+                </div>
+
+                <!-- Arrows -->
+                <div class="conformance-arrows">
+                  <div class="down-arrow">⬇</div>
+                  <div class="diagonal-arrow">⬊</div>
+                </div>
+                <div class="d-flex flex-row align-items-start w-100 custom-info-section">
+                                <!-- Bottom Charts -->
+                                <div class="conformance-bottom-charts">
+
+                                  <div class="conformance-donut-box">
+                                    <h5>Quality input data</h5>
+                                 
+                                    <canvas id="qualityInputDonutChart" style="margin-top: 31px;"></canvas>
+                                  </div>
+
+                                  <div class="conformance-radar-box">
+                                    <canvas id="conformanceRadarChart" style="display: block; box-sizing: border-box; height: 220px; width: 324.1px;"></canvas>
+                                  </div>
+
+                                </div>
+                </div>
+              </div>
+            </div>
+           
           </div>
 
           <!-- CREDITS SECTION -->
-          <div class="card mb-4 shadow-sm">
+          <div class="card mb-4 mt-5 shadow-sm">
             <div class="card-header bg-primary text-white">
               <h5 class="mb-0">Credits & Acknowledgments</h5>
             </div>
