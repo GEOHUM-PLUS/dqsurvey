@@ -187,6 +187,18 @@ document.addEventListener('DOMContentLoaded', function () {
   let scoresChart;
   let gaugeChart;
   let detailBarChart;
+
+  let designGaugeChart;
+  let designBarChart;
+
+
+  let relevanceGaugeChart;
+  let relevanceBarChart;
+
+  let conformanceGaugeChart;
+  let conformanceBarChart;
+  let qualityInputDonutChart;
+  let conformanceRadarChart;
   function populateSummary(s1, s2, s3, s4, s5) {
 
     // -----------------------------
@@ -318,75 +330,809 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       }
     });
+
     // -----------------------------
-    // GAUGE CHART (Semi-circle)
+    // DESCRIPTIVES GAUGE CHART
     // -----------------------------
     const gaugeCtx = document.getElementById("gaugeChart").getContext("2d");
-    if (gaugeChart) gaugeChart.destroy();
 
-    const totalScore = Number(s3?.general_resolution_score || 0); // Example score
+    if (gaugeChart) {
+      gaugeChart.destroy();
+    }
+
+    // Main Descriptives score
+    // const totalScore = Number(s3?.general_resolution_score || 4);
+
+    // Descriptives scores from Section 2 API
+    const accessibilityScore = Number(s2?.score_accessibility ?? 0);
+    const metadataScore = Number(s2?.score_metadata_documentation ?? 0);
+    const spatialPrecisionScore = Number(s2?.score_spatial_accuracy ?? 0);
+    // Average score for Descriptives gauge
+    const totalScore = (
+      accessibilityScore +
+      metadataScore +
+      spatialPrecisionScore
+    ) / 3;
+    const descriptivesGaugeTextPlugin = {
+      id: "descriptivesGaugeTextPlugin",
+      afterDraw(chart) {
+        const { ctx, chartArea } = chart;
+
+        if (!chartArea) return;
+
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const bottomY = chartArea.bottom + 2;
+
+        ctx.save();
+
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillStyle = "#777";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText("0", chartArea.left + 8, bottomY - 8);
+        ctx.fillText(totalScore.toFixed(0), centerX, bottomY - 8);
+        ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
+
+        ctx.restore();
+      }
+    };
 
     gaugeChart = new Chart(gaugeCtx, {
-      type: 'doughnut',
+      type: "doughnut",
       data: {
         datasets: [{
-          data: [totalScore, 5 - totalScore],
-          backgroundColor: ["#d95f02", "#e0e0e0"],
+          data: [totalScore, 4 - totalScore],
+          backgroundColor: ["#d95f02", "#eeeeee"],
           borderWidth: 0
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         rotation: -90,
         circumference: 180,
-        cutout: '80%',
+        cutout: "75%",
         plugins: {
           legend: { display: false },
           tooltip: { enabled: false }
         }
-      }
+      },
+      plugins: [descriptivesGaugeTextPlugin]
     });
 
+
     // -----------------------------
-    // DETAIL BAR CHART (Sub-aspects)
+    // DESCRIPTIVES DETAIL BAR CHART
     // -----------------------------
     const detailCtx = document.getElementById("detailBarChart").getContext("2d");
-    if (detailBarChart) detailBarChart.destroy();
+
+    if (detailBarChart) {
+      detailBarChart.destroy();
+    }
+
+    const descriptivesAspectLabels = [
+      "Accessibility",
+      "Metadata",
+      "Spatial precision"
+    ];
+
+    // const descriptivesAspectScores = [
+    //   Number(s3?.accessibility_score || 4),
+    //   Number(s3?.metadata_score || 4),
+    //   Number(s3?.spatial_precision_score || 4)
+    // ];
+    const descriptivesAspectScores = [
+      accessibilityScore,
+      metadataScore,
+      spatialPrecisionScore
+    ];
+
+    const descriptivesAspectColors = [
+      "#f7c6b3",
+      "#f2a080",
+      "#e85c32"
+    ];
 
     detailBarChart = new Chart(detailCtx, {
-      type: 'bar',
+      type: "bar",
       data: {
-        labels: ["Accessibility", "Metadata", "Spatial Precision"],
+        labels: descriptivesAspectLabels,
         datasets: [{
-          data: [4, 4, 4], // Replace with your actual sub-data variables
-          backgroundColor: ["#f7c6a3", "#f2a477", "#d95f02"], // Varying shades of orange
+          data: descriptivesAspectScores,
+          backgroundColor: descriptivesAspectColors,
+          borderRadius: 0,
           barPercentage: 1.0,
           categoryPercentage: 1.0
         }]
       },
+      plugins: [ChartDataLabels],
       options: {
-        indexAxis: 'y',
+        indexAxis: "y",
+        responsive: true,
         maintainAspectRatio: false,
+
+        layout: {
+          padding: {
+            right: 20
+          }
+        },
+
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: true
+          },
           datalabels: {
-            anchor: 'end',
-            align: 'left',
-            color: '#fff',
-            formatter: (v) => v.toFixed(2),
-            offset: 10,
+            anchor: "end",
+            align: "right",
+            offset: 6,
+            color: "#777",
             font: {
               weight: "bold",
               size: 14
             },
+            formatter: function (value) {
+              return value.toFixed(0);
+            }
           }
         },
+
         scales: {
-          x: { display: false, max: 5 },
-          y: { grid: { display: false }, border: { display: false } }
+          x: {
+            min: 0,
+            max: 4,
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+    // -----------------------------
+    // DESIGN GAUGE CHART
+    // -----------------------------
+    const designGaugeCtx = document.getElementById("designGaugeChart").getContext("2d");
+
+    if (designGaugeChart) {
+      designGaugeChart.destroy();
+    }
+
+    // Main Design score
+    // You can replace this with your actual total design score
+    const designTotalScore = Number(s3?.general_coverage_score || 0);
+
+    // Plugin for gauge text: 0, score, /4
+    const designGaugeTextPlugin = {
+      id: "designGaugeTextPlugin",
+      afterDraw(chart) {
+        const { ctx, chartArea } = chart;
+
+        if (!chartArea) return;
+
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const bottomY = chartArea.bottom + 2;
+
+        ctx.save();
+
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillStyle = "#999";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // left 0
+        ctx.fillText("0", chartArea.left + 8, bottomY - 8);
+
+        // center score
+        ctx.fillText(designTotalScore.toFixed(0), centerX, bottomY - 8);
+
+        // right /4
+        ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
+
+        ctx.restore();
+      }
+    };
+
+    designGaugeChart = new Chart(designGaugeCtx, {
+      type: "doughnut",
+      data: {
+        datasets: [{
+          data: [designTotalScore, 4 - designTotalScore],
+          backgroundColor: ["#ffc400", "#eeeeee"],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        rotation: -90,
+        circumference: 180,
+        cutout: "75%",
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      },
+      plugins: [designGaugeTextPlugin]
+    });
+
+
+    // -----------------------------
+    // DESIGN DETAIL BAR CHART
+    // -----------------------------
+    const designBarCtx = document.getElementById("designBarChart").getContext("2d");
+
+    if (designBarChart) {
+      designBarChart.destroy();
+    }
+
+    // Replace these with your real values
+    const designAspectLabels = [
+      "Timeliness",
+      "Spatial resolution",
+      "Coverage"
+    ];
+
+    const designAspectScores = [
+      Number(s3?.timeliness_score || 2),
+      Number(s3?.spatial_resolution_score || 1),
+      Number(s3?.coverage_score || 4)
+    ];
+
+    const designAspectColors = [
+      "#f8df8b",
+      "#f6d05a",
+      "#ffc400"
+    ];
+
+    designBarChart = new Chart(designBarCtx, {
+      type: "bar",
+      data: {
+        labels: designAspectLabels,
+        datasets: [{
+          data: designAspectScores,
+          backgroundColor: designAspectColors,
+          borderRadius: 0,
+          barPercentage: 1.0,
+          categoryPercentage: 1.0
+        }]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+
+        layout: {
+          padding: {
+            right: 20
+          }
+        },
+
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: true
+          },
+          datalabels: {
+            anchor: "end",
+            align: "right",
+            offset: 6,
+            color: "#777",
+            font: {
+              weight: "bold",
+              size: 14
+            },
+            formatter: function (value) {
+              return value.toFixed(0);
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            min: 0,
+            max: 4,
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
         }
       }
     });
 
+
+    // -----------------------------
+    // RELEVANCE GAUGE CHART
+    // -----------------------------
+    const relevanceGaugeCtx = document.getElementById("relevanceGaugeChart").getContext("2d");
+
+    if (relevanceGaugeChart) {
+      relevanceGaugeChart.destroy();
+    }
+
+    // Main relevance score
+    const relevanceTotalScore = Number(s5?.score_transferability || 3.63);
+
+    const relevanceGaugeTextPlugin = {
+      id: "relevanceGaugeTextPlugin",
+      afterDraw(chart) {
+        const { ctx, chartArea } = chart;
+
+        if (!chartArea) return;
+
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const bottomY = chartArea.bottom + 2;
+
+        ctx.save();
+
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillStyle = "#777";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText("0", chartArea.left + 8, bottomY - 8);
+        ctx.fillText(relevanceTotalScore.toFixed(2), centerX, bottomY - 8);
+        ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
+
+        ctx.restore();
+      }
+    };
+
+    relevanceGaugeChart = new Chart(relevanceGaugeCtx, {
+      type: "doughnut",
+      data: {
+        datasets: [{
+          data: [relevanceTotalScore, 4 - relevanceTotalScore],
+          backgroundColor: ["#69b943", "#eeeeee"],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        rotation: -90,
+        circumference: 180,
+        cutout: "75%",
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      },
+      plugins: [relevanceGaugeTextPlugin]
+    });
+
+
+    // -----------------------------
+    // RELEVANCE DETAIL BAR CHART
+    // -----------------------------
+    const relevanceBarCtx = document.getElementById("relevanceBarChart").getContext("2d");
+
+    if (relevanceBarChart) {
+      relevanceBarChart.destroy();
+    }
+
+    const relevanceAspectLabels = [
+      "Relevance",
+      "Transferability",
+      "Data producer"
+    ];
+
+    const relevanceAspectScores = [
+      Number(s5?.score_relevance || 3),
+      Number(s5?.score_transferability || 4),
+      Number(s5?.score_data_producer || 4)
+    ];
+
+    const relevanceAspectColors = [
+      "#a7dd86",
+      "#4fa382",
+      "#2f8677"
+    ];
+
+    relevanceBarChart = new Chart(relevanceBarCtx, {
+      type: "bar",
+      data: {
+        labels: relevanceAspectLabels,
+        datasets: [{
+          data: relevanceAspectScores,
+          backgroundColor: relevanceAspectColors,
+          borderRadius: 0,
+          barPercentage: 1.0,
+          categoryPercentage: 1.0
+        }]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+
+        layout: {
+          padding: {
+            right: 20
+          }
+        },
+
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            enabled: true
+          },
+          datalabels: {
+            anchor: "end",
+            align: "right",
+            offset: 6,
+            color: "#777",
+            font: {
+              weight: "bold",
+              size: 14
+            },
+            formatter: function (value) {
+              return value.toFixed(0);
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            min: 0,
+            max: 4,
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+
+
+
+    // -----------------------------
+    // CONFORMANCE VALUES
+    // -----------------------------
+    const consistencyScore = Number(s4?.score_consistency ?? 2);
+    const inputDataScore = Number(s4?.score_input_data ?? 3);
+    const reproducibilityScore = Number(s4?.score_reproducibility ?? 4);
+    const uncertaintyScore = Number(s4?.score_uncertainty ?? 2);
+    const spatialHomogeneityScore = Number(s4?.score_spatial_homogeneity ?? 4);
+    const validityScore = Number(s4?.score_validity ?? 4);
+
+    const conformanceTotalScore = (
+      consistencyScore +
+      inputDataScore +
+      reproducibilityScore +
+      uncertaintyScore +
+      spatialHomogeneityScore +
+      validityScore
+    ) / 6;
+
+
+    // -----------------------------
+    // CONFORMANCE GAUGE CHART
+    // -----------------------------
+    const conformanceGaugeCtx = document.getElementById("conformanceGaugeChart").getContext("2d");
+
+    if (conformanceGaugeChart) {
+      conformanceGaugeChart.destroy();
+    }
+
+    const conformanceGaugeTextPlugin = {
+      id: "conformanceGaugeTextPlugin",
+      afterDraw(chart) {
+        const { ctx, chartArea } = chart;
+
+        if (!chartArea) return;
+
+        const centerX = (chartArea.left + chartArea.right) / 2;
+        const bottomY = chartArea.bottom + 2;
+
+        ctx.save();
+
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillStyle = "#777";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.fillText("0", chartArea.left + 8, bottomY - 8);
+        ctx.fillText(conformanceTotalScore.toFixed(2), centerX, bottomY - 8);
+        ctx.fillText("/4", chartArea.right - 6, bottomY - 8);
+
+        ctx.restore();
+      }
+    };
+
+    conformanceGaugeChart = new Chart(conformanceGaugeCtx, {
+      type: "doughnut",
+      data: {
+        datasets: [{
+          data: [conformanceTotalScore, 4 - conformanceTotalScore],
+          backgroundColor: ["#5b9bd5", "#eeeeee"],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        rotation: -90,
+        circumference: 180,
+        cutout: "75%",
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        }
+      },
+      plugins: [conformanceGaugeTextPlugin]
+    });
+
+
+    // -----------------------------
+    // CONFORMANCE BAR CHART
+    // -----------------------------
+    const conformanceBarCtx = document.getElementById("conformanceBarChart").getContext("2d");
+
+    if (conformanceBarChart) {
+      conformanceBarChart.destroy();
+    }
+
+    const conformanceAspectLabels = [
+      "Consistency",
+      "Input data",
+      "Reproducability",
+      "Uncertainty",
+      "Spatial homogeneity",
+      "Validity"
+    ];
+
+    const conformanceAspectScores = [
+      consistencyScore,
+      inputDataScore,
+      reproducibilityScore,
+      uncertaintyScore,
+      spatialHomogeneityScore,
+      validityScore
+    ];
+
+    const conformanceAspectColors = [
+      "#a9d6ff",
+      "#65b5f6",
+      "#2196f3",
+      "#4e73df",
+      "#0033cc",
+      "#151a8f"
+    ];
+
+    conformanceBarChart = new Chart(conformanceBarCtx, {
+      type: "bar",
+      data: {
+        labels: conformanceAspectLabels,
+        datasets: [{
+          data: conformanceAspectScores,
+          backgroundColor: conformanceAspectColors,
+          borderRadius: 0,
+          barPercentage: 1.0,
+          categoryPercentage: 1.0
+        }]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        indexAxis: "y",
+        responsive: true,
+        maintainAspectRatio: false,
+
+        layout: {
+          padding: {
+            right: 25
+          }
+        },
+
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+          datalabels: {
+            anchor: "end",
+            align: "right",
+            offset: 6,
+            color: "#777",
+            font: {
+              weight: "bold",
+              size: 14
+            },
+            formatter: function (value) {
+              return Number(value).toFixed(0);
+            }
+          }
+        },
+
+        scales: {
+          x: {
+            min: 0,
+            max: 4,
+            grid: { display: false },
+            ticks: { display: false },
+            border: { display: false }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { display: false },
+            border: { display: false }
+          }
+        }
+      }
+    });
+
+
+    // -----------------------------
+    // QUALITY INPUT DATA DONUT CHART
+    // -----------------------------
+    const qualityInputDonutCtx = document.getElementById("qualityInputDonutChart").getContext("2d");
+
+    if (qualityInputDonutChart) {
+      qualityInputDonutChart.destroy();
+    }
+
+    qualityInputDonutChart = new Chart(qualityInputDonutCtx, {
+      type: "doughnut",
+      data: {
+        labels: [
+          "Consistency",
+          "Input data",
+          "Reproducability",
+          "Uncertainty",
+          "Spatial homogeneity",
+          "Validity"
+        ],
+        datasets: [{
+          data: conformanceAspectScores,
+          backgroundColor: conformanceAspectColors,
+          borderWidth: 1,
+          borderColor: "#ffffff"
+        }]
+      },
+      plugins: [ChartDataLabels],
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: "42%",
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+          datalabels: {
+            color: "#777",
+            anchor: "end",
+            align: "end",
+            offset: 6,
+            font: {
+              weight: "bold",
+              size: 12
+            },
+            formatter: function (value) {
+              return Number(value).toFixed(2).replace(".", ",");
+            }
+          }
+        }
+      }
+    });
+
+
+    // -----------------------------
+    // CONFORMANCE RADAR CHART
+    // -----------------------------
+    const conformanceRadarCtx = document.getElementById("conformanceRadarChart").getContext("2d");
+
+    if (conformanceRadarChart) {
+      conformanceRadarChart.destroy();
+    }
+
+    conformanceRadarChart = new Chart(conformanceRadarCtx, {
+      type: "radar",
+      data: {
+        labels: [
+          "Consistency",
+          "Input data",
+          "Reproducability",
+          "Spatial homogeneity",
+          "Uncertainity",
+          "Validity"
+        ],
+        datasets: [{
+          data: conformanceAspectScores,
+          backgroundColor: "rgba(0, 70, 200, 0.55)",
+          borderColor: "#0033cc",
+          borderWidth: 2,
+          pointBackgroundColor: "#0033cc",
+          pointBorderColor: "#0033cc"
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 4,
+            ticks: {
+              stepSize: 1,
+              color: "#777",
+              backdropColor: "transparent"
+            },
+            pointLabels: {
+              color: "#777",
+              font: {
+                size: 14
+              }
+            },
+            grid: {
+              color: "#dddddd"
+            },
+            angleLines: {
+              color: "#cccccc"
+            }
+          }
+        }
+      }
+    });
   }
 
   loadSummaryData();
