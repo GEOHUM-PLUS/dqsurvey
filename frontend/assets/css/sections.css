@@ -1461,3 +1461,30 @@ span[role="img"][aria-label]:active {
     width: 55%;
     height: 260px;
 }
+
+
+
+.pdf-page-break {
+  page-break-before: always;
+  break-before: page;
+}
+
+@media print {
+
+  .pdf-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  nav,
+  .navbar,
+  #downloadPDF,
+  #downloadJSON,
+  #printReport {
+    display: none !important;
+  }
+
+  #page1-content {
+    page-break-after: always;
+  }
+}
