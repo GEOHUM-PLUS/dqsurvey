@@ -1113,47 +1113,79 @@ if (!hasConformanceData) {
 
 
   // PDF download - uses the entire currentSummaryData object for a comprehensive export
+  // async function downloadPDF() {
+  //   if (!currentSummaryData) {
+  //     alert("Data not loaded yet!");
+  //     return;
+  //   }
+
+  //   const { jsPDF } = window.jspdf;
+  //   const doc = new jsPDF();
+
+  //   let y = 10; // starting Y position
+  //   const lineHeight = 8;
+
+  //   const addLine = (text) => {
+  //     doc.text(10, y, text);
+  //     y += lineHeight;
+  //   }
+
+  //   addLine("📊 DATA QUALITY EVALUATION SUMMARY");
+  //   addLine("Generated: " + new Date().toLocaleString());
+  //   addLine("===============================");
+
+  //   // Loop through sections
+  //   for (let section in currentSummaryData) {
+  //     addLine(`\n📁 ${section.toUpperCase()}`);
+  //     const data = currentSummaryData[section];
+
+  //     for (let key in data) {
+  //       let value = data[key];
+  //       if (typeof value === 'object' && value !== null) {
+  //         addLine(`  ${key}:`);
+  //         for (let subKey in value) {
+  //           addLine(`    ${subKey}: ${value[subKey]}`);
+  //         }
+  //       } else {
+  //         addLine(`  ${key}: ${value}`);
+  //       }
+  //     }
+  //   }
+
+  //   doc.save(`Summary_${new Date().toISOString().slice(0, 10)}.pdf`);
+  // }
+
   async function downloadPDF() {
-    if (!currentSummaryData) {
-      alert("Data not loaded yet!");
-      return;
+  const { jsPDF } = window.jspdf;
+
+  const navbar = document.querySelector("nav");
+  if (navbar) navbar.style.display = "none";
+
+  const actionButton = document.querySelector("#actionButton");
+  if (actionButton) actionButton.style.display = "none";
+
+  const element = document.querySelector(".main-content");
+
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  await pdf.html(element, {
+    margin: [5, 5, 5, 5],
+    autoPaging: "text",
+    html2canvas: {
+      scale: 0.2, // Adjust this value to improve quality (higher = better, but larger file size)
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    },
+    callback: function (doc) {
+
+      if (navbar) navbar.style.display = "";
+      if (actionButton) actionButton.style.display = "";
+
+      doc.save("Summary_Report.pdf");
     }
-
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    let y = 10; // starting Y position
-    const lineHeight = 8;
-
-    const addLine = (text) => {
-      doc.text(10, y, text);
-      y += lineHeight;
-    }
-
-    addLine("📊 DATA QUALITY EVALUATION SUMMARY");
-    addLine("Generated: " + new Date().toLocaleString());
-    addLine("===============================");
-
-    // Loop through sections
-    for (let section in currentSummaryData) {
-      addLine(`\n📁 ${section.toUpperCase()}`);
-      const data = currentSummaryData[section];
-
-      for (let key in data) {
-        let value = data[key];
-        if (typeof value === 'object' && value !== null) {
-          addLine(`  ${key}:`);
-          for (let subKey in value) {
-            addLine(`    ${subKey}: ${value[subKey]}`);
-          }
-        } else {
-          addLine(`  ${key}: ${value}`);
-        }
-      }
-    }
-
-    doc.save(`Summary_${new Date().toISOString().slice(0, 10)}.pdf`);
-  }
+  });
+}
 
   // JSON download - uses the entire currentSummaryData object for a comprehensive export
   function downloadJSON() {
