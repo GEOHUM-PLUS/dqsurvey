@@ -1488,3 +1488,18 @@ span[role="img"][aria-label]:active {
     page-break-after: always;
   }
 }
+
+
+/* PDF export fix: prevent transparent canvas from becoming black */
+.pdf-export-mode,
+.pdf-export-mode .main-content,
+.pdf-export-mode .section,
+.pdf-export-mode .card,
+.pdf-export-mode .card-body,
+.pdf-export-mode .chart-container {
+  background: #ffffff !important;
+}
+
+.pdf-export-mode canvas {
+  background-color: #ffffff !important;
+}

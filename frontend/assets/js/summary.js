@@ -1155,16 +1155,34 @@ if (!hasConformanceData) {
   //   doc.save(`Summary_${new Date().toISOString().slice(0, 10)}.pdf`);
   // }
 
-  async function downloadPDF() {
+async function downloadPDF() {
   const { jsPDF } = window.jspdf;
 
   const navbar = document.querySelector("nav");
-  if (navbar) navbar.style.display = "none";
-
   const actionButton = document.querySelector("#actionButton");
+  const element = document.querySelector(".main-content");
+
+  if (!element) {
+    alert("Summary content not found.");
+    return;
+  }
+
+  // Hide UI elements
+  if (navbar) navbar.style.display = "none";
   if (actionButton) actionButton.style.display = "none";
 
-  const element = document.querySelector(".main-content");
+  // Add PDF-only white background mode
+  document.body.classList.add("pdf-export-mode");
+
+  // Force canvas elements to white background before capture
+  const canvases = document.querySelectorAll("canvas");
+  canvases.forEach(canvas => {
+    canvas.dataset.oldBackground = canvas.style.backgroundColor || "";
+    canvas.style.backgroundColor = "#ffffff";
+  });
+
+  // Small delay so browser applies styles before html2canvas captures
+  await new Promise(resolve => setTimeout(resolve, 300));
 
   const pdf = new jsPDF("p", "mm", "a4");
 
@@ -1172,20 +1190,62 @@ if (!hasConformanceData) {
     margin: [5, 5, 5, 5],
     autoPaging: "text",
     html2canvas: {
-      scale: 0.2, // Adjust this value to improve quality (higher = better, but larger file size)
+      scale: 0.8,
       useCORS: true,
       allowTaint: true,
-      logging: false
+      logging: false,
+      backgroundColor: "#ffffff"
     },
     callback: function (doc) {
-
+      // Restore UI
       if (navbar) navbar.style.display = "";
       if (actionButton) actionButton.style.display = "";
+
+      // Restore canvas backgrounds
+      canvases.forEach(canvas => {
+        canvas.style.backgroundColor = canvas.dataset.oldBackground || "";
+        delete canvas.dataset.oldBackground;
+      });
+
+      document.body.classList.remove("pdf-export-mode");
 
       doc.save("Summary_Report.pdf");
     }
   });
 }
+
+
+//   async function downloadPDF() {
+//   const { jsPDF } = window.jspdf;
+
+//   const navbar = document.querySelector("nav");
+//   if (navbar) navbar.style.display = "none";
+
+//   const actionButton = document.querySelector("#actionButton");
+//   if (actionButton) actionButton.style.display = "none";
+
+//   const element = document.querySelector(".main-content");
+
+//   const pdf = new jsPDF("p", "mm", "a4");
+
+//   await pdf.html(element, {
+//     margin: [5, 5, 5, 5],
+//     autoPaging: "text",
+//     html2canvas: {
+//       scale: 0.2, // Adjust this value to improve quality (higher = better, but larger file size)
+//       useCORS: true,
+//       allowTaint: true,
+//       logging: false
+//     },
+//     callback: function (doc) {
+
+//       if (navbar) navbar.style.display = "";
+//       if (actionButton) actionButton.style.display = "";
+
+//       doc.save("Summary_Report.pdf");
+//     }
+//   });
+// }
 
   // JSON download - uses the entire currentSummaryData object for a comprehensive export
   function downloadJSON() {
@@ -1201,9 +1261,6 @@ if (!hasConformanceData) {
       s4: "Conformance",
       s5: "Context"
     };
-    //     const data = currentSummaryData; // use everything as-is
-    //     const jsonData = JSON.stringify(data, null, 2);
-
     // 🧠 Create new object with descriptive keys
     const formattedData = {};
 

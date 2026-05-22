@@ -61,7 +61,7 @@
       <div class="mb-3">
         <label for="evaluatorName">Evaluator
           <span class="info-icon" tabindex="0"
-            data-tooltip="<b>Name of the evaluator</b> <br>(Person or an entity)</br>" role="img"
+            data-tooltip="<b>Name of the evaluator</b>" role="img"
             aria-label="Information about evaluator">?</span>
         </label>
         <input class="form-control" id="evaluatorName" placeholder="e.g., John Doe" type="text" />
@@ -69,7 +69,7 @@
       <div class="mb-3">
         <label for="evaluatorOrg">Affiliation
           <span class="info-icon" tabindex="0"
-            data-tooltip="<b>Organization or Institution</b> <br>The affiliated organization of the evaluator</br>"
+            data-tooltip="The affiliated organization or institution of the evaluator"
             role="img" aria-label="Information about affiliation">?</span>
         </label>
         <input class="form-control" id="evaluatorOrg" placeholder="Organization / Institution" type="text" />
@@ -78,7 +78,7 @@
         <label class="required" for="dataprocessinglevel">
           Data Processing Level
           <span class="info-icon" tabindex="0"
-            data-tooltip="<b> Processing Level <b> <br> XYZ information about processing level</br>." role="img"
+            data-tooltip="Primary data: direct observations, collected and pre-processed data<br> Data products: secondary data of varying complexity, based on minimum one, usully multiple input data." role="img"
             aria-label="Information about data processing level">?</span>
         </label>
         <select class="form-select" id="dataprocessinglevel" required="">
@@ -114,7 +114,7 @@
         <label class="required" for="evaluationType">
           Evaluation type and reason
           <span class="info-icon" tabindex="0"
-            data-tooltip="<b>Evaluation Type:</b></br>(i) General data quality: This type means that DQ assessment is more general on a global or continental data</br>(vi) Use-case specific: This type means the DQ assessment is fit for purpose for unique scenario with specified requirements"
+            data-tooltip="Data quality: general evaluation of quality, applicable to global or continental data <br>Data adequacy: assessment of fitness for purpose for a unique use-case with specific requirements and AOI"
             role="img" aria-label="Information about evaluation type">?</span>
         </label>
         <select class="form-select" id="evaluationType" required="">
@@ -412,9 +412,13 @@
 
     <script type="module" src="../assets/js/section1.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
+ 
     <footer class="text-center py-3 mt-auto bg-light border-top">
-      <small>© 2025 Data Quality Evaluation • Created by Maria &amp; Khizer &amp; Team</small>
+      <!-- <small>© 2025 Data Quality Evaluation • Created by Maria &amp; Khizer &amp; Team</small> -->
+    <small>© 2025 Data Quality Evaluation • Technical implementation by Maria Mushtaq &amp; Khizer Zakir * Cite this
+          as
+          doi: <a href="https://ieeexplore.ieee.org/document/11510253" target="_blank">10.1109/ACCESS.2026.3691011 </a>
+        </small>
     </footer>
 </body>
 
