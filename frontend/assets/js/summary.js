@@ -60,7 +60,7 @@ if (conformanceColumn) {
   // Helper to load all summary data from the backend using stored IDs
   async function loadSummaryData() {
     try {
-      const API = "http://localhost:8020";
+      const API = "https://dqsurvey.onrender.com";
       const section1Id = sessionStorage.getItem("section1_id");
       const section2Id = sessionStorage.getItem("section2_id");
       const section3Id = sessionStorage.getItem("section3_id");
