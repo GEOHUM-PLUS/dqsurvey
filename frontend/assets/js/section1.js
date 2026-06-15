@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // ✅ REFILL FIELDS IF EDIT MODE
   if (isEditMode && section1Id) {
     try {
-      const res = await fetch(`https://dqsurvey.onrender.com/section1/${section1Id}`);
+      const res = await fetch(`https://dqsurvey-ymqf.onrender.com/section1/${section1Id}`);
       if (!res.ok) throw new Error('Failed to fetch Section 1 data');
       const data = await res.json();
       console.log('data:', data);
@@ -592,8 +592,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     try {
 
       const url = (isEditMode && section1Id)
-        ? `https://dqsurvey.onrender.com/section1/section1/${section1Id}`
-        : `https://dqsurvey.onrender.com/section1/section1`;
+        ? `https://dqsurvey-ymqf.onrender.com/section1/section1/${section1Id}`
+        : `https://dqsurvey-ymqf.onrender.com/section1/section1`;
 
       const method = (isEditMode && section1Id) ? 'PUT' : 'POST';
 

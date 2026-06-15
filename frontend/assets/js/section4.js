@@ -339,7 +339,7 @@ sanitizeSection4Payload(payload);
 
       // -------- API call --------
       try {
-        // const res = await fetch('https://dqsurvey.onrender.com/section4/section4', {
+        // const res = await fetch('https://dqsurvey-ymqf.onrender.com/section4/section4', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },
         //   body: JSON.stringify(payload)
@@ -353,8 +353,8 @@ const step4Flag = parseInt(sessionStorage.getItem("step4") || "0");
 const isEdit = section4Id && step4Flag === 1;
 
 const endpoint = isEdit
-  ? `https://dqsurvey.onrender.com/section4/section4/${section4Id}`
-  : `https://dqsurvey.onrender.com/section4/section4`;
+  ? `https://dqsurvey-ymqf.onrender.com/section4/section4/${section4Id}`
+  : `https://dqsurvey-ymqf.onrender.com/section4/section4`;
 
 const method = isEdit ? "PUT" : "POST";
 
@@ -388,7 +388,7 @@ sessionStorage.setItem("step4", "0");
 
   async function refillSection4FromDB(section4Id, section1Id, section2Id, section3Id) {
     try {
-      const url = `https://dqsurvey.onrender.com/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`;
+      const url = `https://dqsurvey-ymqf.onrender.com/section4/bySection1And2And3/${section4Id}/${section1Id}/${section2Id}/${section3Id}`;
         const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch section4 data");
       const data = await res.json();

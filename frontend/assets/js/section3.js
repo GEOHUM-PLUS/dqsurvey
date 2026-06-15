@@ -474,15 +474,15 @@ sanitizePayloadByEvaluationType(payload);
       console.log("🚀 Section3 Payload:", payload);
       // Send to backend
       try {
-        // const response = await fetch('https://dqsurvey.onrender.com/section3/section3', {
+        // const response = await fetch('https://dqsurvey-ymqf.onrender.com/section3/section3', {
         //   method: 'POST',
         //   headers: { 'Content-Type': 'application/json' },
         //   body: JSON.stringify(payload)
         // });
 
 const url = isEditMode
-  ? `https://dqsurvey.onrender.com/section3/section3/${section3Id}`
-  : `https://dqsurvey.onrender.com/section3/section3`;
+  ? `https://dqsurvey-ymqf.onrender.com/section3/section3/${section3Id}`
+  : `https://dqsurvey-ymqf.onrender.com/section3/section3`;
 
 const method = isEditMode ? "PUT" : "POST";
 const response = await fetch(url, {
@@ -528,7 +528,7 @@ const response = await fetch(url, {
 // refill back from section 4
   async function refillSection3FromDB(section3Id, section1Id, section2Id) {
     try {
-      const url = `https://dqsurvey.onrender.com/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`;
+      const url = `https://dqsurvey-ymqf.onrender.com/section3/bySection1And2/${section3Id}/${section1Id}/${section2Id}`;
       const res = await fetch(url);
       if (!res.ok) throw new Error("Failed to fetch section3 data");
       const data = await res.json();

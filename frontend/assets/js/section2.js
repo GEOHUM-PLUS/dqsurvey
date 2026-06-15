@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ---------- API CALL ----------
     try {
-      // const response = await fetch("https://dqsurvey.onrender.com/section2/section2", {
+      // const response = await fetch("https://dqsurvey-ymqf.onrender.com/section2/section2", {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(payload)
@@ -425,8 +425,8 @@ const section2Id = sessionStorage.getItem("section2_id");
   const isEditMode = !!section2Id && step2Flag === 1;
 
   const url = isEditMode
-    ? `https://dqsurvey.onrender.com/section2/section2/${section2Id}`
-    : `https://dqsurvey.onrender.com/section2/section2`;
+    ? `https://dqsurvey-ymqf.onrender.com/section2/section2/${section2Id}`
+    : `https://dqsurvey-ymqf.onrender.com/section2/section2`;
 
   const method = isEditMode ? "PUT" : "POST";
 
@@ -464,7 +464,7 @@ const section2Id = sessionStorage.getItem("section2_id");
   // ================== REFILL FUNCTION INSIDE DOM ==================
   async function refillSection2FromDB(section2Id,section1Id) {
     try {
-      const res = await fetch(`https://dqsurvey.onrender.com/section2/bySection1/${section2Id}/${section1Id}`);
+      const res = await fetch(`https://dqsurvey-ymqf.onrender.com/section2/bySection1/${section2Id}/${section1Id}`);
       if (!res.ok) throw new Error("Failed to fetch section2 data");
       const data = await res.json();
       console.log("✅ Section2 DB data:", data);
