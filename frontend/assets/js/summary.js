@@ -1155,7 +1155,7 @@ if (!hasConformanceData) {
   //   doc.save(`Summary_${new Date().toISOString().slice(0, 10)}.pdf`);
   // }
 
-async function downloadPDF() {
+  async function downloadPDF() {
   const { jsPDF } = window.jspdf;
 
   const navbar = document.querySelector("nav");
@@ -1167,64 +1167,110 @@ async function downloadPDF() {
     return;
   }
 
-  // Hide UI elements
-  if (navbar) navbar.style.display = "none";
-  if (actionButton) actionButton.style.display = "none";
+  const canvasRestores = [];
 
-  // Add PDF-only white background mode
-  document.body.classList.add("pdf-export-mode");
+  function cleanup() {
+    if (navbar) navbar.style.display = "";
+    if (actionButton) actionButton.style.display = "";
 
-  // Force canvas elements to white background before capture
-  const canvases = document.querySelectorAll("canvas");
-  canvases.forEach(canvas => {
-    canvas.dataset.oldBackground = canvas.style.backgroundColor || "";
-    canvas.style.backgroundColor = "#ffffff";
-  });
+    canvasRestores.forEach(restore => restore());
 
-  // Small delay so browser applies styles before html2canvas captures
-  await new Promise(resolve => setTimeout(resolve, 300));
+    document.body.classList.remove("pdf-export-mode");
+  }
 
-  const pdf = new jsPDF("p", "mm", "a4");
+  try {
+    if (navbar) navbar.style.display = "none";
+    if (actionButton) actionButton.style.display = "none";
 
-  await pdf.html(element, {
-    margin: [5, 5, 5, 5],
-    autoPaging: "text",
-    html2canvas: {
-      scale: 0.8,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      backgroundColor: "#ffffff"
-    },
-    callback: function (doc) {
-      // Restore UI
-      if (navbar) navbar.style.display = "";
-      if (actionButton) actionButton.style.display = "";
+    document.body.classList.add("pdf-export-mode");
 
-      // Restore canvas backgrounds
-      canvases.forEach(canvas => {
-        canvas.style.backgroundColor = canvas.dataset.oldBackground || "";
-        delete canvas.dataset.oldBackground;
+    // IMPORTANT: Paint real white pixels behind every chart canvas
+    const canvases = document.querySelectorAll("canvas");
+
+    canvases.forEach(canvas => {
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+
+      const oldImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      canvasRestores.push(() => {
+        ctx.putImageData(oldImage, 0, 0);
       });
 
-      document.body.classList.remove("pdf-export-mode");
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    });
 
-      doc.save("Summary_Report.pdf");
-    }
-  });
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    await pdf.html(element, {
+      margin: [5, 5, 5, 5],
+      autoPaging: "text",
+      html2canvas: {
+        scale: 0.2,
+        useCORS: true,
+        allowTaint: false,
+        logging: false,
+        backgroundColor: "#ffffff",
+
+        onclone: clonedDoc => {
+          clonedDoc.body.style.backgroundColor = "#ffffff";
+
+          const clonedMain = clonedDoc.querySelector(".main-content");
+          if (clonedMain) {
+            clonedMain.style.backgroundColor = "#ffffff";
+          }
+
+          clonedDoc.querySelectorAll("canvas").forEach(canvas => {
+            canvas.style.backgroundColor = "#ffffff";
+          });
+        }
+      },
+      callback: function (doc) {
+        cleanup();
+        doc.save("Summary_Report.pdf");
+      }
+    });
+
+  } catch (error) {
+    cleanup();
+    console.error(error);
+    alert("PDF export failed.");
+  }
 }
-
-
-//   async function downloadPDF() {
+// async function downloadPDF() {
 //   const { jsPDF } = window.jspdf;
 
 //   const navbar = document.querySelector("nav");
-//   if (navbar) navbar.style.display = "none";
-
 //   const actionButton = document.querySelector("#actionButton");
+//   const element = document.querySelector(".main-content");
+
+//   if (!element) {
+//     alert("Summary content not found.");
+//     return;
+//   }
+
+//   // Hide UI elements
+//   if (navbar) navbar.style.display = "none";
 //   if (actionButton) actionButton.style.display = "none";
 
-//   const element = document.querySelector(".main-content");
+//   // Add PDF-only white background mode
+//   document.body.classList.add("pdf-export-mode");
+
+//   // Force canvas elements to white background before capture
+//   const canvases = document.querySelectorAll("canvas");
+//   canvases.forEach(canvas => {
+//     canvas.dataset.oldBackground = canvas.style.backgroundColor || "";
+//     canvas.style.backgroundColor = "#ffffff";
+//   });
+
+//   // Small delay so browser applies styles before html2canvas captures
+//   await new Promise(resolve => setTimeout(resolve, 300));
 
 //   const pdf = new jsPDF("p", "mm", "a4");
 
@@ -1232,22 +1278,34 @@ async function downloadPDF() {
 //     margin: [5, 5, 5, 5],
 //     autoPaging: "text",
 //     html2canvas: {
-//       scale: 0.2, // Adjust this value to improve quality (higher = better, but larger file size)
+//       scale: 0.25,
 //       useCORS: true,
 //       allowTaint: true,
-//       logging: false
+//       logging: false,
+//       backgroundColor: "#ffffff"
 //     },
 //     callback: function (doc) {
-
+//       // Restore UI
 //       if (navbar) navbar.style.display = "";
 //       if (actionButton) actionButton.style.display = "";
+
+//       // Restore canvas backgrounds
+//       canvases.forEach(canvas => {
+//         canvas.style.backgroundColor = canvas.dataset.oldBackground || "";
+//         delete canvas.dataset.oldBackground;
+//       });
+
+//       document.body.classList.remove("pdf-export-mode");
 
 //       doc.save("Summary_Report.pdf");
 //     }
 //   });
 // }
 
+
+
   // JSON download - uses the entire currentSummaryData object for a comprehensive export
+  
   function downloadJSON() {
     if (!currentSummaryData) {
       alert("Data not loaded yet!");
