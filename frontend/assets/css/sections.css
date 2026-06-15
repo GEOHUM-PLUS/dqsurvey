@@ -1503,3 +1503,10 @@ span[role="img"][aria-label]:active {
 .pdf-export-mode canvas {
   background-color: #ffffff !important;
 }
+
+.pdf-export-mode,
+.pdf-export-mode body,
+.pdf-export-mode .main-content,
+.pdf-export-mode canvas {
+  background: #ffffff !important;
+}
